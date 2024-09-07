@@ -14,6 +14,15 @@ async function bootstrap() {
   // config security
   app.use(helmet());
 
+  app.enableCors({
+    origin: 'http://localhost:3066',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    allowedHeaders: 'Content-Type,Authorization,X-Custom-Header',
+    exposedHeaders: 'X-Custom-Header,X-Another-Header',
+    credentials: true,
+    preflightContinue: true,
+  });
+
   // config tools
   app.use(compression())
 
