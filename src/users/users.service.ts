@@ -4,10 +4,13 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/user.scheme';
 import { Model } from 'mongoose';
+import { SoftDeleteModel } from 'mongoose-advanced-soft-delete';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+  constructor(
+    @InjectModel(User.name) private userModel: SoftDeleteModel<User>
+  ) { }
 
   async create(createUserDto: CreateUserDto) {
     const user = await this.userModel.create(createUserDto);
@@ -33,7 +36,7 @@ export class UsersService {
   }
 
   remove(id: string) {
-    const status = this.userModel.deleteOne({_id: id})
+    const status = this.userModel.deleteOne({ _id: id })
     return status;
   }
 }

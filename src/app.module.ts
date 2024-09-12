@@ -6,6 +6,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { UsersModule } from './users/users.module';
+import { softDeletePlugin } from 'mongoose-advanced-soft-delete';
 
 @Module({
   imports: [
@@ -22,7 +23,7 @@ import { UsersModule } from './users/users.module';
         {
           uri: configService.get<string>('MONGODB_URI'),
           connectionFactory: (connection) => {
-            //connection.plugin(softDeletePlugin);
+            connection.plugin(softDeletePlugin);
             return connection;
           },
         }
@@ -52,4 +53,4 @@ import { UsersModule } from './users/users.module';
   ],
 
 })
-export class AppModule {}
+export class AppModule { }
