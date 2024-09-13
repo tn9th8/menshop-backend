@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument } from "mongoose";
-import { softDeletePlugin } from "mongoose-advanced-soft-delete";
+import { Gender } from "src/common/enums/gender.enum";
 
 export type UserDocument = HydratedDocument<User>;
 
@@ -20,11 +20,17 @@ export class User {
   @Prop()
   age: number;
 
+  @Prop({ type: String, enum: Object.values(Gender) })
+  gender: Gender;
+
   @Prop()
   phone: string;
 
   @Prop()
   address: string;
+
+  @Prop()
+  avatar: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

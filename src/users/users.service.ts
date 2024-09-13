@@ -13,6 +13,14 @@ export class UsersService {
   ) { }
 
   async create(createUserDto: CreateUserDto) {
+    // is exist mail
+    //const {}
+
+
+    // hash password
+
+
+    // create
     const user = await this.userModel.create(createUserDto);
     return user;
   }
