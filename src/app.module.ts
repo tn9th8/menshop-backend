@@ -6,7 +6,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { UsersModule } from './users/users.module';
-import { softDeletePlugin } from 'mongoose-advanced-soft-delete';
+import { softDeletePlugin } from 'soft-delete-plugin-mongoose';
 
 @Module({
   imports: [

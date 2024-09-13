@@ -1,27 +1,36 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { User } from './schemas/user.scheme';
-import { Model } from 'mongoose';
-import { SoftDeleteModel } from 'mongoose-advanced-soft-delete';
+import { User, UserDocument } from './schemas/user.scheme';
+import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
+import { hashPassword } from 'src/common/utils/hashing.security';
+
+
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectModel(User.name) private userModel: SoftDeleteModel<User>
+    @InjectModel(User.name) private userModel: SoftDeleteModel<UserDocument>
   ) { }
 
   async create(createUserDto: CreateUserDto) {
     // is exist mail
-    //const {}
+    const { email, password } = createUserDto;
 
+    const isExist = await this.userModel.findOne({ email });
+    if (isExist) {
+      throw new BadRequestException(`Email ${email} đã tồn tại. Vui lòng sử dụng email khác`);
+    }
 
     // hash password
-
+    const hash = await hashPassword(password);
 
     // create
-    const user = await this.userModel.create(createUserDto);
+    const user = await this.userModel.create({
+      ...createUserDto,
+      password: hash,
+    });
     return user;
   }
 
@@ -43,8 +52,8 @@ export class UsersService {
     return status;
   }
 
-  remove(id: string) {
-    const status = this.userModel.deleteOne({ _id: id })
+  async remove(id: string) {
+    const status = await this.userModel.softDelete({ _id: id })
     return status;
   }
 }
