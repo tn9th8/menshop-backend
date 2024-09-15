@@ -5,8 +5,10 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
-import { UsersModule } from './users/users.module';
 import { softDeletePlugin } from 'soft-delete-plugin-mongoose';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './modules/users/users.module';
+import { ProductsModule } from './modules/products/products.module';
 
 @Module({
   imports: [
@@ -41,6 +43,8 @@ import { softDeletePlugin } from 'soft-delete-plugin-mongoose';
       ],
     }),
     UsersModule,
+    AuthModule,
+    ProductsModule,
   ],
   controllers: [AppController],
   providers: [
