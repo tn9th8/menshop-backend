@@ -42,9 +42,11 @@ import { ProductsModule } from './modules/products/products.module';
         }
       ],
     }),
+    // Business Model
     UsersModule,
-    AuthModule,
     ProductsModule,
+    // Logic Model
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [

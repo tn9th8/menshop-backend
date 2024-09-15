@@ -8,10 +8,6 @@ import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // config port
-  const configService = app.get(ConfigService);
-  const port = configService.get<string>('PORT');
-
   // config security
   app.use(helmet());
 
@@ -19,7 +15,7 @@ async function bootstrap() {
     origin: 'http://localhost:3066',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     allowedHeaders: 'Content-Type,Authorization,X-Custom-Header,X-No-Compression',
-    exposedHeaders: 'X-Custom-Header,X-Another-Header',
+    exposedHeaders: 'X-Custom-Header,X-Another-Header', // todo
     credentials: true,
     preflightContinue: true,
   });
@@ -38,7 +34,9 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe());
 
-  // server
+  // config server
+  const configService = app.get(ConfigService);
+  const port = configService.get<string>('PORT');
   await app.listen(port);
 }
 bootstrap();
