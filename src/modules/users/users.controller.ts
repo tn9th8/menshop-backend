@@ -10,7 +10,9 @@ export class UsersController {
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
     const user = await this.usersService.create(createUserDto);
-    return user;
+    return {
+      id: user._id
+    };
   }
 
   @Get()
