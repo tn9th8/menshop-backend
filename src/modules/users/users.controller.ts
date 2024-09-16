@@ -23,7 +23,7 @@ export class UsersController {
 
   @Get('by-id/:id')
   findOne(@Param('id') id: string) {
-    return this.usersService.findOne(id);
+    return this.usersService.findOneById(id);
   }
 
   @Patch(':id')

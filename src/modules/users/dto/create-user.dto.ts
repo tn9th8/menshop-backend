@@ -5,7 +5,7 @@ export class CreateUserDto {
     @IsEmail({}, { message: "Email phải theo định dạng []@[].[]" })
     email: string;
 
-    // todo: strong password
+    // todo: check a strong password
     @IsNotEmpty({ message: "Password không thể empty, null hay undefined" })
     @IsString({ message: "Password phải là string" })
     password: string;

@@ -1,10 +1,10 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
+import { hashPass } from 'src/common/utils/hashing.security';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from './schemas/user.scheme';
-import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
-import { hashPassword } from 'src/common/utils/hashing.security';
 
 
 
@@ -24,7 +24,7 @@ export class UsersService {
     }
 
     // hash password
-    const hash = await hashPassword(password);
+    const hash = await hashPass(password);
 
     // create
     const user = await this.userModel.create({
@@ -39,8 +39,13 @@ export class UsersService {
     return users;
   }
 
-  async findOne(id: string) {
+  async findOneById(id: string) {
     const user = await this.userModel.findById(id);
+    return user;
+  }
+
+  async findOneByEmail(email: string) {
+    const user = await this.userModel.findOne({ email });
     return user;
   }
 

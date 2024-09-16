@@ -1,14 +1,15 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
+import { MongooseModule } from '@nestjs/mongoose';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { softDeletePlugin } from 'soft-delete-plugin-mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { MongooseModule } from '@nestjs/mongoose';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
-import { APP_GUARD } from '@nestjs/core';
-import { softDeletePlugin } from 'soft-delete-plugin-mongoose';
 import { AuthModule } from './auth/auth.module';
-import { UsersModule } from './modules/users/users.module';
+import { AuthGuard } from './auth/guard/auth.guard';
 import { ProductsModule } from './modules/products/products.module';
+import { UsersModule } from './modules/users/users.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { ProductsModule } from './modules/products/products.module';
         }
       ],
     }),
+    // Business Module
     UsersModule,
     AuthModule,
     ProductsModule,
@@ -49,11 +51,15 @@ import { ProductsModule } from './modules/products/products.module';
   controllers: [AppController],
   providers: [
     AppService,
-    // bind to ThrottlerGuard globally
+    // bind to all endpoints
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard
-    }
+    },
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
   ],
 
 })

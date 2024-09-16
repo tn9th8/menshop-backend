@@ -1,26 +1,38 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { isMatchPass } from 'src/common/utils/hashing.security';
+import { UsersService } from 'src/modules/users/users.service';
+import { ProfileDto } from './dto/profile.dto';
+import { SignInDto } from './dto/sign-in.dto';
 
 @Injectable()
 export class AuthService {
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
+  constructor(
+    private usersService: UsersService,
+    private jwtService: JwtService,
+  ) { }
+
+  async signIn(signInDto: SignInDto): Promise<ProfileDto> {
+    const { _id, email, password: hash, name, phone } = await this.usersService.findOneByEmail(signInDto.username);
+
+    if (!isMatchPass(signInDto.password, hash)) {
+      throw new UnauthorizedException();
+    }
+
+    const payload = {
+      sub: _id, // be consistent with JWT standards
+      iss: 'from server',
+      name,
+      email,
+      phone,
+    }
+
+    return {
+      access_token: await this.jwtService.signAsync(payload),
+      name,
+      email,
+      phone,
+    };
   }
 
-  findAll() {
-    return `This action returns all auth`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
-
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
-  }
 }
