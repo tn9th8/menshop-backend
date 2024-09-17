@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { isMatchPass } from 'src/common/utils/hashing.security';
+import { isMatchPass } from 'src/common/utils/security.util';
 import { UsersService } from 'src/modules/users/users.service';
 import { ProfileDto } from './dto/profile.dto';
 import { SignInDto } from './dto/sign-in.dto';
