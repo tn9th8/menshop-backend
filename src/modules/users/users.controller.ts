@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { Public } from 'src/common/decorators/public.decorator';
 
 @Controller('users')
 export class UsersController {
@@ -11,14 +12,14 @@ export class UsersController {
   async create(@Body() createUserDto: CreateUserDto) {
     const user = await this.usersService.create(createUserDto);
     return {
-      id: user._id
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
     };
   }
 
   @Get()
   findAll() {
-    const users = this.usersService.findAll();
-    return users;
+    return this.usersService.findAll();
   }
 
   @Get('by-id/:id')
