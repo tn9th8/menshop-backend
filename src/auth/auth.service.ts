@@ -1,9 +1,9 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { isMatchPass } from 'src/common/utils/security.util';
+import { IUser } from 'src/modules/users/interfaces/user.interface';
 import { UsersService } from 'src/modules/users/users.service';
-import { ProfileDto } from './dto/profile.dto';
-import { SignInDto } from './dto/sign-in.dto';
+import { AuthUserDto } from './dto/auth-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -12,26 +12,28 @@ export class AuthService {
     private jwtService: JwtService,
   ) { }
 
-  async signIn(signInDto: SignInDto): Promise<ProfileDto> {
-    const { _id, email, password: hash, name, phone } = await this.usersService.findOneByEmail(signInDto.username);
-
-    if (!isMatchPass(signInDto.password, hash)) {
-      throw new UnauthorizedException();
+  async validateUser(username: string, pass: string): Promise<AuthUserDto | null> {
+    const user = await this.usersService.findOneByEmail(username);
+    if (user && isMatchPass(pass, user.password)) {
+      return {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+      };
     }
+    return null;
+  }
 
+  async signIn(user: AuthUserDto): Promise<{ access_token: string, user: AuthUserDto }> {
     const payload = {
-      sub: _id, // be consistent with JWT standards
-      iss: 'from server',
-      name,
-      email,
-      phone,
+      sub: user.id, // be consistent with JWT standards
+      iss: 'from the menshop server',
+      user,
     }
-
     return {
       access_token: await this.jwtService.signAsync(payload),
-      name,
-      email,
-      phone,
+      user,
     };
   }
 

@@ -7,9 +7,9 @@ import { softDeletePlugin } from 'soft-delete-plugin-mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
-import { AuthGuard } from './auth/guard/auth.guard';
 import { ProductsModule } from './modules/products/products.module';
 import { UsersModule } from './modules/users/users.module';
+import { JwtGuard } from './auth/passport/jwt.guard';
 
 @Module({
   imports: [
@@ -56,10 +56,10 @@ import { UsersModule } from './modules/users/users.module';
       provide: APP_GUARD,
       useClass: ThrottlerGuard
     },
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: AuthGuard,
-    // },
+    {
+      provide: APP_GUARD,
+      useClass: JwtGuard,
+    },
   ],
 
 })

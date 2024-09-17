@@ -41,9 +41,7 @@ export class UsersService {
 
   async findOneById(id: string): Promise<IUser | undefined> {
     isObjetId(id);
-    const user = await this.userModel
-      .findById(id)
-      .select('-password');
+    const user = await this.userModel.findById(id).select('-password');
     return user;
   }
 

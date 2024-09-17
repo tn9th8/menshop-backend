@@ -1,12 +1,12 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
 import { AppService } from './app.service';
-import { Public } from './common/decorators/public.decorator';
+import { SkipJwt } from './common/decorators/skip-jwt.decorator';
 
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) { }
 
-  @Public()
+  @SkipJwt()
   @Get()
   getHello(): string {
     return this.appService.getHello();
