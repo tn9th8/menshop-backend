@@ -31,6 +31,13 @@ export class User {
 
   @Prop()
   avatar: string;
+
+  // security properties
+  @Prop()
+  refreshToken: string;
+
+  @Prop()
+  refreshExpires: Date;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

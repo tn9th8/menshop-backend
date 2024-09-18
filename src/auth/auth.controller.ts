@@ -1,4 +1,6 @@
-import { Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
+import { Response } from 'express';
+import { Cookies } from 'src/common/decorators/cookie.decorator';
 import { SkipJwt } from 'src/common/decorators/skip-jwt.decorator';
 import { User } from 'src/common/decorators/user.decorator';
 import { AuthService } from './auth.service';
@@ -12,12 +14,31 @@ export class AuthController {
   @SkipJwt()
   @UseGuards(LocalGuard)
   @Post('sign-in')
-  async signIn(@User() user: AuthUserDto) {
-    return this.authService.signIn(user);
+  signIn(
+    @User() user: AuthUserDto,
+    @Res({ passthrough: true }) response: Response) {
+    return this.authService.signIn(user, response);
+  }
+
+  @Get('/sign-out')
+  signOut(
+    @User() user: AuthUserDto,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    return this.authService.signOut(user, response);
   }
 
   @Get('account')
   getAccount(@User() user: AuthUserDto) {
     return user;
+  }
+
+  @SkipJwt()
+  @Get('/refresh')
+  refreshAccount(
+    @Cookies('refresh_token') refreshToken: string,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    return this.authService.refreshAccount(refreshToken, response);
   }
 }

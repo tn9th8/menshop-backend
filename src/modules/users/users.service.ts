@@ -8,6 +8,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { IUser } from './interfaces/user.interface';
 import { User } from './schemas/user.scheme';
+import mongoose from 'mongoose';
 
 
 
@@ -39,13 +40,13 @@ export class UsersService {
     return users;
   }
 
-  async findOneById(id: string): Promise<IUser | undefined> {
-    isObjetId(id);
-    const user = await this.userModel.findById(id).select('-password');
+  async findById(_id: string): Promise<IUser | undefined> {
+    isObjetId(_id);
+    const user = await this.userModel.findById(_id).select('-password');
     return user;
   }
 
-  async findOneByEmail(email: string): Promise<IUser | undefined> {
+  async findByEmail(email: string): Promise<IUser | undefined> {
     const user = await this.userModel.findOne({ email });
     return user;
   }
@@ -57,9 +58,18 @@ export class UsersService {
     return result;
   }
 
-  async remove(id: string): Promise<IDeleteResult> {
-    isObjetId(id);
-    const result = await this.userModel.softDelete({ _id: id })
+  async updateToken(_id: mongoose.Types.ObjectId, refreshToken: string, expiresIn: number): Promise<IUpdateResult> {
+    const refreshExpires = expiresIn ? new Date(Date.now() + expiresIn) : null; // in: milliseconds, out: Date
+    return await this.userModel.updateOne({ _id }, { refreshToken, refreshExpires });
+  }
+
+  async findByToken(refreshToken: string): Promise<IUser> {
+    return await this.userModel.findOne({ refreshToken });
+  }
+
+  async remove(_id: string): Promise<IDeleteResult> {
+    isObjetId(_id);
+    const result = await this.userModel.softDelete({ _id })
     return result;
 
   }

@@ -8,6 +8,7 @@ import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './passport/local.strategy';
 import { JwtStrategy } from './passport/jwt.strategy';
 import ms from 'ms';
+import { Jwt } from 'src/common/enums/jwt.enum';
 
 @Module({
   imports: [
@@ -19,8 +20,8 @@ import ms from 'ms';
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => (
         {
-          secret: configService.get<string>('JWT_SECRET'),
-          signOptions: { expiresIn: ms(configService.get<string>('JWT_EXPIRES')) / 1000 }, //seconds
+          secret: configService.get<string>(Jwt.ACCESS_TOKEN_SECRET),
+          signOptions: { expiresIn: ms(configService.get<string>(Jwt.ACCESS_TOKEN_EXPIRES)) / 1000 }, //seconds
         }
       ),
     }),

@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import helmet from 'helmet';
 import compression from 'compression';
+import cookieParser from 'cookie-parser';
 import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
@@ -37,6 +38,8 @@ async function bootstrap() {
   }));
 
   app.useGlobalPipes(new ValidationPipe());
+
+  app.use(cookieParser());
 
   // server
   await app.listen(port);

@@ -1,18 +1,22 @@
-import { ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ExecutionContext, ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { IS_SKIP_JWT_KEY } from 'src/common/decorators/skip-jwt.decorator';
+import { UsersService } from 'src/modules/users/users.service';
 
 @Injectable()
 export class JwtGuard extends AuthGuard('jwt') {
-    constructor(private reflector: Reflector) {
+    constructor(
+        private reflector: Reflector,
+        private readonly userService: UsersService,
+    ) {
         super();
     }
 
     canActivate(context: ExecutionContext) {
         // Add your custom authentication logic here
         // for example, call super.logIn(request) to establish a session.
-        // is skip auth
+        // is skip jwt
         const isSkipAuth = this.reflector.getAllAndOverride<boolean>(IS_SKIP_JWT_KEY, [
             context.getHandler(),
             context.getClass(),
