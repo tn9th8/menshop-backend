@@ -1,9 +1,9 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Request, UseGuards } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { SignInDto } from './dto/sign-in.dto';
-import { LocalGuard } from './passport/local.guard';
+import { Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
 import { SkipJwt } from 'src/common/decorators/skip-jwt.decorator';
+import { User } from 'src/common/decorators/user.decorator';
+import { AuthService } from './auth.service';
 import { AuthUserDto } from './dto/auth-user.dto';
+import { LocalGuard } from './passport/local.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -12,13 +12,12 @@ export class AuthController {
   @SkipJwt()
   @UseGuards(LocalGuard)
   @Post('sign-in')
-  async signIn(@Request() req: any) {
-    return this.authService.signIn(req.user);
+  async signIn(@User() user: AuthUserDto) {
+    return this.authService.signIn(user);
   }
 
   @Get('account')
-  getAccount(@Request() req: any) {
-    const user: AuthUserDto = req.user;
+  getAccount(@User() user: AuthUserDto) {
     return user;
   }
 }

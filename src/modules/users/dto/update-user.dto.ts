@@ -1,7 +1,6 @@
-import { OmitType, PartialType } from '@nestjs/mapped-types';
-import { CreateUserDto } from './create-user.dto';
-import mongoose from 'mongoose';
+import { PartialType } from '@nestjs/mapped-types';
 import { IsNotEmpty } from 'class-validator';
+import { CreateUserDto } from './create-user.dto';
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {
     @IsNotEmpty({ message: "id không thể empty, null hay undefined" })
