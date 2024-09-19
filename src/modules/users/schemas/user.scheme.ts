@@ -9,22 +9,22 @@ export type UserDocument = HydratedDocument<User>;
 })
 export class User {
   @Prop({ required: true })
+  name: string;
+
+  @Prop()
+  phone: string;
+
+  @Prop({ required: true })
   email: string;
 
   @Prop({ required: true })
   password: string;
-
-  @Prop({ required: true })
-  name: string;
 
   @Prop()
   age: number;
 
   @Prop({ type: String, enum: Object.values(Gender) })
   gender: Gender;
-
-  @Prop()
-  phone: string;
 
   @Prop()
   address: string;
@@ -38,6 +38,12 @@ export class User {
 
   @Prop()
   refreshExpires: Date;
+
+  @Prop()
+  verifyToken: string;
+
+  @Prop()
+  verifyExpires: Date;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

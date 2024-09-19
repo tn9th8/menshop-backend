@@ -9,11 +9,8 @@ export class UsersController {
 
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
-    const user = await this.usersService.create(createUserDto);
-    return {
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
-    };
+    const result = await this.usersService.create(createUserDto);
+    return result;
   }
 
   @Get()
@@ -23,16 +20,19 @@ export class UsersController {
 
   @Get('by-id/:id')
   findOne(@Param('id') id: string) {
-    return this.usersService.findById(id);
+    const user = this.usersService.findById(id);
+    return user;
   }
 
   @Patch(':id')
   update(@Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(updateUserDto);
+    const result = this.usersService.update(updateUserDto);
+    return result;
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.usersService.remove(id);
+    const result = this.usersService.remove(id);
+    return result
   }
 }

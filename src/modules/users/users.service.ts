@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
-import { IDeleteResult, IUpdateResult } from 'src/common/interfaces/persist-result.interface';
+import { ICreateResult, IDeleteResult, IUpdateResult } from 'src/common/interfaces/persist-result.interface';
 import { isObjetId } from 'src/common/utils/mongo.util';
 import { hashPass } from 'src/common/utils/security.util';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -9,6 +9,8 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { IUser } from './interfaces/user.interface';
 import { User } from './schemas/user.scheme';
 import mongoose from 'mongoose';
+import { SignInDto } from 'src/auth/dto/sign-in.dto';
+import { SignUpDto } from 'src/auth/dto/sign-up.dto';
 
 
 
@@ -16,7 +18,7 @@ import mongoose from 'mongoose';
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: SoftDeleteModel<IUser>) { }
 
-  async create(createUserDto: CreateUserDto): Promise<IUser> {
+  async create(createUserDto: CreateUserDto | SignUpDto): Promise<ICreateResult> {
     // is exist mail
     const { email, password } = createUserDto;
     const isExist = await this.userModel.findOne({ email });
@@ -32,7 +34,11 @@ export class UsersService {
       ...createUserDto,
       password: hash,
     });
-    return user;
+    return {
+      id: user._id,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt
+    };
   }
 
   async findAll(): Promise<Array<IUser>> {
@@ -58,13 +64,22 @@ export class UsersService {
     return result;
   }
 
-  async updateToken(_id: mongoose.Types.ObjectId, refreshToken: string, expiresIn: number): Promise<IUpdateResult> {
+  async updateRefreshToken(_id: mongoose.Types.ObjectId, refreshToken: string, expiresIn: number): Promise<IUpdateResult> {
     const refreshExpires = expiresIn ? new Date(Date.now() + expiresIn) : null; // in: milliseconds, out: Date
     return await this.userModel.updateOne({ _id }, { refreshToken, refreshExpires });
   }
 
-  async findByToken(refreshToken: string): Promise<IUser> {
+  async findByRefreshToken(refreshToken: string): Promise<IUser> {
     return await this.userModel.findOne({ refreshToken });
+  }
+
+  async updateVerifyToken(_id: mongoose.Types.ObjectId, verifyToken: string, expiresIn: number): Promise<IUpdateResult> {
+    const refreshExpires = expiresIn ? new Date(Date.now() + expiresIn) : null; // input: milliseconds, output: Date
+    return await this.userModel.updateOne({ _id }, { verifyToken, refreshExpires });
+  }
+
+  async findByVerifyToken(verifyToken: string): Promise<IUser> {
+    return await this.userModel.findOne({ verifyToken });
   }
 
   async remove(_id: string): Promise<IDeleteResult> {

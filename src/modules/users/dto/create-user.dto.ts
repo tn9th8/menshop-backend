@@ -2,6 +2,13 @@ import { IsEmail, IsEnum, IsNotEmpty, IsPhoneNumber, IsString } from "class-vali
 import { Gender } from "src/common/enums/gender.enum";
 
 export class CreateUserDto {
+    @IsNotEmpty({ message: "Name không thể empty, null hay undefined" })
+    @IsString({ message: "Name phải là string" })
+    name: string;
+
+    @IsPhoneNumber('VN', { message: "Phone phải là số điện thoại Việt Nam" })
+    phone: string;
+
     @IsEmail({}, { message: "Email phải theo định dạng []@[].[]" })
     email: string;
 
@@ -10,18 +17,11 @@ export class CreateUserDto {
     @IsString({ message: "Password phải là string" })
     password: string;
 
-    @IsNotEmpty({ message: "Name không thể empty, null hay undefined" })
-    @IsString({ message: "Name phải là string" })
-    name: string;
-
     // todo: check >8 < 150
     age: number;
 
     @IsEnum(Gender, { message: "Gender phải là male, female hoặc other" })
     gender: string;
-
-    @IsPhoneNumber('VN', { message: "Phone phải là số điện thoại Việt Nam" })
-    phone: string;
 
     // todo: city, district
     @IsString({ message: "Address phải là string" })
