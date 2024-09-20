@@ -3,7 +3,12 @@ import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import helmet from 'helmet';
 import compression from 'compression';
+import cookieParser from 'cookie-parser';
 import { ValidationPipe } from '@nestjs/common';
+import { DocumentBuilder, SwaggerDocumentOptions, SwaggerModule } from '@nestjs/swagger';
+import metadata from './metadata';
+import { SignInDto } from './auth/dto/sign-in.dto';
+import { UserSchema } from './modules/users/schemas/user.scheme';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -32,7 +37,43 @@ async function bootstrap() {
     level: 6 // compromise speed & compression
   }));
 
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+
+  app.use(cookieParser());
+
+  //config swagger
+  const config = new DocumentBuilder()
+    .setTitle('Menshop APIs Document')
+    .setDescription('All Modules APIs')
+    .setVersion('1.0')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'Bearer',
+        bearerFormat: 'JWT',
+        in: 'header',
+      },
+      'token',
+    )
+    .addSecurityRequirements('token')
+    .build();
+  await SwaggerModule.loadPluginMetadata(metadata);
+  const document = SwaggerModule.createDocument(app, config,
+    {
+      extraModels: [SignInDto],
+      deepScanRoutes: true,
+      operationIdFactory: (
+        controllerKey: string,
+        methodKey: string,
+      ) => `${methodKey}-${controllerKey}`,
+    }
+  );
+  SwaggerModule.setup('api', app, document, {
+    swaggerOptions: {
+      persistAuthorization: true,
+    }
+  });
+
 
   // config server
   const configService = app.get(ConfigService);

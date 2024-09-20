@@ -2,37 +2,39 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Users Module')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
-    const user = await this.usersService.create(createUserDto);
-    return {
-      id: user._id
-    };
+    const result = await this.usersService.create(createUserDto);
+    return result;
   }
 
   @Get()
   findAll() {
-    const users = this.usersService.findAll();
-    return users;
+    return this.usersService.findAll();
   }
 
   @Get('by-id/:id')
   findOne(@Param('id') id: string) {
-    return this.usersService.findOne(id);
+    const user = this.usersService.findById(id);
+    return user;
   }
 
   @Patch(':id')
   update(@Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(updateUserDto);
+    const result = this.usersService.update(updateUserDto);
+    return result;
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.usersService.remove(id);
+    const result = this.usersService.remove(id);
+    return result
   }
 }
