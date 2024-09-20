@@ -11,6 +11,7 @@ import { User } from './schemas/user.scheme';
 import mongoose from 'mongoose';
 import { SignInDto } from 'src/auth/dto/sign-in.dto';
 import { SignUpDto } from 'src/auth/dto/sign-up.dto';
+import { Moment } from 'moment';
 
 
 
@@ -64,8 +65,7 @@ export class UsersService {
     return result;
   }
 
-  async updateRefreshToken(_id: mongoose.Types.ObjectId, refreshToken: string, expiresIn: number): Promise<IUpdateResult> {
-    const refreshExpires = expiresIn ? new Date(Date.now() + expiresIn) : null; // in: milliseconds, out: Date
+  async updateRefreshToken(_id: mongoose.Types.ObjectId, refreshToken: string, refreshExpires: Moment): Promise<IUpdateResult> {
     return await this.userModel.updateOne({ _id }, { refreshToken, refreshExpires });
   }
 
@@ -73,8 +73,7 @@ export class UsersService {
     return await this.userModel.findOne({ refreshToken });
   }
 
-  async updateVerifyToken(_id: mongoose.Types.ObjectId, verifyToken: string, expiresIn: number): Promise<IUpdateResult> {
-    const refreshExpires = expiresIn ? new Date(Date.now() + expiresIn) : null; // input: milliseconds, output: Date
+  async updateVerifyToken(_id: mongoose.Types.ObjectId, verifyToken: string, refreshExpires: Moment): Promise<IUpdateResult> {
     return await this.userModel.updateOne({ _id }, { verifyToken, refreshExpires });
   }
 

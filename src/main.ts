@@ -5,7 +5,10 @@ import helmet from 'helmet';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import { ValidationPipe } from '@nestjs/common';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { DocumentBuilder, SwaggerDocumentOptions, SwaggerModule } from '@nestjs/swagger';
+import metadata from './metadata';
+import { SignInDto } from './auth/dto/sign-in.dto';
+import { UserSchema } from './modules/users/schemas/user.scheme';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -44,7 +47,7 @@ async function bootstrap() {
 
   //config swagger
   const config = new DocumentBuilder()
-    .setTitle('NestJS Series APIs Document')
+    .setTitle('Menshop APIs Document')
     .setDescription('All Modules APIs')
     .setVersion('1.0')
     .addBearerAuth(
@@ -58,14 +61,21 @@ async function bootstrap() {
     )
     .addSecurityRequirements('token')
     .build();
-  const document = SwaggerModule.createDocument(app, config);
+  await SwaggerModule.loadPluginMetadata(metadata);
+  const document = SwaggerModule.createDocument(app, config,
+    {
+      extraModels: [SignInDto],
+      deepScanRoutes: true,
+      operationIdFactory: (
+        controllerKey: string,
+        methodKey: string,
+      ) => `${methodKey}-${controllerKey}`,
+    }
+  );
   SwaggerModule.setup('api', app, document, {
     swaggerOptions: {
       persistAuthorization: true,
     }
-  });
-  SwaggerModule.setup('swagger', app, document, {
-    jsonDocumentUrl: 'swagger/json',
   });
 
 

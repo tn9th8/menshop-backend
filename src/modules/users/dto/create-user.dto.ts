@@ -1,4 +1,4 @@
-import { IsEmail, IsEnum, IsNotEmpty, IsPhoneNumber, IsString } from "class-validator";
+import { IsEmail, IsEnum, IsNotEmpty, IsNumber, IsPhoneNumber, IsString } from "class-validator";
 import { Gender } from "src/common/enums/gender.enum";
 
 export class CreateUserDto {
@@ -18,6 +18,7 @@ export class CreateUserDto {
     password: string;
 
     // todo: check >8 < 150
+    @IsNumber()
     age: number;
 
     @IsEnum(Gender, { message: "Gender phải là male, female hoặc other" })

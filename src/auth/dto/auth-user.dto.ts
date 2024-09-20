@@ -1,4 +1,5 @@
-import { PickType } from "@nestjs/mapped-types";
+
+import { PickType } from "@nestjs/swagger";
 import mongoose from "mongoose";
 import { IsObjectId } from "src/common/decorators/is-object-id.decorator";
 import { CreateUserDto } from "src/modules/users/dto/create-user.dto";

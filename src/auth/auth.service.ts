@@ -11,6 +11,7 @@ import { UsersService } from 'src/modules/users/users.service';
 import { AuthUserDto } from './dto/auth-user.dto';
 import { SignUpDto } from './dto/sign-up.dto';
 import { MailService } from 'src/mail/mail.service';
+import moment from 'moment';
 
 @Injectable()
 export class AuthService {
@@ -63,12 +64,14 @@ export class AuthService {
   async signIn(user: AuthUserDto, response: Response): Promise<{ access_token: string, user: AuthUserDto }> {
     // generate tokens
     const { access_token, refresh_token } = await this.generateTokenPair(user);
+    const refreshExpires = moment().add(ms(this.configService.get<string>(Jwt.REFRESH_TOKEN_EXPIRES)), "ms")
 
     // update a refresh token
     this.usersService.updateRefreshToken(
       user.id,
       refresh_token,
-      ms(this.configService.get<string>(Jwt.REFRESH_TOKEN_EXPIRES)));
+      refreshExpires
+    );
 
     // set the token to cookie
     response.cookie('refresh_token', refresh_token,
@@ -90,26 +93,38 @@ export class AuthService {
   async refreshAccount(refreshToken: string, response: Response): Promise<{ access_token: string, user: AuthUserDto }> {
     // is exist token
     const user = await this.usersService.findByRefreshToken(refreshToken);
-    if (!(refreshToken && user.refreshExpires)) {
-      throw new ForbiddenException(`Token không hợp lệ. Vui lòng Sign in`);
+    if (!user) {
+      throw new ForbiddenException(`Token không hợp lệ`);
+    }
+    if (moment().isAfter(user.refreshExpires)) {
+      throw new ForbiddenException(`Token hết hạn`);
     }
 
     try {
       // verify and decode
-      const payload = await this.jwtService.verifyAsync(
-        refreshToken,
-        { secret: this.configService.get<string>(Jwt.REFRESH_TOKEN_SECRET) },
+      const payload = await this.jwtService.verifyAsync(refreshToken,
+        {
+          secret: this.configService.get<string>(Jwt.REFRESH_TOKEN_SECRET)
+        },
       );
 
       // is match id
-      if (payload.sub === user._id) {
-        throw new ForbiddenException(`Token không hợp lệ. Vui lòng Sign in`);
+      if (payload.sub != user._id) {
+        throw new ForbiddenException(`Token không hợp lệ`);
       }
       response.clearCookie('refresh_token');
-      return this.signIn(payload.user, response);
+      return this.signIn(
+        {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          phone: user.phone
+        },
+        response
+      );
 
     } catch (error) {
-      throw new ForbiddenException(`Token không hợp lệ. Vui lòng Sign in`);
+      throw new ForbiddenException(`Token không hợp lệ`);
     }
   }
 
@@ -135,10 +150,12 @@ export class AuthService {
 
     // update a verify token //todo: apply strategy pattern
     const verify_token = await this.generateVerifyToken(result.id);
+    const verifyExpires = moment().add(ms(this.configService.get<string>(Jwt.VERIFY_TOKEN_EXPIRES)), 'ms')
     this.usersService.updateVerifyToken(
       result.id,
       verify_token,
-      ms(this.configService.get<string>(Jwt.VERIFY_TOKEN_EXPIRES)));
+      verifyExpires,
+    );
 
     // send a verify link //todo: nexturl
     const verifyLink = this.configService.get<string>('DOMAIN') + '/auth/verify-email?key=' + verify_token;
@@ -147,5 +164,33 @@ export class AuthService {
     return verifyLink;
   }
 
+  async verifyEmail(verifyToken: string): Promise<boolean> {
+    // is exist token
+    const user = await this.usersService.findByVerifyToken(verifyToken);
+    if (!user) {
+      throw new ForbiddenException(`Token không hợp lệ`);
+    }
+    if (moment().isAfter(user.verifyExpires)) {
+      throw new ForbiddenException(`Token hết hạn`);
+    }
+
+    try {
+      // verify and decode
+      const payload = await this.jwtService.verifyAsync(verifyToken,
+        {
+          secret: this.configService.get<string>(Jwt.REFRESH_TOKEN_SECRET)
+        },
+      );
+
+      // is match id
+      if (payload.sub != user._id) {
+        throw new ForbiddenException(`Token không hợp lệ`);
+      }
+
+    } catch (error) {
+      throw new ForbiddenException(`Token không hợp lệ`);
+    }
+    return true;
+  }
 
 }

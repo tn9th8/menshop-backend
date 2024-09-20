@@ -1,8 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { CreateEmailDto } from './dto/create-email.dto';
-import { UpdateEmailDto } from './dto/update-email.dto';
 import { MailerService } from '@nestjs-modules/mailer';
-import { AuthUserDto } from 'src/auth/dto/auth-user.dto';
+import { Injectable } from '@nestjs/common';
 import { SignUpDto } from 'src/auth/dto/sign-up.dto';
 
 @Injectable()
@@ -12,15 +9,11 @@ export class MailService {
   async sendVerifyLink(user: SignUpDto, verifyLink: string) {
     await this.mailerService.sendMail({
       to: user.email,
-      //from: '"Support Team" <support@example.com>', // override default from
+      from: '"Menshop Account Team" <account-team@menshop.com>', // override default from
       subject: 'Welcome to Nice App! Verify Your Email Address',
       // template: './confirmation', // `.hbs` extension is appended automatically
-      html: `<a href="${verifyLink}"> Verify Email Address </a>`, // HTML body content
+      html: `<a href="${verifyLink}"> Verify Email Address </a>`,
 
-      // context: { // ✏️ filling curly brackets with content
-      //   name: user.name,
-      //   url: verifyLink,
-      // },
     });
   }
 }

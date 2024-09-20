@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post, Query, Res, UseGuards } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiExtraModels, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { Cookies } from 'src/common/decorators/cookie.decorator';
 import { SkipJwt } from 'src/common/decorators/skip-jwt.decorator';
@@ -8,8 +8,9 @@ import { AuthService } from './auth.service';
 import { AuthUserDto } from './dto/auth-user.dto';
 import { SignUpDto } from './dto/sign-up.dto';
 import { LocalGuard } from './passport/local.guard';
+import { SignInDto } from './dto/sign-in.dto';
 
-@ApiTags('auth')
+@ApiTags('Auth Module')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) { }
@@ -17,6 +18,7 @@ export class AuthController {
   @SkipJwt()
   @UseGuards(LocalGuard)
   @Post('sign-in')
+  @ApiBody({ type: SignInDto })
   signIn(
     @User() user: AuthUserDto,
     @Res({ passthrough: true }) response: Response,
@@ -54,11 +56,9 @@ export class AuthController {
 
   @SkipJwt()
   @Get('verify-email')
-  verifyEmail(
-    @Query('key') verifyToken: string,
-    @Query('nexturl') nextUrl: string,
-  ) {
-    return { verifyToken, nextUrl };
+  verifyEmail(@Query('key') verifyToken: string,) {
+    const isVerified = this.authService.verifyEmail(verifyToken);
+    return isVerified;
   }
 
   // @Cron(CronExpression.EVERY_DAY_AT_6AM)

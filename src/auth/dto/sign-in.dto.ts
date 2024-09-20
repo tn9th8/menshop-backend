@@ -1,4 +1,5 @@
-import { PickType } from "@nestjs/mapped-types";
+
+import { PickType } from "@nestjs/swagger";
 import { IsEmail } from "class-validator";
 import { CreateUserDto } from "src/modules/users/dto/create-user.dto";
 
