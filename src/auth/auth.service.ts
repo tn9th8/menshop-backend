@@ -10,6 +10,7 @@ import { isMatchPass } from 'src/common/utils/security.util';
 import { UsersService } from 'src/modules/users/users.service';
 import { AuthUserDto } from './dto/auth-user.dto';
 import { SignUpDto } from './dto/sign-up.dto';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class AuthService {
@@ -17,6 +18,7 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    private readonly mailService: MailService,
   ) { }
 
   async validateLocal(username: string, pass: string): Promise<AuthUserDto | null> {
@@ -130,20 +132,19 @@ export class AuthService {
   async signUp(signUpDto: SignUpDto) {
     // create a user
     const result = await this.usersService.create(signUpDto);
-    const verify_token = await this.generateVerifyToken(result.id);
 
-    // update a verify token
-    //todo: apply strategy pattern for update, find token
+    // update a verify token //todo: apply strategy pattern
+    const verify_token = await this.generateVerifyToken(result.id);
     this.usersService.updateVerifyToken(
       result.id,
       verify_token,
-      ms(this.configService.get<string>(Jwt.REFRESH_TOKEN_EXPIRES)));
+      ms(this.configService.get<string>(Jwt.VERIFY_TOKEN_EXPIRES)));
 
-    // generate a verify link
-    const emailVerificationLink = this.configService.get<string>('DOMAIN') + '/auth/verify-email?key=' + verify_token;
+    // send a verify link //todo: nexturl
+    const verifyLink = this.configService.get<string>('DOMAIN') + '/auth/verify-email?key=' + verify_token;
+    this.mailService.sendVerifyLink(signUpDto, verifyLink)
 
-    // send email
-    return emailVerificationLink;
+    return verifyLink;
   }
 
 

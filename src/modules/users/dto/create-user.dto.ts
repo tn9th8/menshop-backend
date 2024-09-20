@@ -21,7 +21,7 @@ export class CreateUserDto {
     age: number;
 
     @IsEnum(Gender, { message: "Gender phải là male, female hoặc other" })
-    gender: string;
+    gender: Gender;
 
     // todo: city, district
     @IsString({ message: "Address phải là string" })

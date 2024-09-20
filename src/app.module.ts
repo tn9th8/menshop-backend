@@ -10,6 +10,8 @@ import { AuthModule } from './auth/auth.module';
 import { ProductsModule } from './modules/products/products.module';
 import { UsersModule } from './modules/users/users.module';
 import { JwtGuard } from './auth/passport/jwt.guard';
+import { MailModule } from './mail/mail.module';
+import { MailerModule } from '@nestjs-modules/mailer';
 
 @Module({
   imports: [
@@ -36,16 +38,18 @@ import { JwtGuard } from './auth/passport/jwt.guard';
     ThrottlerModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => [
+      useFactory: async (configService: ConfigService) => [
         {
-          ttl: configService.get('THROTTLE_TTL'),
-          limit: configService.get('THROTTLE_LIMIT'),
+          ttl: configService.get<number>('THROTTLE_TTL'),
+          limit: configService.get<number>('THROTTLE_LIMIT'),
         }
       ],
     }),
+    // Technique Module
+    AuthModule,
+    MailModule,
     // Business Module
     UsersModule,
-    AuthModule,
     ProductsModule,
   ],
   controllers: [AppController],

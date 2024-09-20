@@ -9,11 +9,14 @@ import { LocalStrategy } from './passport/local.strategy';
 import { JwtStrategy } from './passport/jwt.strategy';
 import ms from 'ms';
 import { Jwt } from 'src/common/enums/jwt.enum';
+import { MailModule } from 'src/mail/mail.module';
+import { MailService } from 'src/mail/mail.service';
+import { UsersService } from 'src/modules/users/users.service';
+import { MongooseModule } from '@nestjs/mongoose';
+import { User, UserSchema } from 'src/modules/users/schemas/user.scheme';
 
 @Module({
   imports: [
-    UsersModule,
-    PassportModule,
     JwtModule.registerAsync({
       global: true,
       imports: [ConfigModule],
@@ -25,6 +28,9 @@ import { Jwt } from 'src/common/enums/jwt.enum';
         }
       ),
     }),
+    UsersModule,
+    PassportModule,
+    MailModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, LocalStrategy, JwtStrategy],

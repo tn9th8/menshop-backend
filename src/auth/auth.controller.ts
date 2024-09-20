@@ -1,13 +1,15 @@
 import { Body, Controller, Get, Post, Query, Res, UseGuards } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { Cookies } from 'src/common/decorators/cookie.decorator';
 import { SkipJwt } from 'src/common/decorators/skip-jwt.decorator';
 import { User } from 'src/common/decorators/user.decorator';
 import { AuthService } from './auth.service';
 import { AuthUserDto } from './dto/auth-user.dto';
-import { LocalGuard } from './passport/local.guard';
 import { SignUpDto } from './dto/sign-up.dto';
+import { LocalGuard } from './passport/local.guard';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) { }
