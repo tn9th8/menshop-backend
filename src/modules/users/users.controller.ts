@@ -3,6 +3,8 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { SkipJwt } from 'src/common/decorators/skip-jwt.decorator';
+import { ApiMessage } from 'src/common/decorators/api-message.decorator';
 
 @ApiTags('Users Module')
 @Controller('users')
@@ -20,6 +22,7 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
+  @ApiMessage('Fetch a user by id')
   @Get('by-id/:id')
   findOne(@Param('id') id: string) {
     const user = this.usersService.findById(id);
