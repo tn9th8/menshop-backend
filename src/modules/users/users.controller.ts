@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -12,30 +12,35 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 
   @Post()
+  @ApiMessage('Create a user')
   async create(@Body() createUserDto: CreateUserDto) {
     const result = await this.usersService.create(createUserDto);
     return result;
   }
 
   @Get()
-  findAll() {
-    return this.usersService.findAll();
+  @ApiMessage('Fetch a user with pagination')
+  findAll(@Query() queryString: string) { // paginate: page, size
+    const result = this.usersService.findAll(queryString);
+    return result;
   }
 
-  @ApiMessage('Fetch a user by id')
   @Get('by-id/:id')
+  @ApiMessage('Fetch a user by id')
   findOne(@Param('id') id: string) {
     const user = this.usersService.findById(id);
     return user;
   }
 
   @Patch(':id')
+  @ApiMessage('Update a user')
   update(@Body() updateUserDto: UpdateUserDto) {
     const result = this.usersService.update(updateUserDto);
     return result;
   }
 
   @Delete(':id')
+  @ApiMessage('Delete a user')
   remove(@Param('id') id: string) {
     const result = this.usersService.remove(id);
     return result
