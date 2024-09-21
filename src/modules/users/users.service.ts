@@ -12,6 +12,7 @@ import mongoose from 'mongoose';
 import { SignInDto } from 'src/auth/dto/sign-in.dto';
 import { SignUpDto } from 'src/auth/dto/sign-up.dto';
 import { Moment } from 'moment';
+import aqp from 'api-query-params';
 
 
 
@@ -42,9 +43,35 @@ export class UsersService {
     };
   }
 
-  async findAll(): Promise<Array<IUser>> {
-    const users = await this.userModel.find();
-    return users;
+  async findAll(queryString: string) {
+    // page = current; limit = size; offset = skip
+    const { filter, sort, projection, population } = aqp(queryString);
+    const { page, size, ...condition } = filter // delete filter.page
+    // limit, offset
+    let offset = (+page - 1) * (+size);
+    let limit = +size || 10;
+    // use Promise.all to perform 2 queries parallel
+    const [totalItems, result] = await Promise.all([
+      this.userModel.countDocuments(condition),
+      this.userModel.find(condition)
+        .skip(offset)
+        .limit(limit)
+        .sort(sort as any) // @ts-ignore: Unreachable code error
+        .populate(population)
+        .exec()
+    ]);
+    const totalPages = Math.ceil(totalItems / limit);
+
+    return {
+      meta: {
+        page,
+        size: limit,
+        pages: totalPages,
+        items: totalItems,
+      },
+      result //kết quả query
+    }
+
   }
 
   async findById(_id: string): Promise<IUser | undefined> {
