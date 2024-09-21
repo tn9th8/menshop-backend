@@ -9,6 +9,7 @@ import { AuthUserDto } from './dto/auth-user.dto';
 import { SignUpDto } from './dto/sign-up.dto';
 import { LocalGuard } from './passport/local.guard';
 import { SignInDto } from './dto/sign-in.dto';
+import { ApiMessage } from 'src/common/decorators/api-message.decorator';
 
 @ApiTags('Auth Module')
 @Controller('auth')
@@ -18,6 +19,7 @@ export class AuthController {
   @SkipJwt()
   @UseGuards(LocalGuard)
   @Post('sign-in')
+  @ApiMessage('sign in')
   @ApiBody({ type: SignInDto })
   signIn(
     @User() user: AuthUserDto,
@@ -27,6 +29,7 @@ export class AuthController {
   }
 
   @Get('sign-out')
+  @ApiMessage('Sign out')
   signOut(
     @User() user: AuthUserDto,
     @Res({ passthrough: true }) response: Response,
@@ -36,6 +39,7 @@ export class AuthController {
 
   @SkipJwt()
   @Get('refresh')
+  @ApiMessage('Refresh account')
   refreshAccount(
     @Cookies('refresh_token') refreshToken: string,
     @Res({ passthrough: true }) response: Response,
@@ -44,18 +48,21 @@ export class AuthController {
   }
 
   @Get('account')
+  @ApiMessage('Fetch account')
   getAccount(@User() user: AuthUserDto) {
     return user;
   }
 
   @SkipJwt()
   @Post('sign-up')
+  @ApiMessage('Sign up')
   signUp(@Body() signUpDto: SignUpDto) {
     return this.authService.signUp(signUpDto);
   }
 
   @SkipJwt()
   @Get('verify-email')
+  @ApiMessage('Verify the email')
   verifyEmail(@Query('key') verifyToken: string,) {
     const isVerified = this.authService.verifyEmail(verifyToken);
     return isVerified;

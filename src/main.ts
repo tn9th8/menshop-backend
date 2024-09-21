@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import helmet from 'helmet';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { DocumentBuilder, SwaggerDocumentOptions, SwaggerModule } from '@nestjs/swagger';
 import metadata from './metadata';
 import { SignInDto } from './auth/dto/sign-in.dto';
@@ -25,7 +25,13 @@ async function bootstrap() {
     preflightContinue: true,
   });
 
-  // config middleware
+  // config middlewares
+  app.setGlobalPrefix('api');
+  app.enableVersioning({
+    type: VersioningType.URI,
+    defaultVersion: ['1', '2'], // v1, v1
+  });
+
   app.use(compression({
     filter: (req, res) => {
       if (req.headers['X-No-Compression']) {
@@ -37,6 +43,7 @@ async function bootstrap() {
     level: 6 // compromise speed & compression
   }));
 
+  //todo
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
 
   app.use(cookieParser());
@@ -57,6 +64,7 @@ async function bootstrap() {
     )
     .addSecurityRequirements('token')
     .build();
+
   await SwaggerModule.loadPluginMetadata(metadata);
   const document = SwaggerModule.createDocument(app, config,
     {
@@ -68,6 +76,7 @@ async function bootstrap() {
       ) => `${methodKey}-${controllerKey}`,
     }
   );
+
   SwaggerModule.setup('api', app, document, {
     swaggerOptions: {
       persistAuthorization: true,
