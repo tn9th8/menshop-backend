@@ -1,19 +1,15 @@
 import { Module } from '@nestjs/common';
-import { UsersModule } from 'src/modules/users/users.module';
-import { AuthController } from './auth.controller';
-import { AuthService } from './auth.service';
-import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { LocalStrategy } from './passport/local.strategy';
-import { JwtStrategy } from './passport/jwt.strategy';
 import ms from 'ms';
 import { Jwt } from 'src/common/enums/jwt.enum';
 import { MailModule } from 'src/mail/mail.module';
-import { MailService } from 'src/mail/mail.service';
-import { UsersService } from 'src/modules/users/users.service';
-import { MongooseModule } from '@nestjs/mongoose';
-import { User, UserSchema } from 'src/modules/users/schemas/user.scheme';
+import { UsersModule } from 'src/modules/users/users.module';
+import { AuthController } from './auth.controller';
+import { AuthService } from './auth.service';
+import { JwtStrategy } from './passport/jwt.strategy';
+import { LocalStrategy } from './passport/local.strategy';
 
 @Module({
   imports: [

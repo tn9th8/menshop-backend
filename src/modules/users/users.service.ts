@@ -100,8 +100,8 @@ export class UsersService {
     return await this.userModel.findOne({ refreshToken });
   }
 
-  async updateVerifyToken(_id: mongoose.Types.ObjectId, verifyToken: string, refreshExpires: Moment): Promise<IUpdateResult> {
-    return await this.userModel.updateOne({ _id }, { verifyToken, refreshExpires });
+  async updateVerifyToken(_id: mongoose.Types.ObjectId, verifyToken: string, verifyExpires: Moment): Promise<IUpdateResult> {
+    return await this.userModel.updateOne({ _id }, { verifyToken, verifyExpires });
   }
 
   async findByVerifyToken(verifyToken: string): Promise<IUser> {
