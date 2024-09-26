@@ -158,7 +158,7 @@ export class AuthService {
     );
 
     // send a verify link //todo: nexturl
-    const verifyLink = this.configService.get<string>('DOMAIN') + '/auth/verify-email?token=' + verify_token;
+    const verifyLink = this.configService.get<string>('DOMAIN') + '/api/v1' + '/auth/verify-email?token=' + verify_token;
     this.mailService.sendVerifyLink(signUpDto, verifyLink)
 
     return verifyLink;
@@ -178,7 +178,7 @@ export class AuthService {
       // verify and decode
       const payload = await this.jwtService.verifyAsync(verifyToken,
         {
-          secret: this.configService.get<string>(Jwt.REFRESH_TOKEN_SECRET)
+          secret: this.configService.get<string>(Jwt.VERIFY_TOKEN_SECRET)
         },
       );
 

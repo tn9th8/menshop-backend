@@ -8,6 +8,10 @@
     "typeCheck": true,
     "plugins": [
       "@nestjs/swagger"
-    ]
+    ],
+    "assets": [
+      "mail/templates/**/*"
+    ],
+    "watchAssets": true
   }
 }
