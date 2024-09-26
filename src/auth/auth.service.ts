@@ -158,7 +158,7 @@ export class AuthService {
     );
 
     // send a verify link //todo: nexturl
-    const verifyLink = this.configService.get<string>('DOMAIN') + '/api/v1/auth/verify-email?key=' + verify_token;
+    const verifyLink = this.configService.get<string>('DOMAIN') + '/api/v1' + '/auth/verify-email?token=' + verify_token;
     this.mailService.sendVerifyLink(signUpDto, verifyLink)
 
     return verifyLink;

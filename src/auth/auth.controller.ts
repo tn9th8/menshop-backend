@@ -63,7 +63,7 @@ export class AuthController {
   @SkipJwt()
   @Get('verify-email')
   @ApiMessage('Verify the email')
-  verifyEmail(@Query('key') verifyToken: string,) {
+  verifyEmail(@Query('token') verifyToken: string,) {
     const isVerified = this.authService.verifyEmail(verifyToken);
     return isVerified;
   }
