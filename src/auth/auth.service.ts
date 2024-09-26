@@ -35,7 +35,7 @@ export class AuthService {
     return null;
   }
 
-  async generateTokenPair(user: AuthUserDto): Promise<{ access_token: string, refresh_token: string }> {
+  async generateTokenPair(user: AuthUserDto): Promise<{ accessToken: string, refreshToken: string }> {
     const shortPayload = {
       sub: user.id, // be consistent with JWT standards
       iss: 'from the menshop server',
@@ -56,41 +56,41 @@ export class AuthService {
     };
 
     return {
-      access_token: await this.jwtService.signAsync(userPayload),
-      refresh_token: await generateRefreshToken(shortPayload),
+      accessToken: await this.jwtService.signAsync(userPayload),
+      refreshToken: await generateRefreshToken(shortPayload),
     };
   }
 
-  async signIn(user: AuthUserDto, response: Response): Promise<{ access_token: string, user: AuthUserDto }> {
+  async signIn(user: AuthUserDto, response: Response): Promise<{ accessToken: string, user: AuthUserDto }> {
     // generate tokens
-    const { access_token, refresh_token } = await this.generateTokenPair(user);
+    const { accessToken, refreshToken } = await this.generateTokenPair(user);
     const refreshExpires = moment().add(ms(this.configService.get<string>(Jwt.REFRESH_TOKEN_EXPIRES)), "ms")
 
     // update a refresh token
     this.usersService.updateRefreshToken(
       user.id,
-      refresh_token,
+      refreshToken,
       refreshExpires
     );
 
     // set the token to cookie
-    response.cookie('refresh_token', refresh_token,
+    response.cookie('refreshToken', refreshToken,
       {
         httpOnly: true,
         maxAge: ms(this.configService.get<string>(Jwt.REFRESH_TOKEN_EXPIRES)),
       }
     );
 
-    return { access_token, user };
+    return { accessToken, user };
   }
 
   async signOut(user: AuthUserDto, response: Response): Promise<IUpdateResult> {
-    response.clearCookie('refresh_token');
+    response.clearCookie('refreshToken');
     return await this.usersService.updateRefreshToken(user.id, null, null);
 
   }
 
-  async refreshAccount(refreshToken: string, response: Response): Promise<{ access_token: string, user: AuthUserDto }> {
+  async refreshAccount(refreshToken: string, response: Response): Promise<{ accessToken: string, user: AuthUserDto }> {
     // is exist token
     const user = await this.usersService.findByRefreshToken(refreshToken);
     if (!user) {
@@ -112,7 +112,7 @@ export class AuthService {
       if (payload.sub != user._id) {
         throw new ForbiddenException(`Token không hợp lệ`);
       }
-      response.clearCookie('refresh_token');
+      response.clearCookie('refreshToken');
       return this.signIn(
         {
           id: user.id,

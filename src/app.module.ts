@@ -12,6 +12,7 @@ import { TransformInterceptor } from './core/interceptor/transform.interceptor';
 import { MailModule } from './mail/mail.module';
 import { ProductsModule } from './modules/products/products.module';
 import { UsersModule } from './modules/users/users.module';
+import { DatabasesModule } from './databases/databases.module';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { UsersModule } from './modules/users/users.module';
     // Business Module
     UsersModule,
     ProductsModule,
+    DatabasesModule,
   ],
   controllers: [AppController],
   providers: [

@@ -1,24 +1,23 @@
-import { Body, Controller, Get, Post, Query, Res, UseGuards } from '@nestjs/common';
-import { ApiBody, ApiExtraModels, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
+import { ApiMessage } from 'src/common/decorators/api-message.decorator';
 import { Cookies } from 'src/common/decorators/cookie.decorator';
 import { SkipJwt } from 'src/common/decorators/skip-jwt.decorator';
 import { User } from 'src/common/decorators/user.decorator';
 import { AuthService } from './auth.service';
 import { AuthUserDto } from './dto/auth-user.dto';
-import { SignUpDto } from './dto/sign-up.dto';
-import { LocalGuard } from './passport/local.guard';
 import { SignInDto } from './dto/sign-in.dto';
-import { ApiMessage } from 'src/common/decorators/api-message.decorator';
+import { LocalGuard } from './passport/local.guard';
 
-@ApiTags('Auth Module')
-@Controller('auth')
+@ApiTags('Auth Module for Admins')
+@Controller('adm/auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) { }
 
   @SkipJwt()
   @UseGuards(LocalGuard)
-  @Post('sign-in')
+  @Post('signin')
   @ApiMessage('sign in')
   @ApiBody({ type: SignInDto })
   signIn(
@@ -28,7 +27,7 @@ export class AuthController {
     return this.authService.signIn(user, response);
   }
 
-  @Get('sign-out')
+  @Get('signout')
   @ApiMessage('Sign out')
   signOut(
     @User() user: AuthUserDto,
@@ -41,7 +40,7 @@ export class AuthController {
   @Get('refresh')
   @ApiMessage('Refresh account')
   refreshAccount(
-    @Cookies('refresh_token') refreshToken: string,
+    @Cookies('refreshToken') refreshToken: string,
     @Res({ passthrough: true }) response: Response,
   ) {
     return this.authService.refreshAccount(refreshToken, response);
@@ -52,26 +51,5 @@ export class AuthController {
   getAccount(@User() user: AuthUserDto) {
     return user;
   }
-
-  @SkipJwt()
-  @Post('sign-up')
-  @ApiMessage('Sign up')
-  signUp(@Body() signUpDto: SignUpDto) {
-    return this.authService.signUp(signUpDto);
-  }
-
-  @SkipJwt()
-  @Get('verify-email')
-  @ApiMessage('Verify the email')
-  verifyEmail(@Query('token') verifyToken: string,) {
-    const isVerified = this.authService.verifyEmail(verifyToken);
-    return isVerified;
-  }
-
-  // @Cron(CronExpression.EVERY_DAY_AT_6AM)
-  // async clearAccount() {
-  //   await this.authRefreshTokenRepository.delete({ expiresAt: LessThanOrEqual(new Date()) });
-  //   // clear yet verify account
-  // }
-
 }
+

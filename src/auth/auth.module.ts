@@ -6,10 +6,11 @@ import ms from 'ms';
 import { Jwt } from 'src/common/enums/jwt.enum';
 import { MailModule } from 'src/mail/mail.module';
 import { UsersModule } from 'src/modules/users/users.module';
-import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './passport/jwt.strategy';
 import { LocalStrategy } from './passport/local.strategy';
+import { MembersController } from './members/members.controller';
+import { AuthController } from './auth.controller';
 
 @Module({
   imports: [
@@ -28,7 +29,7 @@ import { LocalStrategy } from './passport/local.strategy';
     PassportModule,
     MailModule,
   ],
-  controllers: [AuthController],
+  controllers: [AuthController, MembersController],
   providers: [AuthService, LocalStrategy, JwtStrategy],
 })
 export class AuthModule { }

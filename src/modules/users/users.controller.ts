@@ -1,13 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
-import { UsersService } from './users.service';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import { ApiMessage } from 'src/common/decorators/api-message.decorator';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { UsersService } from './users.service';
 import { SkipJwt } from 'src/common/decorators/skip-jwt.decorator';
-import { ApiMessage } from 'src/common/decorators/api-message.decorator';
 
-@ApiTags('Users Module')
-@Controller('users')
+@ApiTags('Users Module for Admins')
+@Controller('adm/users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 
@@ -25,14 +25,14 @@ export class UsersController {
     return result;
   }
 
-  @Get('by-id/:id')
+  @Get(':id([a-f0-9]{24})')
   @ApiMessage('Fetch a user by id')
   findOne(@Param('id') id: string) {
     const user = this.usersService.findById(id);
     return user;
   }
 
-  @Patch(':id')
+  @Patch()
   @ApiMessage('Update a user')
   update(@Body() updateUserDto: UpdateUserDto) {
     const result = this.usersService.update(updateUserDto);
