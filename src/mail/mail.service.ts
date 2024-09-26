@@ -6,14 +6,17 @@ import { SignUpDto } from 'src/auth/dto/sign-up.dto';
 export class MailService {
   constructor(private mailerService: MailerService) { }
 
+  //todo: transaction with callback
   async sendVerifyLink(user: SignUpDto, verifyLink: string) {
     await this.mailerService.sendMail({
       to: user.email,
-      from: '"Menshop Account Team" <account-team@menshop.com>', // override default from
+      from: '"Menshop Account Team" <account@menshop.nestjs.com>',
       subject: 'Welcome to Nice App! Verify Your Email Address',
-      // template: './confirmation', // `.hbs` extension is appended automatically
-      html: `<a href="${verifyLink}"> Verify Email Address </a>`,
-
+      template: './verify-email',
+      context: {
+        receiver: user.name,
+        link: verifyLink,
+      }
     });
   }
 }
