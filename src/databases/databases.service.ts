@@ -2,9 +2,7 @@ import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
-import { IUser } from 'src/modules/users/interfaces/user.interface';
-import { User } from 'src/modules/users/schemas/user.scheme';
-import { hashPass } from 'src/common/utils/security.util';
+import { IUser, User } from 'src/modules/users/schemas/user.scheme';
 import { INIT_USERS } from './sample/users.sample';
 
 @Injectable()
