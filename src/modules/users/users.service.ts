@@ -1,24 +1,23 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import aqp from 'api-query-params';
+import { Moment } from 'moment';
+import mongoose from 'mongoose';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
+import { SignUpDto } from 'src/auth/dto/sign-up.dto';
 import { ICreateResult, IDeleteResult, IUpdateResult } from 'src/common/interfaces/persist-result.interface';
 import { isObjetId } from 'src/common/utils/mongo.util';
 import { hashPass } from 'src/common/utils/security.util';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { IUser } from './interfaces/user.interface';
-import { User } from './schemas/user.scheme';
-import mongoose from 'mongoose';
-import { SignInDto } from 'src/auth/dto/sign-in.dto';
-import { SignUpDto } from 'src/auth/dto/sign-up.dto';
-import { Moment } from 'moment';
-import aqp from 'api-query-params';
-
-
+import { IUser, User } from './schemas/user.scheme';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name) private userModel: SoftDeleteModel<IUser>) { }
+  constructor(
+    @InjectModel(User.name)
+    private readonly userModel: SoftDeleteModel<IUser>
+  ) { }
 
   async create(createUserDto: CreateUserDto | SignUpDto): Promise<ICreateResult> {
     // is exist mail

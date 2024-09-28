@@ -13,6 +13,7 @@ import { MailModule } from './mail/mail.module';
 import { ProductsModule } from './modules/products/products.module';
 import { UsersModule } from './modules/users/users.module';
 import { DatabasesModule } from './databases/databases.module';
+import { timestampsPlugin } from './common/utils/mongo.util';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { DatabasesModule } from './databases/databases.module';
           uri: configService.get<string>('MONGODB_URI'),
           connectionFactory: (connection) => {
             connection.plugin(softDeletePlugin);
+            connection.plugin(timestampsPlugin);
             return connection;
           },
         }
@@ -49,10 +51,10 @@ import { DatabasesModule } from './databases/databases.module';
     // Technique Module
     AuthModule,
     MailModule,
+    DatabasesModule,
     // Business Module
     UsersModule,
     ProductsModule,
-    DatabasesModule,
   ],
   controllers: [AppController],
   providers: [

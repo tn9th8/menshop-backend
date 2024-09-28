@@ -3,7 +3,7 @@ import { hashPass } from "src/common/utils/security.util";
 
 export const INIT_USERS = async (configService: ConfigService) => {
     const password = await hashPass(configService.get<string>('INIT_PASSWORD'));
-    const x = [
+    return [
         {
             name: "I'm a super admin",
             phone: "094699009900",
@@ -29,5 +29,4 @@ export const INIT_USERS = async (configService: ConfigService) => {
             password
         }
     ];
-    return x;
 };

@@ -1,12 +1,19 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument } from "mongoose";
+import mongoose, { HydratedDocument } from "mongoose";
 import { Gender } from "src/common/enums/gender.enum";
 
 export type UserDocument = HydratedDocument<User>;
 
-@Schema({
-  timestamps: true,
-})
+export interface IUser extends UserDocument {
+  _id: mongoose.Types.ObjectId;
+  isDeleted: false;
+  deletedAt: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  __v: number;
+}
+
+@Schema()
 export class User {
   @Prop({ required: true })
   name: string;
@@ -32,7 +39,6 @@ export class User {
   @Prop()
   avatar: string;
 
-  // security properties
   @Prop()
   refreshToken: string;
 

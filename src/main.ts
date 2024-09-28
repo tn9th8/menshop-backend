@@ -43,7 +43,9 @@ async function bootstrap() {
   }));
 
   //todo
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+  app.useGlobalPipes(new ValidationPipe(
+    //  { whitelist: true }
+  ));
 
   app.use(cookieParser());
 
