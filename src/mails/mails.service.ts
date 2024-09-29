@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { SignUpDto } from 'src/auth/dto/sign-up.dto';
 
 @Injectable()
-export class MailService {
+export class MailsService {
   constructor(private mailerService: MailerService) { }
 
   //todo: transaction with callback

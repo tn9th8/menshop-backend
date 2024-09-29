@@ -8,9 +8,18 @@ import helmet from 'helmet';
 import { AppModule } from './app.module';
 import { SignInDto } from './auth/dto/sign-in.dto';
 import metadata from './metadata';
+import { join } from 'path';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const configService = app.get(ConfigService);
+
+  // config mvc
+  app.useStaticAssets(join(__dirname, '..', 'public')); // js, css, images // __dirname: chỉ ra path đến file main
+  app.setBaseViewsDir(join(__dirname, '..', 'views')); // view
+  app.setViewEngine('ejs');
+
 
   // config security
   app.use(helmet());
@@ -86,7 +95,6 @@ async function bootstrap() {
 
 
   // config server
-  const configService = app.get(ConfigService);
   const port = configService.get<string>('PORT');
   await app.listen(port);
 }

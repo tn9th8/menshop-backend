@@ -10,7 +10,7 @@ import { isMatchPass } from 'src/common/utils/security.util';
 import { UsersService } from 'src/modules/users/users.service';
 import { AuthUserDto } from './dto/auth-user.dto';
 import { SignUpDto } from './dto/sign-up.dto';
-import { MailService } from 'src/mail/mail.service';
+import { MailsService } from 'src/mails/mails.service';
 import moment from 'moment';
 
 @Injectable()
@@ -19,7 +19,7 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
-    private readonly mailService: MailService,
+    private readonly mailService: MailsService,
   ) { }
 
   async validateLocal(username: string, pass: string): Promise<AuthUserDto | null> {
@@ -84,6 +84,7 @@ export class AuthService {
     return { accessToken, user };
   }
 
+  //todo: use transaction
   async signOut(user: AuthUserDto, response: Response): Promise<IUpdateResult> {
     response.clearCookie('refreshToken');
     return await this.usersService.updateRefreshToken(user.id, null, null);

@@ -9,11 +9,12 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { JwtGuard } from './auth/passport/jwt.guard';
 import { TransformInterceptor } from './core/interceptor/transform.interceptor';
-import { MailModule } from './mail/mail.module';
+import { MailsModule } from './mails/mails.module';
 import { ProductsModule } from './modules/products/products.module';
 import { UsersModule } from './modules/users/users.module';
 import { DatabasesModule } from './databases/databases.module';
 import { timestampsPlugin } from './common/utils/mongo.util';
+import { FilesModule } from './files/files.module';
 
 @Module({
   imports: [
@@ -50,11 +51,12 @@ import { timestampsPlugin } from './common/utils/mongo.util';
     }),
     // Technique Module
     AuthModule,
-    MailModule,
+    MailsModule,
     DatabasesModule,
     // Business Module
     UsersModule,
     ProductsModule,
+    FilesModule,
   ],
   controllers: [AppController],
   providers: [
