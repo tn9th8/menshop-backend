@@ -1,15 +1,19 @@
+# version: '3.8'
+#MongoDB 5.0+ requires a CPU with AVX support, => sử dụng image: mongo:4.4
 services:
-  mongodb:
+  db-mongo:
     image: mongo:5.0.15
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: 123456
     ports:
-      - 27017:27017
+      - 27018:27017
     volumes:
-      - mongodb_data_container:/data/db
+      - db-mongo-data:/data/db
+    expose:
+      - 27017
 
 volumes:
-  mongodb_data_container:
+  db-mongo-data:
 
-    # docker compose -p hoidanit-mongodb-4rn up -d
+    # docker compose -p tn-menshop-services up -d

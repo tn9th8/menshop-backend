@@ -15,10 +15,9 @@ export class HttpExceptionFilter implements ExceptionFilter {
                 // statusCode: status,
                 // timestamp: new Date().toISOString(),
                 // path: request.url,
-
-                error: "Payload Too Large",
-                message: "File too large customize",
                 statusCode: status,
+                message: "File too large customize",
+                error: "Payload Too Large",
             });
     }
 }
