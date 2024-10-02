@@ -12,7 +12,7 @@ export class ProductsService {
     protected readonly productModel: SoftDeleteModel<IProduct>,
   ) { }
 
-  async create(createProductDto: CreateProductDto) {
+  async create(createProductDto: CreateProductDto): Promise<IProduct> {
     const result = await this.productModel.create(createProductDto);
     if (!result) { throw new BadRequestException('create a Product error'); }
     return result;

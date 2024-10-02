@@ -24,12 +24,13 @@ export class AuthService {
 
   async validateLocal(username: string, pass: string): Promise<AuthUserDto | null> {
     const user = await this.usersService.findByEmail(username);
+
     if (user && isMatchPass(pass, user.password)) {
       return {
         id: user._id,
         name: user.name,
         email: user.email,
-        phone: user.phone,
+        phone: user.phone
       };
     }
     return null;
@@ -93,7 +94,9 @@ export class AuthService {
 
   async refreshAccount(refreshToken: string, response: Response): Promise<{ accessToken: string, user: AuthUserDto }> {
     // is exist token
-    const user = await this.usersService.findByRefreshToken(refreshToken);
+    const userx = await this.usersService.findByRefreshToken(refreshToken);
+    //todo wait shop module
+    const user = { shop: 'shopid123456', ...(userx as any)._doc };
     if (!user) {
       throw new ForbiddenException(`Token không hợp lệ`);
     }

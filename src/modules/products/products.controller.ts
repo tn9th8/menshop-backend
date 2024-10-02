@@ -1,10 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { ProductsService } from './products.service';
-import { CreateProductDto } from './dto/create-product.dto';
-import { UpdateProductDto } from './dto/update-product.dto';
+import { Body, Controller, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { SkipJwt } from 'src/common/decorators/skip-jwt.decorator';
-import { ProductsEnum, ProductsFactory } from './factory/products.factory';
+import { User } from 'src/common/decorators/user.decorator';
+import { CreateProductDto } from './dto/create-product.dto';
+import { ProductsFactory } from './factory/products.factory';
 
 @ApiTags('Products Module for Admins')
 @Controller('adm/products')
@@ -13,10 +11,11 @@ export class ProductsController {
     private readonly productsFactory: ProductsFactory,
   ) { }
 
-  @SkipJwt()
   @Post()
-  create(@Body() createProductDto: CreateProductDto) {
-    return this.productsFactory.create((createProductDto as any).type, createProductDto);
+  create(@Body() createProductDto: CreateProductDto, @User() user) {
+    //todo: use generic instead any
+    //todo: any
+    return this.productsFactory.create({ ...createProductDto });
   }
 
   // @Get()

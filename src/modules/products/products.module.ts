@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-
-import { ClothingService } from './modules/clothing.service';
+import { ProductsConfig } from './factory/products.config';
+import { ProductsFactory } from './factory/products.factory';
 import { ProductsController } from './products.controller';
 import { ProductsService } from './products.service';
 import { Product, ProductSchema } from './schemas/product.schema';
-import { Clothing, ClothingSchema } from './modules/schema/clothing.schema';
-import { Clock, ClockSchema } from './modules/schema/clock.schema';
-import { ClocksService } from './modules/clocks.service';
-import { ProductsFactory } from './factory/products.factory';
+import { ClocksService } from './types/clocks.service';
+import { ClothingsService } from './types/clothings.service';
+import { Clock, ClockSchema } from './types/schema/clock.schema';
+import { Clothing, ClothingSchema } from './types/schema/clothing.schema';
 
 @Module({
   imports: [MongooseModule.forFeature([
@@ -17,6 +17,13 @@ import { ProductsFactory } from './factory/products.factory';
     { name: Clock.name, schema: ClockSchema },
   ])],
   controllers: [ProductsController],
-  providers: [ProductsService, ClothingService, ClocksService, ProductsFactory],
+  providers: [
+    ProductsConfig,
+    ProductsFactory,
+    ProductsService,
+    ClothingsService,
+    ClocksService
+  ],
 })
 export class ProductsModule { }
+
