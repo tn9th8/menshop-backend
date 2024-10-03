@@ -8,6 +8,7 @@ import { ShopsRepo } from './shops.repo';
 @Module({
   controllers: [ShopsController],
   providers: [ShopsService, ShopsRepo],
-  imports: [MongooseModule.forFeature([{ name: Shop.name, schema: ShopSchema }])]
+  imports: [MongooseModule.forFeature([{ name: Shop.name, schema: ShopSchema }])],
+  exports: [ShopsRepo]
 })
 export class ShopsModule { }

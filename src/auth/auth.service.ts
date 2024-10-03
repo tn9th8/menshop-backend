@@ -30,7 +30,8 @@ export class AuthService {
         id: user._id,
         name: user.name,
         email: user.email,
-        phone: user.phone
+        phone: user.phone,
+        shop: user.shop
       };
     }
     return null;
@@ -122,7 +123,8 @@ export class AuthService {
           id: user.id,
           name: user.name,
           email: user.email,
-          phone: user.phone
+          phone: user.phone,
+          shop: user.shop
         },
         response
       );

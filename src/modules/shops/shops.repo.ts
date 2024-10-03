@@ -33,4 +33,13 @@ export class ShopsRepo {
   remove(id: number) {
     return `This action removes a #${id} shop`;
   }
+
+  async count() {
+    const result = await this.shopModel.count();
+    return result;
+  }
+
+  async insertMany(docs: {}[]) {
+    await this.shopModel.insertMany(docs);
+  }
 }

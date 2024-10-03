@@ -1,16 +1,14 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import ms from 'ms';
-import { Jwt } from 'src/common/enums/jwt.enum';
+import { JwtConfig } from 'src/config/security.config';
 import { MailsModule } from 'src/mails/mails.module';
 import { UsersModule } from 'src/modules/users/users.module';
+import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { MembersController } from './members/members.controller';
 import { JwtStrategy } from './passport/jwt.strategy';
 import { LocalStrategy } from './passport/local.strategy';
-import { MembersController } from './members/members.controller';
-import { AuthController } from './auth.controller';
 
 @Module({
   controllers: [AuthController, MembersController],
@@ -19,17 +17,7 @@ import { AuthController } from './auth.controller';
     UsersModule,
     PassportModule,
     MailsModule,
-    JwtModule.registerAsync({
-      global: true,
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => (
-        {
-          secret: configService.get<string>(Jwt.ACCESS_TOKEN_SECRET),
-          signOptions: { expiresIn: ms(configService.get<string>(Jwt.ACCESS_TOKEN_EXPIRES)) / 1000 }, //seconds
-        }
-      ),
-    }),
+    JwtModule.registerAsync(JwtConfig),
   ],
 })
 export class AuthModule { }

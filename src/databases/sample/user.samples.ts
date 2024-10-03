@@ -1,7 +1,7 @@
 import { ConfigService } from "@nestjs/config";
 import { hashPass } from "src/common/utils/security.util";
 
-export const INIT_USERS = async (configService: ConfigService) => {
+export const USER_SAMPLES = async (configService: ConfigService) => {
     const password = await hashPass(configService.get<string>('INIT_PASSWORD'));
     return [
         {
@@ -11,15 +11,10 @@ export const INIT_USERS = async (configService: ConfigService) => {
             password
         },
         {
-            name: "I'm a shop manager",
+            name: "I'm a shop seller",
             phone: "0946880880",
-            email: "manager@menshop.com",
-            password
-        },
-        {
-            name: "I'm a shop staff",
-            phone: "094644004400",
-            email: "staff@menshop.com",
+            email: "shop@menshop.com",
+            shop: "66fe7af5efc4a95d4f3684f6",
             password
         },
         {

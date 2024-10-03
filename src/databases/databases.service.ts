@@ -1,9 +1,11 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { InjectModel } from '@nestjs/mongoose';
-import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
-import { IUser, User } from 'src/modules/users/schemas/user.scheme';
-import { INIT_USERS } from './sample/users.sample';
+import { Shop } from 'src/modules/shops/schemas/shop.schema';
+import { ShopsRepo } from 'src/modules/shops/shops.repo';
+import { SHOP_SAMPLES } from './sample/shop.samples';
+import { User } from 'src/modules/users/schemas/user.scheme';
+import { UsersRepo } from 'src/modules/users/users.repo';
+import { USER_SAMPLES } from './sample/user.samples';
 
 @Injectable()
 export class DatabasesService implements OnModuleInit {
@@ -12,27 +14,32 @@ export class DatabasesService implements OnModuleInit {
 
     constructor(
         private readonly configService: ConfigService,
-
-        @InjectModel(User.name)
-        private userModel: SoftDeleteModel<IUser>,
+        private readonly shopsRepo: ShopsRepo,
+        private readonly usersRepo: UsersRepo,
     ) { }
 
     async onModuleInit() {
         this.logger.log('>>> STARTING ON MODULE INIT...');
         const isInit = this.configService.get<boolean>('SHOULD_INIT');
         if (isInit) {
-            const countUser = await this.userModel.count();
-
-            // bulk create users
-            if (countUser === 0) {
-                this.logger.log('>>> THE USERS MODULE HAS INITIALIZED');
-                const x = INIT_USERS;
-                await this.userModel.insertMany(await INIT_USERS(this.configService))
-            }
-
-            if (countUser > 0) {
-                this.logger.log('>>> THE SAMPLE DATA IS READY');
-            }
+            await this.initSamples(Shop.name, this.shopsRepo, SHOP_SAMPLES());
+            await this.initSamples(User.name, this.usersRepo, await USER_SAMPLES(this.configService));
         }
     }
+
+    async initSamples<T>(
+        nameModules: string,
+        repo: {
+            count: () => Promise<number>;
+            insertMany: (data: T[]) => Promise<void>;
+        },
+        data: T[],
+    ): Promise<void> {
+        const count = await repo.count();
+        if (count === 0) {
+            await repo.insertMany(data); // bulk create
+            this.logger.log(`>>> THE ${nameModules.toUpperCase()} SAMPLES HAS INITIALIZED`);
+        }
+    }
+
 }
