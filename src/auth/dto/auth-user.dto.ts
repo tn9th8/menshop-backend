@@ -7,4 +7,6 @@ import { CreateUserDto } from "src/modules/users/dto/create-user.dto";
 export class AuthUserDto extends PickType(CreateUserDto, ['name', 'email', 'phone'] as const) {
     @IsObjectId({ message: "id của AuthUserDto phải là ObjectId" })
     id: mongoose.Types.ObjectId;
+
+    shop: mongoose.Types.ObjectId;
 }

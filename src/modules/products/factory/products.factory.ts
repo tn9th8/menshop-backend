@@ -6,11 +6,12 @@ import { ProductsConfig } from "./products.config";
 export class ProductsFactory {
     constructor(private readonly productsConfig: ProductsConfig) { }
 
+    //todo: generic
     async create(createProductDto: CreateProductDto) {
         //todo: any
-        const { type } = (createProductDto as any);
-        const productProvider = ProductsConfig.context[type];
-        if (!productProvider) { throw new BadRequestException(`Invalid Product Type: ${type}`); }
+        const { product_type } = createProductDto as any;
+        const productProvider = ProductsConfig.context[product_type];
+        if (!productProvider) { throw new BadRequestException(`Invalid Product Type: ${product_type}`); }
         return productProvider.create(createProductDto);
     }
 }

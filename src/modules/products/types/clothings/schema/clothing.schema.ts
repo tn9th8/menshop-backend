@@ -1,16 +1,11 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import mongoose, { HydratedDocument } from "mongoose";
+import { IBaseDocument } from "src/common/interfaces/base-document.interface";
+import { Shop } from "src/modules/shops/schemas/shop.schema";
 
 export type ClothingDocument = HydratedDocument<Clothing>;
 
-export interface IClothing extends ClothingDocument {
-    _id: mongoose.Types.ObjectId;
-    isDeleted: false;
-    deletedAt: boolean;
-    createdAt: Date;
-    updatedAt: Date;
-    __v: number;
-}
+export interface IClothing extends ClothingDocument, IBaseDocument { }
 
 @Schema()
 export class Clothing {
@@ -22,6 +17,10 @@ export class Clothing {
 
     @Prop()
     material: string;
+
+    //refer
+    @Prop({ required: true, type: mongoose.Schema.ObjectId, ref: Shop.name })
+    product_shop: mongoose.Types.ObjectId;
 }
 
 export const ClothingSchema = SchemaFactory.createForClass(Clothing);

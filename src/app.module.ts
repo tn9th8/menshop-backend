@@ -15,8 +15,27 @@ import { UsersModule } from './modules/users/users.module';
 import { DatabasesModule } from './databases/databases.module';
 import { timestampsPlugin } from './common/utils/mongo.util';
 import { FilesModule } from './files/files.module';
+import { ShopsModule } from './modules/shops/shops.module';
+import { TypesModule } from './modules/types/types.module';
 
 @Module({
+  controllers: [AppController],
+  providers: [
+    AppService,
+    // bind to all endpoints
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard
+    },
+    {
+      provide: APP_GUARD,
+      useClass: JwtGuard,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: TransformInterceptor,
+    },
+  ],
   imports: [
     // Config Module
     ConfigModule.forRoot({
@@ -50,31 +69,15 @@ import { FilesModule } from './files/files.module';
       ],
     }),
     // Technique Module
+    DatabasesModule,
     AuthModule,
     MailsModule,
-    DatabasesModule,
+    FilesModule,
     // Business Module
     UsersModule,
     ProductsModule,
-    FilesModule,
+    ShopsModule,
+    TypesModule,
   ],
-  controllers: [AppController],
-  providers: [
-    AppService,
-    // bind to all endpoints
-    {
-      provide: APP_GUARD,
-      useClass: ThrottlerGuard
-    },
-    {
-      provide: APP_GUARD,
-      useClass: JwtGuard,
-    },
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: TransformInterceptor,
-    },
-  ],
-
 })
 export class AppModule { }
