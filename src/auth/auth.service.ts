@@ -23,18 +23,15 @@ export class AuthService {
   ) { }
 
   async validateLocal(username: string, pass: string): Promise<AuthUserDto | null> {
-    const user = await this.usersService.findByEmail(username);
-
-    if (user && isMatchPass(pass, user.password)) {
-      return {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        phone: user.phone,
-        shop: user.shop
-      };
-    }
-    return null;
+    const { _id, name, email, phone, password, shop } = await this.usersService.findByEmail(username);
+    if (!(_id && isMatchPass(pass, password))) { return null; }
+    return {
+      id: _id,
+      name,
+      email,
+      phone,
+      shop,
+    };
   }
 
   async generateTokenPair(user: AuthUserDto): Promise<{ accessToken: string, refreshToken: string }> {
@@ -66,13 +63,13 @@ export class AuthService {
   async signIn(user: AuthUserDto, response: Response): Promise<{ accessToken: string, user: AuthUserDto }> {
     // generate tokens
     const { accessToken, refreshToken } = await this.generateTokenPair(user);
-    const refreshExpires = moment().add(ms(this.configService.get<string>(Jwt.REFRESH_TOKEN_EXPIRES)), "ms")
+    const refreshExpires = moment().add(ms(this.configService.get<string>(Jwt.REFRESH_TOKEN_EXPIRES)), "ms");
 
     // update a refresh token
     this.usersService.updateRefreshToken(
       user.id,
       refreshToken,
-      refreshExpires
+      refreshExpires,
     );
 
     // set the token to cookie
@@ -95,13 +92,11 @@ export class AuthService {
 
   async refreshAccount(refreshToken: string, response: Response): Promise<{ accessToken: string, user: AuthUserDto }> {
     // is exist token
-    const userx = await this.usersService.findByRefreshToken(refreshToken);
-    //todo wait shop module
-    const user = { shop: 'shopid123456', ...(userx as any)._doc };
-    if (!user) {
+    const { _id, name, email, phone, shop, refreshExpires } = await this.usersService.findByRefreshToken(refreshToken);
+    if (!_id) {
       throw new ForbiddenException(`Token không hợp lệ`);
     }
-    if (moment().isAfter(user.refreshExpires)) {
+    if (moment().isAfter(refreshExpires)) {
       throw new ForbiddenException(`Token hết hạn`);
     }
 
@@ -114,18 +109,12 @@ export class AuthService {
       );
 
       // is match id
-      if (payload.sub != user._id) {
+      if (payload.sub != _id) {
         throw new ForbiddenException(`Token không hợp lệ`);
       }
       response.clearCookie('refreshToken');
       return this.signIn(
-        {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          phone: user.phone,
-          shop: user.shop
-        },
+        { id: _id, name, email, phone, shop },
         response
       );
 

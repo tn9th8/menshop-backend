@@ -33,4 +33,13 @@ export class TypesRepo {
   remove(id: number) {
     return `This action removes a #${id} type`;
   }
+
+  async count() {
+    const result = await this.typeModel.count();
+    return result;
+  }
+
+  async insertMany(docs: {}[]) {
+    await this.typeModel.insertMany(docs);
+  }
 }

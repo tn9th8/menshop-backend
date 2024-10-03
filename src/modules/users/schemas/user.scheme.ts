@@ -5,7 +5,6 @@ import { IBaseDocument } from "src/common/interfaces/base-document.interface";
 import { Shop } from "src/modules/shops/schemas/shop.schema";
 
 export type UserDocument = HydratedDocument<User>;
-
 export interface IUser extends UserDocument, IBaseDocument { }
 
 @Schema()

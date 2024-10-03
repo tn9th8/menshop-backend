@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ClocksService } from './clocks.service';
 
-
 describe('ClocksService', () => {
   let service: ClocksService;
 

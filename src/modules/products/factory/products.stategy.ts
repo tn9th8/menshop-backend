@@ -1,4 +1,4 @@
-import { IProduct } from "../../schemas/product.schema";
+import { IProduct } from "../schemas/product.schema";
 
 export interface IProductsStrategy {
     //todo: any

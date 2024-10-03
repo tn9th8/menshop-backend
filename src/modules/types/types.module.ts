@@ -8,6 +8,7 @@ import { Type, TypeSchema } from './schemas/type.schema';
 @Module({
   controllers: [TypesController],
   providers: [TypesService, TypesRepo],
-  imports: [MongooseModule.forFeature([{ name: Type.name, schema: TypeSchema }])]
+  imports: [MongooseModule.forFeature([{ name: Type.name, schema: TypeSchema }])],
+  exports: [TypesRepo],
 })
 export class TypesModule { }

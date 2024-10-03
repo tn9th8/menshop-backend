@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import mongoose, { HydratedDocument } from "mongoose";
+import { Shop } from "src/modules/shops/schemas/shop.schema";
 
 export type ClockDocument = HydratedDocument<Clock>;
 
@@ -28,6 +29,10 @@ export class Clock {
 
     @Prop()
     frame: string;
+
+    //refer
+    @Prop({ required: true, type: mongoose.Schema.ObjectId, ref: Shop.name })
+    product_shop: mongoose.Types.ObjectId;
 }
 
 export const ClockSchema = SchemaFactory.createForClass(Clock);

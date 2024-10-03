@@ -21,7 +21,7 @@ export class ProductsController {
    * @desc create one using factory
    * @param { Dto } createProductDto
    * @param { Request.user} user
-   * @returns { JSON } 
+   * @returns { JSON }
    */
   @ApiMessage('create one using factory')
   @Post()
@@ -29,7 +29,11 @@ export class ProductsController {
     @Body() createProductDto: CreateProductDto,
     @User() user: AuthUserDto
   ) {
-    return this.productsFactory.create({ ...createProductDto });
+    //todo: check shop is null
+    return this.productsFactory.create({
+      ...createProductDto,
+      product_shop: user?.shop,
+    });
   }
   // END CREATE //
 
