@@ -1,20 +1,23 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { InjectModel } from '@nestjs/mongoose';
-import { IProduct, Product } from './schemas/product.schema';
-import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
+import { ProductsRepo } from './products.repo';
+import { IProduct } from './schemas/product.schema';
 
 @Injectable()
 export class ProductsService {
-  constructor(
-    @InjectModel(Product.name)
-    protected readonly productModel: SoftDeleteModel<IProduct>,
-  ) { }
+  constructor(private readonly productsRepo: ProductsRepo) { }
 
   async create(createProductDto: CreateProductDto): Promise<IProduct> {
-    const result = await this.productModel.create(createProductDto);
+    const result = await this.productsRepo.create(createProductDto);
     if (!result) { throw new BadRequestException('create a Product error'); }
+    return result;
+  }
+
+  async findAllIsDraft(limit: number = 60, skip: number = 0): Promise<IProduct[]> {
+    //todo: metadata
+    const query = { isDraft: true };
+    const result = await this.productsRepo.findAllIsDraft(limit, skip, query);
     return result;
   }
 

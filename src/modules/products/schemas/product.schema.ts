@@ -1,70 +1,80 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import mongoose, { HydratedDocument } from "mongoose";
+import { ProductsEnum } from "src/common/enums/product.enum";
+import { IBaseDocument } from "src/common/interfaces/base-document.interface";
+import { slugPlugin } from "src/common/utils/mongo.util";
 
 export type ProductDocument = HydratedDocument<Product>;
 
-export interface IProduct extends ProductDocument {
-    _id: mongoose.Types.ObjectId;
-    isDeleted: false;
-    deletedAt: boolean;
-    createdAt: Date;
-    updatedAt: Date;
-    __v: number;
-}
+export interface IProduct extends ProductDocument, IBaseDocument { }
 
 @Schema()
 export class Product {
     @Prop({ required: true })
-    name: string;
-
-    //  @Prop({ unique: true })
-    @Prop()
-    code: string;
+    product_name: string;
 
     @Prop()
-    thumb: string;
+    product_slug: string;
 
-    @Prop([String])
-    assets: string[];
+    @Prop({ required: true })
+    product_code: string;
 
-    @Prop([String])
-    hashtags: string[];
+    @Prop({ required: true })
+    product_thumb: string;
 
-    @Prop()
-    description: string;
+    @Prop({ type: [String], default: undefined })
+    product_assets: string[];
 
-    @Prop()
-    weight: number;
+    @Prop({ type: [String], default: undefined })
+    product_hashtags: string[];
 
-    @Prop()
-    releaseDate: Date;
-
-    @Prop()
-    basePrice: number;
+    @Prop({ type: [String], default: undefined })
+    product_variations: string[];
 
     @Prop()
-    listedPrice: number;
+    product_description: string;
+
+    @Prop({ required: true })
+    product_weight: number;
+
+    @Prop({ required: true })
+    product_basePrice: number;
+
+    @Prop({ required: true })
+    product_listedPrice: number;
 
     @Prop()
-    salePrice: number;
-
-    @Prop({ enum: ['isActive, isDraft'] })
-    status: string;
-
-    @Prop()
-    attributes: mongoose.Mixed; // ===mongoose.Schema.Types.Mixed
+    product_salePrice: number;
 
     // refer
-    @Prop()
-    type: string;
-    // category: string;
+    @Prop({ required: true })
+    product_brand: string;
+
+    @Prop({ required: true, type: String, enum: Object.values(ProductsEnum) })
+    product_type: ProductsEnum;
+
+    @Prop({ required: true })
+    product_attributes: mongoose.Mixed; // mongoose.Schema.Types.Mixed
+
+    @Prop({
+        default: 5.0,
+        min: [1.0, 'ratingsAverage is not under 1.0'],
+        max: [5.0, 'ratingsAverage is not above 5.0'],
+        set: (value: number) => Math.round(value * 10) / 10
+    })
+    product_ratingsAverage: number;
+
+    // no select
+    @Prop({ default: true, index: true, select: false })
+    isDraft: boolean;
+
+    @Prop({ default: false, index: true, select: false })
+    isPublished: boolean;
 
     @Prop()
-    brand: string;
-
-    @Prop()
-    reviews: string;
+    publishedDate: Date;
 
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);
+ProductSchema.plugin(slugPlugin);

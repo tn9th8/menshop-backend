@@ -1,17 +1,11 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import mongoose, { HydratedDocument } from "mongoose";
-import { Gender } from "src/common/enums/gender.enum";
+import { GenderEnum } from "src/common/enums/gender.enum";
+import { IBaseDocument } from "src/common/interfaces/base-document.interface";
 
 export type UserDocument = HydratedDocument<User>;
 
-export interface IUser extends UserDocument {
-  _id: mongoose.Types.ObjectId;
-  isDeleted: false;
-  deletedAt: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-  __v: number;
-}
+export interface IUser extends UserDocument, IBaseDocument { }
 
 @Schema()
 export class User {
@@ -30,8 +24,8 @@ export class User {
   @Prop()
   age: number;
 
-  @Prop({ type: String, enum: Object.values(Gender) })
-  gender: Gender;
+  @Prop({ type: String, enum: Object.values(GenderEnum) })
+  gender: GenderEnum;
 
   @Prop()
   address: string;

@@ -9,6 +9,7 @@ import { ClocksService } from './types/clocks.service';
 import { ClothingsService } from './types/clothings.service';
 import { Clock, ClockSchema } from './types/schema/clock.schema';
 import { Clothing, ClothingSchema } from './types/schema/clothing.schema';
+import { ProductsRepo } from './products.repo';
 
 @Module({
   imports: [MongooseModule.forFeature([
@@ -22,7 +23,8 @@ import { Clothing, ClothingSchema } from './types/schema/clothing.schema';
     ProductsFactory,
     ProductsService,
     ClothingsService,
-    ClocksService
+    ClocksService,
+    ProductsRepo
   ],
 })
 export class ProductsModule { }

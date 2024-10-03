@@ -1,5 +1,5 @@
 import { IsEmail, IsEnum, IsNotEmpty, IsNumber, IsPhoneNumber, IsString } from "class-validator";
-import { Gender } from "src/common/enums/gender.enum";
+import { GenderEnum } from "src/common/enums/gender.enum";
 
 export class CreateUserDto {
     @IsNotEmpty({ message: "Name không thể empty, null hay undefined" })
@@ -21,8 +21,8 @@ export class CreateUserDto {
     @IsNumber()
     age: number;
 
-    @IsEnum(Gender, { message: "Gender phải là male, female hoặc other" })
-    gender: Gender;
+    @IsEnum(GenderEnum, { message: "Gender phải là male, female hoặc other" })
+    gender: GenderEnum;
 
     // todo: city, district
     @IsString({ message: "Address phải là string" })
