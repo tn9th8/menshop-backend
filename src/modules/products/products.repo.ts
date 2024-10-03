@@ -8,7 +8,7 @@ import { CreateProductDto } from './dto/create-product.dto';
 export class ProductsRepo {
   constructor(
     @InjectModel(Product.name)
-    protected readonly productModel: SoftDeleteModel<IProduct>
+    private readonly productModel: SoftDeleteModel<IProduct>
   ) { }
 
   async create(createProductDto: CreateProductDto) {

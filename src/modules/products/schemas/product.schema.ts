@@ -5,7 +5,6 @@ import { IBaseDocument } from "src/common/interfaces/base-document.interface";
 import { slugPlugin } from "src/common/utils/mongo.util";
 
 export type ProductDocument = HydratedDocument<Product>;
-
 export interface IProduct extends ProductDocument, IBaseDocument { }
 
 @Schema()
@@ -50,11 +49,11 @@ export class Product {
     @Prop({ required: true })
     product_brand: string;
 
-    @Prop({ required: true, type: String, enum: Object.values(ProductsEnum) })
+    @Prop({ required: true, type: String, enum: ProductsEnum })
     product_type: ProductsEnum;
 
     @Prop({ required: true })
-    product_attributes: mongoose.Mixed; // mongoose.Schema.Types.Mixed
+    product_attributes: mongoose.Mixed; // =mongoose.Schema.Types.Mixed
 
     @Prop({
         default: 5.0,

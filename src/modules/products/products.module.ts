@@ -12,20 +12,20 @@ import { Clothing, ClothingSchema } from './types/schema/clothing.schema';
 import { ProductsRepo } from './products.repo';
 
 @Module({
+  controllers: [ProductsController],
+  providers: [
+    ProductsService,
+    ProductsFactory,
+    ProductsConfig,
+    ClothingsService,
+    ClocksService,
+    ProductsRepo
+  ],
   imports: [MongooseModule.forFeature([
     { name: Product.name, schema: ProductSchema },
     { name: Clothing.name, schema: ClothingSchema },
     { name: Clock.name, schema: ClockSchema },
   ])],
-  controllers: [ProductsController],
-  providers: [
-    ProductsConfig,
-    ProductsFactory,
-    ProductsService,
-    ClothingsService,
-    ClocksService,
-    ProductsRepo
-  ],
 })
 export class ProductsModule { }
 

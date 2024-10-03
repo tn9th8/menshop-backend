@@ -6,6 +6,7 @@ import { ProductsFactory } from './factory/products.factory';
 import { AuthUserDto } from 'src/auth/dto/auth-user.dto';
 import { ProductsService } from './products.service';
 import { IProduct } from './schemas/product.schema';
+import { ApiMessage } from 'src/common/decorators/api-message.decorator';
 
 @ApiTags('Products Module for Admins')
 @Controller('/adm/products')
@@ -22,6 +23,7 @@ export class ProductsController {
    * @param { Request.user} user
    * @returns { JSON } 
    */
+  @ApiMessage('create one using factory')
   @Post()
   create(
     @Body() createProductDto: CreateProductDto,
@@ -37,6 +39,7 @@ export class ProductsController {
    * @param { Request.user } user
    * @returns { JSON }
    */
+  @ApiMessage('find all is draft')
   @Get('/draft')
   findAllIsDraft(@User() user: AuthUserDto): Promise<IProduct[]> {
     //todo: ko lấy _id, timestamp
