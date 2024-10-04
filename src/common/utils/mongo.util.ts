@@ -37,7 +37,7 @@ export const timestampsPlugin = (schema: Schema) => {
  */
 export const slugPlugin = (schema: Schema) => {
     schema.pre('save', function (next) {
-        this.product_slug = slugify(this.product_name, { lower: true })
+        this.slug = slugify(this.name, { lower: true })
         next();
     })
 }

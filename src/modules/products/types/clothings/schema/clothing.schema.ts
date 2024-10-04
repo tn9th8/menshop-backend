@@ -20,7 +20,7 @@ export class Clothing {
 
     //refer
     @Prop({ required: true, type: mongoose.Schema.ObjectId, ref: Shop.name })
-    product_shop: mongoose.Types.ObjectId;
+    shop: mongoose.Types.ObjectId;
 }
 
 export const ClothingSchema = SchemaFactory.createForClass(Clothing);

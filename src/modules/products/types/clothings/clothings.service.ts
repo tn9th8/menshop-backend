@@ -15,8 +15,8 @@ export class ClothingsService implements IProductsStrategy {
     async create(createProductDto: CreateProductDto) {
         //create clothing
         const clothingsResult = await this.clothingsRepo.create({
-            product_shop: createProductDto.product_shop,
-            ...createProductDto.product_attributes,
+            shop: createProductDto.shop,
+            ...createProductDto.attributes,
         });
         if (!clothingsResult) { throw new BadRequestException('create a Clothing error'); }
         //create product
@@ -34,8 +34,8 @@ export class ClothingsService implements IProductsStrategy {
         try {
             //create clothing
             const clothingsResult = await this.clothingsRepo.create({
-                product_shop: createProductDto.product_shop,
-                ...createProductDto.product_attributes,
+                shop: createProductDto.shop,
+                ...createProductDto.attributes,
             });
             if (!clothingsResult) { throw new BadRequestException('create a Clothing error'); }
             //create product

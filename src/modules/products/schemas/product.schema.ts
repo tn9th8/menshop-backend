@@ -11,25 +11,25 @@ export interface IProduct extends ProductDocument, IBaseDocument { }
 @Schema()
 export class Product {
     @Prop({ required: true })
-    product_name: string;
+    name: string;
 
     @Prop()
-    product_slug: string;
+    slug: string;
 
     @Prop({ required: true })
-    product_code: string;
+    code: string;
 
     @Prop({ required: true })
-    product_thumb: string;
+    thumb: string;
 
     @Prop({ type: [String], default: undefined })
-    product_assets: string[];
+    assets: string[];
 
     @Prop({ type: [String], default: undefined })
-    product_hashtags: string[];
+    hashtags: string[];
 
     @Prop({ type: [String], default: undefined })
-    product_variations: string[];
+    variations: string[];
 
     @Prop({
         default: 5.0,
@@ -37,32 +37,32 @@ export class Product {
         max: [5.0, 'ratingsAverage is not above 5.0'],
         set: (value: number) => Math.round(value * 10) / 10
     })
-    product_ratingsAverage: number;
+    ratingsAverage: number;
 
     @Prop()
-    product_description: string;
+    description: string;
 
     @Prop({ required: true })
-    product_weight: number;
+    weight: number;
 
     @Prop({ required: true })
-    product_basePrice: number;
+    basePrice: number;
 
     @Prop({ required: true })
-    product_listedPrice: number;
+    listedPrice: number;
 
     @Prop()
-    product_salePrice: number;
+    salePrice: number;
 
     //refer
     @Prop({ required: true, type: mongoose.Schema.ObjectId, ref: Shop.name })
-    product_shop: mongoose.Types.ObjectId;
+    shop: mongoose.Types.ObjectId;
 
     @Prop({ required: true, type: mongoose.Schema.ObjectId, ref: Type.name })
-    product_type: mongoose.Types.ObjectId;
+    type: mongoose.Types.ObjectId;
 
     @Prop({ required: true })
-    product_attributes: mongoose.Mixed; //=mongoose.Schema.Types.Mixed
+    attributes: mongoose.Mixed; //=mongoose.Schema.Types.Mixed
 
     //no select
     @Prop({ default: true, index: true, select: false })

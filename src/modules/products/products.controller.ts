@@ -32,7 +32,7 @@ export class ProductsController {
     //todo: check shop is null
     return this.productsFactory.create({
       ...createProductDto,
-      product_shop: user?.shop,
+      shop: user?.shop,
     });
   }
   // END CREATE //

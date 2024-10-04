@@ -32,7 +32,7 @@ export class Clock {
 
     //refer
     @Prop({ required: true, type: mongoose.Schema.ObjectId, ref: Shop.name })
-    product_shop: mongoose.Types.ObjectId;
+    shop: mongoose.Types.ObjectId;
 }
 
 export const ClockSchema = SchemaFactory.createForClass(Clock);

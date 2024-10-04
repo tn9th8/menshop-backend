@@ -18,7 +18,7 @@ export class ProductsRepo {
 
   async findAllIsDraft(limit: number, skip: number, query: {}): Promise<IProduct[]> {
     const result = await this.productModel.find(query)
-      //.populate('product_shop', 'name email -_id')
+      //.populate('shop', 'name email -_id')
       .sort({ updatedAt: -1 })
       .skip(skip)
       .limit(limit)
