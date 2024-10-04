@@ -9,7 +9,8 @@ export class ProductsFactory {
     //todo: generic
     async create(createProductDto: CreateProductDto) {
         //todo: any
-        const { type } = createProductDto as any;
+        const { type, shop } = createProductDto as any;
+        if (!shop) { throw new BadRequestException(`Invalid Product Shop: ${shop}`); }
         const productProvider = ProductsConfig.context[type];
         if (!productProvider) { throw new BadRequestException(`Invalid Product Type: ${type}`); }
         return productProvider.create(createProductDto);

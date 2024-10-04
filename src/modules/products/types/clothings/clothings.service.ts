@@ -3,50 +3,43 @@ import { CreateProductDto } from '../../dto/create-product.dto';
 import { IProductsStrategy } from '../../factory/products.stategy';
 import { ProductsRepo } from '../../products.repo';
 import { ClothingsRepo } from './clothings.repo';
-import mongoose from 'mongoose';
+import mongoose, { Connection } from 'mongoose';
+import { InjectConnection } from '@nestjs/mongoose';
 
 @Injectable()
 export class ClothingsService implements IProductsStrategy {
     constructor(
         private readonly clothingsRepo: ClothingsRepo,
         private readonly productsRepo: ProductsRepo,
+        @InjectConnection()
+        private readonly connection: Connection,
     ) { }
 
     async create(createProductDto: CreateProductDto) {
-        //create clothing
-        const clothingsResult = await this.clothingsRepo.create({
-            shop: createProductDto.shop,
-            ...createProductDto.attributes,
-        });
-        if (!clothingsResult) { throw new BadRequestException('create a Clothing error'); }
-        //create product
-        const productResult = await this.productsRepo.create({
-            _id: clothingsResult._id,
-            ...createProductDto,
-        });
-        if (!productResult) { throw new BadRequestException('create a Product error'); }
-        return productResult;
-    }
-
-    async createWithinTransaction(createProductDto: CreateProductDto) {
-        const session = await mongoose.startSession();
-        session.startTransaction();
+        const session = await this.connection.startSession();
         try {
-            //create clothing
-            const clothingsResult = await this.clothingsRepo.create({
-                shop: createProductDto.shop,
-                ...createProductDto.attributes,
-            });
-            if (!clothingsResult) { throw new BadRequestException('create a Clothing error'); }
-            //create product
-            const productResult = await this.productsRepo.create({
-                _id: clothingsResult._id,
-                ...createProductDto,
-            });
-            if (!productResult) { throw new BadRequestException('create a Product error'); }
-            //commit
-            await session.commitTransaction();
-            return productResult;
+            session.startTransaction();
+
+            try {
+                //create types
+                const typesResult = await this.clothingsRepo.create({
+                    shop: createProductDto.shop,
+                    ...createProductDto.attributes,
+                });
+                if (!typesResult) { throw new BadRequestException('create a Clothing error'); }
+
+                //create product
+                const productResult = await this.productsRepo.create({
+                    _id: typesResult._id,
+                    ...createProductDto,
+                });
+                if (!productResult) { throw new BadRequestException('create a Product error'); }
+                //commit
+                await session.commitTransaction();
+                return productResult;
+            } catch (error) {
+
+            }
         } catch (error) {
             //rollback
             await session.abortTransaction();
