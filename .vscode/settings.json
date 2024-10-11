@@ -1,1 +1,14 @@
-{}
+{
+    "editor.formatOnSave": true,
+    "editor.fontSize": 16,
+    //"workbench.iconTheme": "material-icon-theme",
+    "cSpell.userWords": [],
+    "files.exclude": {
+        "**/node_modules": true,
+        "**/dist": true,
+    },
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/dist": true
+    }
+}

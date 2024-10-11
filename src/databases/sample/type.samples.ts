@@ -4,12 +4,12 @@ export const CATEGORY_SAMPLES = () => {
     return [
         {
             _id: ProductsEnum.CLOTHINGS,
-            type_code: 'clothings',
+            type_code: 'tops',
             type_name: 'Quần áo',
         },
         {
             _id: ProductsEnum.CLOCKS,
-            type_code: 'clocks',
+            type_code: 'watches',
             type_name: 'Đồng hồ',
         },
         {

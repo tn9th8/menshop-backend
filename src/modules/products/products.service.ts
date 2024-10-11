@@ -3,14 +3,24 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductsRepo } from './products.repo';
 import { IProduct } from './schemas/product.schema';
+import { ProductsFactory } from './factory/products.factory';
 
 @Injectable()
 export class ProductsService {
-  constructor(private readonly productsRepo: ProductsRepo) { }
+  constructor(
+    private readonly productsRepo: ProductsRepo,
+    private readonly productsFactory: ProductsFactory,
+  ) { }
 
   async create(createProductDto: CreateProductDto): Promise<IProduct> {
+    const { shop, type, attributes } = createProductDto;
+    if (!shop) { throw new BadRequestException(`Invalid Product Shop: ${shop}`) };
+
+    const isValid = this.productsFactory.isValidAttrs(attributes, type);
+    if (!isValid) { throw new BadRequestException('Invalid Product Attributes') };
+
     const result = await this.productsRepo.create(createProductDto);
-    if (!result) { throw new BadRequestException('create a Product error'); }
+    if (!result) { throw new BadRequestException('Create A Product Error'); }
     return result;
   }
 

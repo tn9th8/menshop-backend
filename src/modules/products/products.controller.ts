@@ -11,10 +11,7 @@ import { ApiMessage } from 'src/common/decorators/api-message.decorator';
 @ApiTags('Products Module for Admins')
 @Controller('/adm/products')
 export class ProductsController {
-  constructor(
-    private readonly productsFactory: ProductsFactory,
-    private readonly productsService: ProductsService
-  ) { }
+  constructor(private readonly productsService: ProductsService) { }
 
   // CREATE //
   /**
@@ -23,16 +20,16 @@ export class ProductsController {
    * @param { Request.user} user
    * @returns { JSON }
    */
-  @ApiMessage('create one using factory')
+  @ApiMessage('create a product')
   @Post()
   create(
     @Body() createProductDto: CreateProductDto,
     @User() user: AuthUserDto
   ) {
     //todo: check shop is null
-    return this.productsFactory.create({
+    return this.productsService.create({
       ...createProductDto,
-      product_shop: user?.shop,
+      shop: user?.shop,
     });
   }
   // END CREATE //
