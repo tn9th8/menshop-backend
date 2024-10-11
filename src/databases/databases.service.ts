@@ -21,15 +21,15 @@ export class DatabasesService implements OnModuleInit {
         private readonly typesRepo: TypesRepo,
     ) { }
 
-    async onModuleInit() {
-        this.logger.log('>>> STARTING ON MODULE INIT...');
-        const isInit = this.configService.get<boolean>('SHOULD_INIT');
-        if (isInit) {
-            await this.initSamples(Shop.name, this.shopsRepo, SHOP_SAMPLES());
-            await this.initSamples(User.name, this.usersRepo, await USER_SAMPLES(this.configService));
-            await this.initSamples('CATEGORY', this.typesRepo, CATEGORY_SAMPLES());
-        }
-    }
+    // async onModuleInit() {
+    //     this.logger.log('>>> STARTING ON MODULE INIT...');
+    //     const isInit = this.configService.get<boolean>('SHOULD_INIT');
+    //     if (isInit) {
+    //         await this.initSamples(Shop.name, this.shopsRepo, SHOP_SAMPLES());
+    //         await this.initSamples(User.name, this.usersRepo, await USER_SAMPLES(this.configService));
+    //         await this.initSamples('CATEGORY', this.typesRepo, CATEGORY_SAMPLES());
+    //     }
+    // }
 
     async initSamples<T>(
         nameModules: string,

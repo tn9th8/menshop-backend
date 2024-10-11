@@ -54,15 +54,17 @@ export class Product {
     @Prop()
     salePrice: number;
 
+    @Prop({ required: true })
+    attributes: [{ name: string, value: string, link: string }]; // mongodb attribute pattern
+
     //refer
     @Prop({ required: true, type: mongoose.Schema.ObjectId, ref: Shop.name })
     shop: mongoose.Types.ObjectId;
 
-    @Prop({ required: true, type: mongoose.Schema.ObjectId, ref: Type.name })
-    type: mongoose.Types.ObjectId;
-
-    @Prop({ required: true })
-    attributes: mongoose.Mixed; //=mongoose.Schema.Types.Mixed
+    // @Prop({ required: true, type: mongoose.Schema.ObjectId, ref: Type.name })
+    // type: mongoose.Types.ObjectId;
+    @Prop()
+    type: string
 
     //no select
     @Prop({ default: true, index: true, select: false })

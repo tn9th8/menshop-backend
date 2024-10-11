@@ -1,18 +1,15 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { CreateProductDto } from "../dto/create-product.dto";
-import { ProductsConfig } from "./products.config";
+import { ProductsContext } from "./products.context";
+
 
 @Injectable()
 export class ProductsFactory {
-    constructor(private readonly productsConfig: ProductsConfig) { }
+    constructor(private readonly productsContext: ProductsContext) { }
 
-    //todo: generic
-    async create(createProductDto: CreateProductDto) {
-        //todo: any
-        const { type, shop } = createProductDto as any;
-        if (!shop) { throw new BadRequestException(`Invalid Product Shop: ${shop}`); }
-        const productProvider = ProductsConfig.context[type];
-        if (!productProvider) { throw new BadRequestException(`Invalid Product Type: ${type}`); }
-        return productProvider.create(createProductDto);
+    isValidAttrs(inputAttributes: [{ name: string }], type: string) {
+        const productStrategy = ProductsContext.context[type];
+        if (!productStrategy) { throw new BadRequestException(`Invalid Product Type: ${type}`) };
+        return productStrategy.isValidAttrs(inputAttributes);
     }
 }

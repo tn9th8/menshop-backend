@@ -50,10 +50,11 @@ export class CreateProductDto {
     // refer
     shop: mongoose.Types.ObjectId;
 
-    @IsNotEmpty({ message: 'type không là empty/null/undefined' })
-    @IsObjectId({ message: 'type nên là objectId' })
-    type: mongoose.Types.ObjectId;
+    // @IsNotEmpty({ message: 'type không là empty/null/undefined' })
+    // @IsObjectId({ message: 'type nên là objectId' })
+    // type: mongoose.Types.ObjectId;
+    type: string;
 
     @IsNotEmpty({ message: 'attributes không là empty/null/undefined' })
-    attributes: mongoose.Mixed;
+    attributes: [{ name: string, value: string }];
 }
