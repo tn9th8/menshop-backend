@@ -8,10 +8,8 @@ import slugify from "slugify";
  * @returns boolean
  */
 export const isObjetId = (id: string): boolean => {
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-        throw new BadRequestException(`Không thể tìm với id=${id}`)
-    }
-    return true
+    if (!mongoose.Types.ObjectId.isValid(id)) { return false; }
+    return true;
 }
 
 /**

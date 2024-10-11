@@ -16,7 +16,7 @@ import { DatabasesModule } from './databases/databases.module';
 import { timestampsPlugin } from './common/utils/mongo.util';
 import { FilesModule } from './files/files.module';
 import { ShopsModule } from './modules/shops/shops.module';
-import { TypesModule } from './modules/types/types.module';
+import { CategoriesModule } from './modules/categories/categories.module';
 
 @Module({
   controllers: [AppController],
@@ -77,7 +77,7 @@ import { TypesModule } from './modules/types/types.module';
     UsersModule,
     ProductsModule,
     ShopsModule,
-    TypesModule,
+    CategoriesModule,
   ],
 })
 export class AppModule { }

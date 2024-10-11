@@ -3,10 +3,10 @@ import mongoose, { HydratedDocument } from "mongoose";
 import { IBaseDocument } from "src/common/interfaces/base-document.interface";
 import { slugPlugin } from "src/common/utils/mongo.util";
 import { Shop } from "src/modules/shops/schemas/shop.schema";
-import { Type } from "src/modules/types/schemas/type.schema";
+import { AttributesSchema, IAttributes } from "./custom.schema";
 
 export type ProductDocument = HydratedDocument<Product>;
-export interface IProduct extends ProductDocument, IBaseDocument { }
+export type IProduct = ProductDocument & IBaseDocument;
 
 @Schema()
 export class Product {
@@ -17,27 +17,21 @@ export class Product {
     slug: string;
 
     @Prop({ required: true })
-    code: string;
-
-    @Prop({ required: true })
     thumb: string;
 
     @Prop({ type: [String], default: undefined })
     assets: string[];
 
-    @Prop({ type: [String], default: undefined })
-    hashtags: string[];
-
-    @Prop({ type: [String], default: undefined })
-    variations: string[];
-
     @Prop({
         default: 5.0,
         min: [1.0, 'ratingsAverage is not under 1.0'],
         max: [5.0, 'ratingsAverage is not above 5.0'],
-        set: (value: number) => Math.round(value * 10) / 10
+        set: (value: number) => Math.round(value * 10) / 10 //4.648 => 46.48 => 46 => 4.6
     })
-    ratingsAverage: number;
+    ratingStar: number;
+
+    @Prop({ type: [String], default: undefined })
+    hashtags: string[];
 
     @Prop()
     description: string;
@@ -46,25 +40,44 @@ export class Product {
     weight: number;
 
     @Prop({ required: true })
-    basePrice: number;
+    minListedPrice: number;
 
     @Prop({ required: true })
-    listedPrice: number;
+    maxListedPrice: number;
 
     @Prop()
-    salePrice: number;
+    minDiscountPrice: number;
+
+    @Prop()
+    maxDiscountPrice: number;
+
+    @Prop()
+    minDiscount: number; //unit: %
+
+    @Prop()
+    maxDiscount: number; //unit: %
 
     @Prop({ required: true })
-    attributes: [{ name: string, value: string, link: string }]; // mongodb attribute pattern
+    type: string; //type of attributes
+
+    @Prop({ required: true, type: AttributesSchema })
+    attributes: IAttributes //mongodb attribute pattern
 
     //refer
     @Prop({ required: true, type: mongoose.Schema.ObjectId, ref: Shop.name })
     shop: mongoose.Types.ObjectId;
 
-    // @Prop({ required: true, type: mongoose.Schema.ObjectId, ref: Type.name })
-    // type: mongoose.Types.ObjectId;
+    @Prop({ required: true, type: [String], default: undefined })
+    categories: string[];
+
     @Prop()
-    type: string
+    model: string;
+
+    @Prop()
+    variations: string;
+
+    @Prop({ required: true })
+    reviews: string;
 
     //no select
     @Prop({ default: true, index: true, select: false })

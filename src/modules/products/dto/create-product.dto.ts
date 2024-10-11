@@ -1,9 +1,5 @@
-import { IsArray, IsEnum, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsArray, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import mongoose from 'mongoose';
-import { IsObjectId } from 'src/common/decorators/is-object-id.decorator';
-import { ProductsEnum } from 'src/common/enums/product.enum';
-import { Shop } from 'src/modules/shops/schemas/shop.schema';
-import { Type } from 'src/modules/types/schemas/type.schema';
 
 export class CreateProductDto {
     _id: mongoose.Types.ObjectId;
