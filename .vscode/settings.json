@@ -10,5 +10,10 @@
     "search.exclude": {
         "**/node_modules": true,
         "**/dist": true
-    }
+    },
+    "cSpell.words": [
+        "hoặc",
+        "không",
+        "trống"
+    ]
 }

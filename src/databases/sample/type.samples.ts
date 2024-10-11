@@ -3,19 +3,14 @@ import { ProductsEnum } from "src/common/enums/product.enum";
 export const CATEGORY_SAMPLES = () => {
     return [
         {
-            _id: ProductsEnum.CLOTHINGS,
+            _id: ProductsEnum.TOPS,
             type_code: 'tops',
             type_name: 'Quần áo',
         },
         {
-            _id: ProductsEnum.CLOCKS,
+            _id: ProductsEnum.WATCHES,
             type_code: 'watches',
             type_name: 'Đồng hồ',
-        },
-        {
-            _id: ProductsEnum.GLASSES,
-            type_code: 'glasses',
-            type_name: 'Mắt kính',
         },
     ];
 };
