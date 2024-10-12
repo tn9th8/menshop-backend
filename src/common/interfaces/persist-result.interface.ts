@@ -1,3 +1,4 @@
+import { PartialType } from "@nestjs/mapped-types";
 import mongoose, { UpdateWriteOpResult } from "mongoose";
 
 export interface ICreateResult {
