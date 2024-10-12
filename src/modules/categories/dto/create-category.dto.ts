@@ -1,10 +1,14 @@
 import { IsEnum, IsNotEmpty, IsString } from "class-validator";
 import mongoose from "mongoose";
-import { CategoryTypeEnum } from "src/common/enums/category-type.enum";
+import { CategoryLevelEnum, CategoryTypeEnum } from "src/common/enums/category.enum";
+
+export interface IParent {
+    id: mongoose.Types.ObjectId,
+    type: CategoryTypeEnum,
+}
+
 
 export class CreateCategoryDto {
-    _id: mongoose.Types.ObjectId;
-
     @IsString({ message: 'name nên là một string' })
     @IsNotEmpty({ message: 'name không nên là empty/null/undefined' })
     name: string;
@@ -17,8 +21,12 @@ export class CreateCategoryDto {
     @IsNotEmpty({ message: 'description không nên là empty/null/undefined' })
     description: string;
 
-    @IsEnum(CategoryTypeEnum, { message: "type không hợp lệ" }) //default not empty
-    type: CategoryTypeEnum;
+    @IsEnum(CategoryLevelEnum, { message: 'level không hợp lệ' }) //default not empty
+    level: CategoryLevelEnum;
 
-    parent: mongoose.Types.ObjectId;
+    parents?: IParent[];
+
+    childrenBasedShape: mongoose.Types.ObjectId[];
+
+    childrenBasedNeed: mongoose.Types.ObjectId[];
 }

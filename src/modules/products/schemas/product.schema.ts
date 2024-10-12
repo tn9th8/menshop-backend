@@ -3,7 +3,7 @@ import mongoose, { HydratedDocument } from "mongoose";
 import { IBaseDocument } from "src/common/interfaces/base-document.interface";
 import { slugPlugin } from "src/common/utils/mongo.util";
 import { Shop } from "src/modules/shops/schemas/shop.schema";
-import { AttributesSchema, IAttributes } from "./custom.schema";
+import { AttributeSchema, IAttribute } from "./custom.schema";
 
 export type ProductDocument = HydratedDocument<Product>;
 export type IProduct = ProductDocument & IBaseDocument;
@@ -60,8 +60,8 @@ export class Product {
     @Prop({ required: true })
     type: string; //type of attributes
 
-    @Prop({ required: true, type: AttributesSchema })
-    attributes: IAttributes //mongodb attribute pattern
+    @Prop({ required: true, type: [AttributeSchema] })
+    attributes: IAttribute[] //mongodb attribute pattern
 
     //refer
     @Prop({ required: true, type: mongoose.Schema.ObjectId, ref: Shop.name })

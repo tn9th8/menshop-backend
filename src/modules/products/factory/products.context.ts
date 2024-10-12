@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { ProductsEnum } from "src/common/enums/product.enum";
+import { ProductTypeEnum } from "src/common/enums/product-type.enum";
 import { WatchesService } from "../types/watches/watches.service";
 import { TopsService } from "../types/tops/tops.service";
 import { IProductsStrategy } from "./products.strategy";
@@ -14,11 +14,11 @@ export class ProductsContext {
         private readonly watchesService: WatchesService,
         private readonly topsService: TopsService,
     ) {
-        ProductsContext.register(ProductsEnum.TOPS, this.topsService);
-        ProductsContext.register(ProductsEnum.WATCHES, this.watchesService);
+        ProductsContext.register(ProductTypeEnum.TOPS, this.topsService);
+        ProductsContext.register(ProductTypeEnum.WATCHES, this.watchesService);
     }
 
-    static register(name: ProductsEnum, strategy: IProductsStrategy) {
+    static register(name: ProductTypeEnum, strategy: IProductsStrategy) {
         this.context[name] = strategy;
     }
 }
