@@ -5,7 +5,6 @@ import { IBaseDocument } from "src/common/interfaces/base-document.interface";
 
 export type CategoryDocument = HydratedDocument<Category>;
 export type ICategory = CategoryDocument & IBaseDocument;
-//export interface ICategory extends CategoryDocument, IBaseDocument { }
 
 @Schema()
 export class Category {
@@ -21,14 +20,18 @@ export class Category {
     @Prop({ type: Number, default: CategoryLevelEnum.PARENT, required: true })
     level: CategoryLevelEnum;
 
-    //position
+    @Prop({ type: String, default: CategoryTypeEnum.CATEGORY, required: true })
+    type: CategoryTypeEnum;
 
     //not required
-    @Prop({ type: [mongoose.Schema.ObjectId], ref: Category.name }) //auto init []
-    childrenBasedShape: mongoose.Types.ObjectId[];
+    // @Prop()
+    // position: number;
 
-    @Prop({ type: [mongoose.Schema.ObjectId], ref: Category.name })
-    childrenBasedNeed: mongoose.Types.ObjectId[];
+    @Prop({ type: [mongoose.Schema.ObjectId], ref: Category.name }) //auto init []
+    childCategories: mongoose.Types.ObjectId[]; //set
+
+    @Prop({ type: [mongoose.Schema.ObjectId], ref: Category.name }) //auto init []
+    childCollections: mongoose.Types.ObjectId[]; //set
 }
 
 export const CategorySchema = SchemaFactory.createForClass(Category);

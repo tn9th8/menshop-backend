@@ -4,6 +4,11 @@ export enum CategoryLevelEnum {
 }
 
 export enum CategoryTypeEnum {
-    SHAPE = 'based-shape',
-    NEED = 'based-need',
+    CATEGORY = 'category',
+    COLLECTION = 'collection',
+}
+
+export enum CategoryDestinationEnum {
+    CATEGORY = 'childCategories',
+    COLLECTION = 'childCollections',
 }
