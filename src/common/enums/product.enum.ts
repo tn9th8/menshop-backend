@@ -1,3 +1,11 @@
+export enum ProductAnnotationEnum {
+    FLASH_SALE = 'Flash Sale',
+    COD = 'COD',
+    FREE_SHIP = 'Free Ship',
+    TOP = 'TOP',
+}
+
+
 export enum ProductTypeEnum {
     // CLOTHINGS = '66fe5fd25d65d8a3a4140272',
     // CLOCKS = '66fe6115d958de71b8659a6c',
@@ -22,8 +30,6 @@ export enum NeedSportEnum {
     SWIM_SEA = 'SWIMMING',
     GENERAL = 'GENERAL',
 }
-
-
 
 // export enum ProductColorEnum {
 //     BLACK = 'BLACK',

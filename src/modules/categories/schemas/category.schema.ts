@@ -3,6 +3,7 @@ import { HydratedDocument, SchemaTypes, Types } from "mongoose";
 import { CategoryLevelEnum } from "src/common/enums/category.enum";
 import { IBaseDocument } from "src/common/interfaces/base-document.interface";
 import { slugDisplayNamePlugin } from "src/common/utils/mongo.util";
+import { Brand } from "src/modules/brands/schemas/brand.schema";
 import { Variation } from "src/modules/variations/schemas/variation.schema";
 
 export type CategoryDocument = HydratedDocument<Category>;
@@ -37,13 +38,16 @@ export class Category {
     specifications: string[];
 
     //ref
-    @Prop({ type: [SchemaTypes.ObjectId], ref: Category.name }) //default []
+    @Prop({ type: [SchemaTypes.ObjectId], ref: Category.name })
     children: Types.ObjectId[];
 
-    @Prop({ type: [SchemaTypes.ObjectId], ref: Variation.name }) //default []
+    @Prop({ type: [SchemaTypes.ObjectId], ref: Brand.name })
+    brands: Types.ObjectId[];
+
+    @Prop({ type: [SchemaTypes.ObjectId], ref: Variation.name })
     variations: Types.ObjectId[];
 
-    @Prop({ type: [SchemaTypes.ObjectId], ref: Variation.name }) //default []
+    @Prop({ type: [SchemaTypes.ObjectId], ref: Variation.name })
     needs: Types.ObjectId[];
 }
 

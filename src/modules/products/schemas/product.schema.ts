@@ -3,24 +3,26 @@ import mongoose, { HydratedDocument } from "mongoose";
 import { IBaseDocument } from "src/common/interfaces/base-document.interface";
 import { slugNamePlugin } from "src/common/utils/mongo.util";
 import { Shop } from "src/modules/shops/schemas/shop.schema";
-import { AttributeSchema, IAttribute } from "./custom.schema";
+import { ProductAttribute, ProductAttributeSchema } from "./nested.schemas";
+import { ProductAnnotationEnum } from "src/common/enums/product.enum";
 
 export type ProductDocument = HydratedDocument<Product>;
 export type IProduct = ProductDocument & IBaseDocument;
 
 @Schema()
 export class Product {
-    @Prop({ required: true })
-    name: string;
+    //required
+    @Prop({ trim: true, required: true })
+    name: string; //id code
+
+    @Prop({ trim: true, required: true })
+    displayName: string;
 
     @Prop()
-    slug: string;
+    slug: string; //plugin
 
-    @Prop({ required: true })
-    thumb: string;
-
-    @Prop({ type: [String], default: undefined })
-    assets: string[];
+    @Prop({ trim: true, required: true })
+    description: string;
 
     @Prop({
         default: 5.0,
@@ -30,38 +32,26 @@ export class Product {
     })
     ratingStar: number;
 
-    @Prop({ type: [String], default: undefined })
-    hashtags: string[];
+    @Prop({ type: [String], required: true })
+    annotations: ProductAnnotationEnum[];
+
+    @Prop({ required: true })
+    price: number;
+
+    @Prop({ required: true })
+    maxPrice: number;
 
     @Prop()
-    description: string;
-
-    @Prop({ required: true })
-    weight: number;
-
-    @Prop({ required: true })
-    minListedPrice: number;
-
-    @Prop({ required: true })
-    maxListedPrice: number;
-
-    @Prop()
-    minDiscountPrice: number;
+    discountPrice: number;
 
     @Prop()
     maxDiscountPrice: number;
 
     @Prop()
-    minDiscount: number; //unit: %
+    discount: number; //unit: %
 
     @Prop()
     maxDiscount: number; //unit: %
-
-    @Prop({ required: true })
-    type: string; //type of attributes
-
-    @Prop({ required: true, type: [AttributeSchema] })
-    attributes: IAttribute[] //mongodb attribute pattern
 
     //refer
     @Prop({ required: true, type: mongoose.Schema.ObjectId, ref: Shop.name })
@@ -78,6 +68,29 @@ export class Product {
 
     @Prop({ required: true })
     reviews: string;
+
+
+
+    @Prop({ required: true })
+    thumb: string;
+
+    @Prop({ type: [String], default: undefined })
+    assets: string[];
+
+
+
+    @Prop({ type: [String], default: undefined })
+    hashtags: string[];
+
+
+
+
+
+
+    @Prop({ required: true, type: [ProductAttributeSchema] })
+    attributes: ProductAttribute[] //mongodb attribute pattern
+
+
 
     //no select
     @Prop({ default: false, index: true, select: false })
