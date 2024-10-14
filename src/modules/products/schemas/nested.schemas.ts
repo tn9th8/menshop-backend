@@ -1,5 +1,71 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 
+/**
+ * define Prop() variation
+ */
+@Schema()
+export class ProductAsset {
+    @Prop({ required: true, default: true })
+    thumb: string;
+
+    @Prop({ required: true })
+    video: string;
+
+    @Prop({ type: [String], required: true })
+    images: string[];
+
+    @Prop({ type: [String], required: true })
+    variationImages: string[];
+
+    @Prop({ type: String, required: true })
+    sizeChartImage: string;
+}
+
+export const ProductAssetSchema = SchemaFactory.createForClass(ProductAsset);
+
+/**
+ * define Prop() variation
+ */
+@Schema()
+export class ProductVariation {
+    @Prop({ required: true, default: true })
+    isColor: string;
+
+    @Prop({ required: true, default: 'Màu sắc' })
+    name: string;
+
+    @Prop({ type: [String], required: true })
+    options: string[];
+
+    @Prop({ type: [String], required: true })
+    images: string[];
+}
+
+export const ProductVariationSchema = SchemaFactory.createForClass(ProductVariation);
+
+/**
+ * define Prop() size
+ */
+@Schema()
+export class ProductSize {
+    @Prop({ required: true, default: false })
+    isCustom: string;
+
+    @Prop({ required: true, default: 'Size' })
+    name: string;
+
+    @Prop({ type: [String], required: true })
+    options: string[];
+
+    @Prop({ required: true })
+    chartImage: string;
+}
+
+export const ProductSizeSchema = SchemaFactory.createForClass(ProductSize);
+
+/**
+ * define Prop() Attribute
+ */
 @Schema()
 export class ProductAttribute {
     @Prop({ required: true })
@@ -13,7 +79,6 @@ export class ProductAttribute {
 }
 
 export const ProductAttributeSchema = SchemaFactory.createForClass(ProductAttribute);
-
 
 /**
  * another approach

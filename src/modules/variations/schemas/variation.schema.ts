@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument } from "mongoose";
 import { IBaseDocument } from "src/common/interfaces/base-document.interface";
-import { slugDisplayNamePlugin } from "src/common/utils/mongo.util";
+import { slugPlugin } from "src/common/utils/mongo.util";
 
 export type VariationDocument = HydratedDocument<Variation>;
 export type IVariation = VariationDocument & IBaseDocument;
@@ -29,4 +29,4 @@ export class Variation {
 }
 
 export const CategorySchema = SchemaFactory.createForClass(Variation);
-CategorySchema.plugin(slugDisplayNamePlugin);
+CategorySchema.plugin(slugPlugin);

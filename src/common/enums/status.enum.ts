@@ -3,3 +3,10 @@ export enum StatusEnum {
     ACTIVE = 'ACTIVE',
     STOP = 'STOP',
 }
+
+export enum ProductStatusEnum {
+    NORMAL = 'NORMAL',
+    BAN = 'BAN',
+    PRIORITY = 'PRIORITY',
+    LIMIT = 'LIMIT',
+}

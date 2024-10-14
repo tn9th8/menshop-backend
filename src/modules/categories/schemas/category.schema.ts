@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument, SchemaTypes, Types } from "mongoose";
 import { CategoryLevelEnum } from "src/common/enums/category.enum";
 import { IBaseDocument } from "src/common/interfaces/base-document.interface";
-import { slugDisplayNamePlugin } from "src/common/utils/mongo.util";
+import { slugPlugin } from "src/common/utils/mongo.util";
 import { Brand } from "src/modules/brands/schemas/brand.schema";
 import { Variation } from "src/modules/variations/schemas/variation.schema";
 
@@ -52,4 +52,4 @@ export class Category {
 }
 
 export const CategorySchema = SchemaFactory.createForClass(Category);
-CategorySchema.plugin(slugDisplayNamePlugin);
+CategorySchema.plugin(slugPlugin);

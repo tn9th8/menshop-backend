@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument, SchemaTypes, Types } from "mongoose";
 import { NeedLevelEnum } from "src/common/enums/need.enum";
 import { IBaseDocument } from "src/common/interfaces/base-document.interface";
-import { slugDisplayNamePlugin } from "src/common/utils/mongo.util";
+import { slugPlugin } from "src/common/utils/mongo.util";
 
 export type NeedDocument = HydratedDocument<Need>;
 export type INeed = NeedDocument & IBaseDocument;
@@ -31,4 +31,4 @@ export class Need {
 }
 
 export const NeedSchema = SchemaFactory.createForClass(Need);
-NeedSchema.plugin(slugDisplayNamePlugin);
+NeedSchema.plugin(slugPlugin);

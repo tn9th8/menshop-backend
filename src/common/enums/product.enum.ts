@@ -5,7 +5,6 @@ export enum ProductAnnotationEnum {
     TOP = 'TOP',
 }
 
-
 export enum ProductTypeEnum {
     // CLOTHINGS = '66fe5fd25d65d8a3a4140272',
     // CLOCKS = '66fe6115d958de71b8659a6c',
