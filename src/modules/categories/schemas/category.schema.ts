@@ -1,37 +1,51 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import mongoose, { HydratedDocument } from "mongoose";
-import { CategoryLevelEnum, CategoryTypeEnum } from "src/common/enums/category.enum";
+import { HydratedDocument, SchemaTypes, Types } from "mongoose";
+import { CategoryLevelEnum } from "src/common/enums/category.enum";
 import { IBaseDocument } from "src/common/interfaces/base-document.interface";
+import { slugDisplayNamePlugin } from "src/common/utils/mongo.util";
+import { Variation } from "src/modules/variations/schemas/variation.schema";
 
 export type CategoryDocument = HydratedDocument<Category>;
 export type ICategory = CategoryDocument & IBaseDocument;
 
+//plus: position
 @Schema()
 export class Category {
+    //required
     @Prop({ trim: true, required: true })
-    name: string; //english name
+    name: string;
 
     @Prop({ trim: true, required: true })
-    displayName: string; //vietnamese name
+    displayName: string;
+
+    @Prop()
+    slug: string; //plugin
 
     @Prop({ trim: true, required: true })
     description: string;
 
-    @Prop({ type: Number, default: CategoryLevelEnum.PARENT, required: true })
+    @Prop({ type: Number, default: CategoryLevelEnum.LV1, required: true })
     level: CategoryLevelEnum;
 
-    @Prop({ type: String, default: CategoryTypeEnum.CATEGORY, required: true })
-    type: CategoryTypeEnum;
+    @Prop({ default: true, required: true })
+    isOnBar: boolean;
 
-    //not required
-    // @Prop()
-    // position: number;
+    @Prop({ type: [String], required: true })
+    attributes: string[];
 
-    @Prop({ type: [mongoose.Schema.ObjectId], ref: Category.name }) //auto init []
-    childCategories: mongoose.Types.ObjectId[]; //set
+    @Prop({ type: [String], required: true })
+    specifications: string[];
 
-    @Prop({ type: [mongoose.Schema.ObjectId], ref: Category.name }) //auto init []
-    childCollections: mongoose.Types.ObjectId[]; //set
+    //ref
+    @Prop({ type: [SchemaTypes.ObjectId], ref: Category.name }) //default []
+    children: Types.ObjectId[];
+
+    @Prop({ type: [SchemaTypes.ObjectId], ref: Variation.name }) //default []
+    variations: Types.ObjectId[];
+
+    @Prop({ type: [SchemaTypes.ObjectId], ref: Variation.name }) //default []
+    needs: Types.ObjectId[];
 }
 
 export const CategorySchema = SchemaFactory.createForClass(Category);
+CategorySchema.plugin(slugDisplayNamePlugin);

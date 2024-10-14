@@ -6,4 +6,6 @@ export interface IBaseDocument {
     deletedAt: boolean;
     createdAt: Date;
     updatedAt: Date;
+    // __v: any;
+    // _doc: any;
 }

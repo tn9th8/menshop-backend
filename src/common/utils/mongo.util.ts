@@ -30,12 +30,23 @@ export const timestampsPlugin = (schema: Schema) => {
 }
 
 /**
- * plugin slug for product
+ * plugin slug for product.name
  * @param schema product
  */
-export const slugPlugin = (schema: Schema) => {
+export const slugNamePlugin = (schema: Schema) => {
     schema.pre('save', function (next) {
         this.slug = slugify(this.name, { lower: true })
+        next();
+    })
+}
+
+/**
+ * plugin slug for category.displayName
+ * @param schema product
+ */
+export const slugDisplayNamePlugin = (schema: Schema) => {
+    schema.pre('save', function (next) {
+        this.slug = slugify(this.displayName, { lower: true })
         next();
     })
 }

@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import mongoose, { HydratedDocument } from "mongoose";
 import { IBaseDocument } from "src/common/interfaces/base-document.interface";
-import { slugPlugin } from "src/common/utils/mongo.util";
+import { slugNamePlugin } from "src/common/utils/mongo.util";
 import { Shop } from "src/modules/shops/schemas/shop.schema";
 import { AttributeSchema, IAttribute } from "./custom.schema";
 
@@ -80,16 +80,16 @@ export class Product {
     reviews: string;
 
     //no select
-    @Prop({ default: true, index: true, select: false })
-    isDraft: boolean;
-
     @Prop({ default: false, index: true, select: false })
-    isPublished: boolean;
+    isPublished: boolean; //draft or published
 
     @Prop()
     publishedDate: Date;
 
+    @Prop({ default: 'normal', index: true, select: false })
+    status: string; //normal, ban, priority, limit
+
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);
-ProductSchema.plugin(slugPlugin);
+ProductSchema.plugin(slugNamePlugin);
