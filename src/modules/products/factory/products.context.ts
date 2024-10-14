@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { ProductTypeEnum } from "src/common/enums/product-type.enum";
+import { ProductTypeEnum } from "src/common/enums/product.enum";
 import { WatchesService } from "../types/watches/watches.service";
 import { TopsService } from "../types/tops/tops.service";
 import { IProductsStrategy } from "./products.strategy";

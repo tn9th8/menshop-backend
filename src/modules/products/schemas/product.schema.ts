@@ -1,95 +1,102 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import mongoose, { HydratedDocument } from "mongoose";
+import { HydratedDocument, SchemaTypes, Types } from "mongoose";
+import { ProductAnnotationEnum } from "src/common/enums/product.enum";
+import { ProductStatusEnum } from "src/common/enums/status.enum";
 import { IBaseDocument } from "src/common/interfaces/base-document.interface";
-import { slugPlugin } from "src/common/utils/mongo.util";
+import { publishPlugin, ratingStarProp, slugPlugin } from "src/common/utils/mongo.util";
+import { Brand } from "src/modules/brands/schemas/brand.schema";
+import { Category } from "src/modules/categories/schemas/category.schema";
+import { Need } from "src/modules/needs/shemas/need.schema";
 import { Shop } from "src/modules/shops/schemas/shop.schema";
-import { AttributeSchema, IAttribute } from "./custom.schema";
+import { StockModel } from "src/modules/stock-models/schemas/stock-model.schema";
+import {
+    ProductAsset, ProductAssetSchema,
+    ProductAttribute, ProductAttributeSchema,
+    ProductSize, ProductSizeSchema,
+    ProductVariation, ProductVariationSchema
+} from "./nested.schemas";
 
 export type ProductDocument = HydratedDocument<Product>;
 export type IProduct = ProductDocument & IBaseDocument;
 
 @Schema()
 export class Product {
-    @Prop({ required: true })
-    name: string;
+    //required
+    @Prop({ trim: true, required: true })
+    name: string; //id code
+
+    @Prop({ trim: true, required: true })
+    displayName: string;
 
     @Prop()
-    slug: string;
+    slug: string; //plugin
 
-    @Prop({ required: true })
-    thumb: string;
-
-    @Prop({ type: [String], default: undefined })
-    assets: string[];
-
-    @Prop({
-        default: 5.0,
-        min: [1.0, 'ratingsAverage is not under 1.0'],
-        max: [5.0, 'ratingsAverage is not above 5.0'],
-        set: (value: number) => Math.round(value * 10) / 10 //4.648 => 46.48 => 46 => 4.6
-    })
-    ratingStar: number;
-
-    @Prop({ type: [String], default: undefined })
-    hashtags: string[];
-
-    @Prop()
+    @Prop({ trim: true, required: true })
     description: string;
 
     @Prop({ required: true })
-    weight: number;
+    price: number;
 
     @Prop({ required: true })
-    minListedPrice: number;
-
-    @Prop({ required: true })
-    maxListedPrice: number;
+    maxPrice: number;
 
     @Prop()
-    minDiscountPrice: number;
+    discountPrice: number;
 
     @Prop()
     maxDiscountPrice: number;
 
     @Prop()
-    minDiscount: number; //unit: %
+    discount: number; //unit: %
 
     @Prop()
     maxDiscount: number; //unit: %
 
-    @Prop({ required: true })
-    type: string; //type of attributes
+    @Prop(ratingStarProp)
+    ratingStar: number;
 
-    @Prop({ required: true, type: [AttributeSchema] })
-    attributes: IAttribute[] //mongodb attribute pattern
+    @Prop({ type: [String], required: true })
+    annotations: ProductAnnotationEnum[];
+
+    @Prop({ type: ProductVariationSchema, required: true })
+    variation: ProductVariation;
+
+    @Prop({ type: ProductSizeSchema, required: true })
+    size: ProductSize;
+
+    @Prop({ type: [ProductAttributeSchema], required: true })
+    attributes: ProductAttribute[] //mongodb attribute pattern
+
+    @Prop({ type: ProductAssetSchema, required: true })
+    assets: ProductAsset;
 
     //refer
-    @Prop({ required: true, type: mongoose.Schema.ObjectId, ref: Shop.name })
-    shop: mongoose.Types.ObjectId;
+    @Prop({ type: SchemaTypes.ObjectId, ref: Shop.name, required: true })
+    shop: Types.ObjectId;
 
-    @Prop({ required: true, type: [String], default: undefined })
-    categories: string[];
+    @Prop({ type: SchemaTypes.ObjectId, ref: Brand.name, required: true })
+    brand: Types.ObjectId;
 
-    @Prop()
-    model: string;
+    @Prop({ type: [SchemaTypes.ObjectId], ref: StockModel.name, required: true })
+    model: Types.ObjectId[];
 
-    @Prop()
-    variations: string;
+    @Prop({ type: [SchemaTypes.ObjectId], ref: Category.name, required: true })
+    categories: Types.ObjectId[];
 
-    @Prop({ required: true })
-    reviews: string;
+    @Prop({ type: [SchemaTypes.ObjectId], ref: Need.name, required: true })
+    needs: Types.ObjectId[];
 
     //no select
-    @Prop({ default: true, index: true, select: false })
-    isDraft: boolean;
-
-    @Prop({ default: false, index: true, select: false })
-    isPublished: boolean;
+    @Prop({ index: true, default: false, select: false })
+    isPublished: boolean; //draft or published
 
     @Prop()
     publishedDate: Date;
 
+    @Prop({ index: true, type: String, default: ProductStatusEnum.NORMAL, select: false })
+    status: ProductStatusEnum;
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);
 ProductSchema.plugin(slugPlugin);
+ProductSchema.plugin(publishPlugin);

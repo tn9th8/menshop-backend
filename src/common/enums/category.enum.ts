@@ -1,9 +1,5 @@
 export enum CategoryLevelEnum {
-    PARENT = 1,
-    CHILD = 2,
-}
-
-export enum CategoryTypeEnum {
-    SHAPE = 'based-shape',
-    NEED = 'based-need',
+    LV1 = 1,
+    LV2 = 2,
+    LV3 = 3,
 }
