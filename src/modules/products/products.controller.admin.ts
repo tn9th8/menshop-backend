@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthUserDto } from 'src/auth/dto/auth-user.dto';
 import { ApiMessage } from 'src/common/decorators/api-message.decorator';
@@ -6,13 +6,14 @@ import { User } from 'src/common/decorators/user.decorator';
 import { CreateProductDto } from './dto/create-product.dto';
 import { ProductsService } from './products.service';
 import { IProduct } from './schemas/product.schema';
+import { Types } from 'mongoose';
 
 @ApiTags('Products Module for Admins')
 @Controller('/admin/products')
 export class AdminProductsController {
   constructor(private readonly productsService: ProductsService) { }
 
-  // CREATE //
+  //CREATE//
   /**
    * @desc create one
    * @param { dto } createProductDto
@@ -30,33 +31,40 @@ export class AdminProductsController {
       shop: user?.shop || null,
     });
   }
-  // END CREATE //
+  //END CREATE//
 
-  // QUERY //
+  //QUERY//
   /**
    * @desc find all is draft
-   * @param { user } user
+   * @param { request.user } user
    * @returns { JSON }
    */
   @ApiMessage('find all is draft')
   @Get('/draft')
   findAllIsDraft(@User() user: AuthUserDto): Promise<IProduct[]> {
-    return this.productsService.findAllIsDraft(user?.shop);
+    return this.productsService.findAllIsPublishedOrDraft(user?.shop, false);
   }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.productsService.findOne(+id);
-  // }
-  // END QUERY //
+  /**
+   * @desc find all is published
+   * @param { request.user } user
+   * @returns { JSON }
+   */
+  @ApiMessage('find all is published')
+  @Get('/published')
+  findAllIsPublished(@User() user: AuthUserDto): Promise<IProduct[]> {
+    return this.productsService.findAllIsPublishedOrDraft(user?.shop, true);
+  }
+  //END QUERY//
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
-  //   return this.productsService.update(+id, updateProductDto);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.productsService.remove(+id);
-  // }
+  //UPDATE//
+  @ApiMessage('publish a product')
+  @Patch('/published/:id')
+  publishOne(
+    @User() user: AuthUserDto,
+    @Param('id') id: Types.ObjectId
+  ) {
+    return this.productsService.publishOrUnpublishOne(user?.shop, id, true);
+  }
+  //END UPDATE//
 }

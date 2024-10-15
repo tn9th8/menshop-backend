@@ -5,6 +5,7 @@ import { ProductsRepository } from './products.repository';
 import { IProduct } from './schemas/product.schema';
 import { ProductsFactory } from './factory/products.factory';
 import { Types } from 'mongoose';
+import { isObjetId } from 'src/common/utils/mongo.util';
 
 @Injectable()
 export class ProductsService {
@@ -25,30 +26,37 @@ export class ProductsService {
     return result;
   }
 
-  async findAllIsDraft(shop: Types.ObjectId, limit: number = 60, skip: number = 0): Promise<IProduct[]> {
+  //QUERY//
+  async findAllIsPublishedOrDraft(shop: Types.ObjectId, isPublished: boolean, limit: number = 60, skip: number = 0): Promise<IProduct[]> {
     //todo: metadata
     let query = {};
     if (shop) {
       query = { ...query, shop };
     }
-    query = { ...query, isDraft: true };
-    const result = await this.productsRepository.findAllIsDraft(query, limit, skip);
+    query = { ...query, isPublished };
+    const result = await this.productsRepository.findAllIsPublishedOrDraft(query, limit, skip);
     return result;
   }
+  // END QUERY//
 
-  findAll() {
-    return `This action returns all products`;
+  //UPDATE//
+  async publishOrUnpublishOne(shop: Types.ObjectId, id: Types.ObjectId, isPublished: boolean) {
+    //check is objectId
+    if (!isObjetId(id)) {
+      throw new BadRequestException(`product id nên là một objectId, id: ${id}`);
+    }
+    //check is exist id
+    const foundDoc = await this.productsRepository.findByIdAndShop(id, shop);
+    if (!foundDoc) {
+      throw new BadRequestException(`product id không tìm thấy, id: ${id}`);
+    }
+    //update
+    const partialDoc = { isPublished };
+    const modifiedCount = await this.productsRepository.updateById(id, partialDoc);
+    if (!modifiedCount) {
+      throw new BadRequestException(`update product không thành công, id: ${id}`);
+    }
+    return { modifiedCount };
   }
-
-  findOne(id: number) {
-    return `This action returns a #${id} product`;
-  }
-
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} product`;
-  }
+  //END UPDATE//
 }

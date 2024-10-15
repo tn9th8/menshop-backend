@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { IProduct, Product } from './schemas/product.schema';
 import { CreateProductDto } from './dto/create-product.dto';
-import { FilterQuery } from 'mongoose';
+import { FilterQuery, Types } from 'mongoose';
 
 @Injectable()
 export class ProductsRepository {
@@ -16,8 +16,8 @@ export class ProductsRepository {
     const result = await this.productModel.create(createProductDto);
     return result;
   }
-
-  async findAllIsDraft(query: FilterQuery<IProduct>, limit: number, skip: number): Promise<IProduct[]> {
+  //QUERY//
+  async findAllIsPublishedOrDraft(query: FilterQuery<IProduct>, limit: number, skip: number): Promise<IProduct[]> {
     const result = await this.productModel.find(query)
       .populate('shop', 'name -_id') //email
       .sort({ updatedAt: -1 })
@@ -27,4 +27,20 @@ export class ProductsRepository {
       .exec();
     return result;
   }
+
+  async findByIdAndShop(_id: Types.ObjectId, shop: Types.ObjectId) {
+    const found = await this.productModel.find({ _id, shop });
+    if (!found) {
+      return null;
+    }
+    return found;
+  }
+  // END QUERY//
+
+  //UPDATE//
+  async updateById(_id: Types.ObjectId, partialDoc: Partial<IProduct>): Promise<number> {
+    const { modifiedCount } = await this.productModel.updateOne({ _id }, partialDoc);
+    return modifiedCount;
+  }
+  //END UPDATE//
 }
