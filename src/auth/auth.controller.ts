@@ -11,7 +11,7 @@ import { SignInDto } from './dto/sign-in.dto';
 import { LocalGuard } from './passport/local.guard';
 
 @ApiTags('Auth Module for Admins')
-@Controller('adm/auth')
+@Controller('admin/auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) { }
 

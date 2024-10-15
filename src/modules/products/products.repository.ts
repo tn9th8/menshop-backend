@@ -3,9 +3,10 @@ import { InjectModel } from '@nestjs/mongoose';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { IProduct, Product } from './schemas/product.schema';
 import { CreateProductDto } from './dto/create-product.dto';
+import { FilterQuery } from 'mongoose';
 
 @Injectable()
-export class ProductsRepo {
+export class ProductsRepository {
   constructor(
     @InjectModel(Product.name)
     private readonly productModel: SoftDeleteModel<IProduct>
@@ -16,9 +17,9 @@ export class ProductsRepo {
     return result;
   }
 
-  async findAllIsDraft(limit: number, skip: number, query: {}): Promise<IProduct[]> {
+  async findAllIsDraft(query: FilterQuery<IProduct>, limit: number, skip: number): Promise<IProduct[]> {
     const result = await this.productModel.find(query)
-      //.populate('shop', 'name email -_id')
+      .populate('shop', 'name -_id') //email
       .sort({ updatedAt: -1 })
       .skip(skip)
       .limit(limit)

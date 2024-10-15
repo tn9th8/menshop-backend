@@ -4,7 +4,7 @@ import { ProductsContext } from './factory/products.context';
 import { ProductsFactory } from './factory/products.factory';
 import { AdminProductsController } from './products.controller.admin';
 import { ClientProductsController } from './products.controller.client';
-import { ProductsRepo } from './products.repository';
+import { ProductsRepository } from './products.repository';
 import { ProductsService } from './products.service';
 import { Product, ProductSchema } from './schemas/product.schema';
 import { TopsService } from './types/tops/tops.service';
@@ -15,7 +15,7 @@ import { CustomService } from './types/custom/custom.service';
   controllers: [AdminProductsController, ClientProductsController],
   providers: [
     ProductsService,
-    ProductsRepo,
+    ProductsRepository,
     ProductsFactory,
     ProductsContext,
     CustomService,

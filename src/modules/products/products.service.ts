@@ -1,14 +1,15 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { ProductsRepo } from './products.repository';
+import { ProductsRepository } from './products.repository';
 import { IProduct } from './schemas/product.schema';
 import { ProductsFactory } from './factory/products.factory';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class ProductsService {
   constructor(
-    private readonly productsRepo: ProductsRepo,
+    private readonly productsRepository: ProductsRepository,
     private readonly productsFactory: ProductsFactory,
   ) { }
 
@@ -19,15 +20,19 @@ export class ProductsService {
     const isValid = this.productsFactory.isValidAttrs(attributes, categories);
     if (!isValid) { throw new BadRequestException('Invalid Product Attributes') };
 
-    const result = await this.productsRepo.create(createProductDto);
+    const result = await this.productsRepository.create(createProductDto);
     if (!result) { throw new BadRequestException('Create A Product Error'); }
     return result;
   }
 
-  async findAllIsDraft(limit: number = 60, skip: number = 0): Promise<IProduct[]> {
+  async findAllIsDraft(shop: Types.ObjectId, limit: number = 60, skip: number = 0): Promise<IProduct[]> {
     //todo: metadata
-    const query = { isDraft: true };
-    const result = await this.productsRepo.findAllIsDraft(limit, skip, query);
+    let query = {};
+    if (shop) {
+      query = { ...query, shop };
+    }
+    query = { ...query, isDraft: true };
+    const result = await this.productsRepository.findAllIsDraft(query, limit, skip);
     return result;
   }
 

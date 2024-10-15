@@ -1,13 +1,11 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { AuthUserDto } from 'src/auth/dto/auth-user.dto';
+import { ApiMessage } from 'src/common/decorators/api-message.decorator';
 import { User } from 'src/common/decorators/user.decorator';
 import { CreateProductDto } from './dto/create-product.dto';
-import { ProductsFactory } from './factory/products.factory';
-import { AuthUserDto } from 'src/auth/dto/auth-user.dto';
 import { ProductsService } from './products.service';
 import { IProduct } from './schemas/product.schema';
-import { ApiMessage } from 'src/common/decorators/api-message.decorator';
-import { Request } from 'express';
 
 @ApiTags('Products Module for Admins')
 @Controller('/admin/products')
@@ -16,9 +14,9 @@ export class AdminProductsController {
 
   // CREATE //
   /**
-   * @desc create one using factory
-   * @param { Dto } createProductDto
-   * @param { Request.user} user
+   * @desc create one
+   * @param { dto } createProductDto
+   * @param { user} user
    * @returns { JSON }
    */
   @ApiMessage('create a product')
@@ -36,15 +34,14 @@ export class AdminProductsController {
 
   // QUERY //
   /**
-   * @desc find All Is Draft
-   * @param { Request.user } user
+   * @desc find all is draft
+   * @param { user } user
    * @returns { JSON }
    */
   @ApiMessage('find all is draft')
   @Get('/draft')
   findAllIsDraft(@User() user: AuthUserDto): Promise<IProduct[]> {
-    //todo: ko lấy _id, timestamp
-    return this.productsService.findAllIsDraft();
+    return this.productsService.findAllIsDraft(user?.shop);
   }
 
   // @Get(':id')
