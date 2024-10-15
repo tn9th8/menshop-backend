@@ -6,6 +6,8 @@ import { User } from 'src/modules/users/schemas/user.scheme';
 import { UsersRepo } from 'src/modules/users/users.repo';
 import { SHOP_SAMPLES } from './sample/shop.samples';
 import { USER_SAMPLES } from './sample/user.samples';
+import { InjectConnection } from '@nestjs/mongoose';
+import mongoose, { Mongoose } from 'mongoose';
 
 @Injectable()
 export class DatabasesService implements OnModuleInit {
@@ -22,8 +24,8 @@ export class DatabasesService implements OnModuleInit {
         this.logger.log('>>> STARTING ON MODULE INIT...');
         const isInit = this.configService.get<boolean>('SHOULD_INIT');
         if (isInit) {
-            await this.initSamples(Shop.name, this.shopsRepo, SHOP_SAMPLES());
-            await this.initSamples(User.name, this.usersRepo, await USER_SAMPLES(this.configService));
+            // await this.initSamples(Shop.name, this.shopsRepo, SHOP_SAMPLES());
+            // await this.initSamples(User.name, this.usersRepo, await USER_SAMPLES(this.configService));
             //await this.initSamples('CATEGORY', this.typesRepo, CATEGORY_SAMPLES());
         }
     }

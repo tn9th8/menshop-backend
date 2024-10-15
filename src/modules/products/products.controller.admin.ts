@@ -27,14 +27,10 @@ export class AdminProductsController {
     @Body() createProductDto: CreateProductDto,
     @User() user: AuthUserDto
   ) {
-    return {
+    return this.productsService.create({
       ...createProductDto,
       shop: user?.shop || null,
-    };
-    // return this.productsService.create({
-    //   ...createProductDto,
-    //   shop: user?.shop,
-    // });
+    });
   }
   // END CREATE //
 

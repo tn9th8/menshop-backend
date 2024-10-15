@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument, SchemaTypes, Types } from "mongoose";
+import mongoose, { HydratedDocument, SchemaTypes, Types } from "mongoose";
 import { ProductAnnotationEnum } from "src/common/enums/product.enum";
 import { ProductStatusEnum } from "src/common/enums/status.enum";
 import { IBaseDocument } from "src/common/interfaces/base-document.interface";
@@ -10,11 +10,13 @@ import { Need } from "src/modules/needs/shemas/need.schema";
 import { Shop } from "src/modules/shops/schemas/shop.schema";
 import { StockModel } from "src/modules/stock-models/schemas/stock-model.schema";
 import {
-    ProductAsset, ProductAssetSchema,
-    ProductAttribute, ProductAttributeSchema,
-    ProductSize, ProductSizeSchema,
-    ProductVariation, ProductVariationSchema
+    ProductAsset,
+    ProductAttribute,
+    ProductSize,
+    ProductVariation,
 } from "./nested-types.schema";
+
+mongoose.set('applyPluginsToChildSchemas', false);
 
 export type ProductDocument = HydratedDocument<Product>;
 export type IProduct = ProductDocument & IBaseDocument;
@@ -57,16 +59,16 @@ export class Product {
     @Prop({ type: [String] }) //default []
     annotations: ProductAnnotationEnum[];
 
-    @Prop({ type: ProductVariationSchema, default: null })
+    @Prop({ type: Object, default: null })
     variation: ProductVariation;
 
-    @Prop({ type: ProductSizeSchema, default: null })
+    @Prop({ type: Object, default: null })
     size: ProductSize;
 
-    @Prop({ type: ProductAssetSchema, required: true })
+    @Prop({ type: Object, required: true })
     asset: ProductAsset;
 
-    @Prop({ type: [ProductAttributeSchema], required: true }) //mongodb attribute pattern
+    @Prop({ type: [Object], required: true }) //mongodb attribute pattern
     attributes: ProductAttribute[];
 
     //refer

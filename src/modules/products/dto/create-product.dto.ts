@@ -1,34 +1,36 @@
 import { Type } from 'class-transformer';
 import { ArrayMinSize, MinLength, ValidateNested } from 'class-validator';
-import { arrayValidator, stringValidator, nestedValidator, objectIdValidator } from 'src/common/utils/validator.util';
+import { arrayMessage, stringMessage, nestedMessage, objectIdMessage } from 'src/common/utils/validator.util';
 import { ProductAssetDto, ProductAttributeDto } from './nested-types.dto';
 import { Types } from 'mongoose';
 import { IsObjectId } from 'src/common/decorators/is-object-id.decorator';
 
 export class CreateProductDto {
-    @MinLength(1, stringValidator('name'))
+    @MinLength(1, stringMessage('name'))
     name: string;
 
-    @MinLength(1, stringValidator('displayName'))
+    @MinLength(1, stringMessage('displayName'))
     displayName: string;
 
     description: string;
 
-    @ValidateNested(nestedValidator('asset')) //validate nested
+    @ValidateNested(nestedMessage('asset')) //validate nested
     @Type(() => ProductAssetDto) //transform the prop by type
     asset: ProductAssetDto;
 
-    @ArrayMinSize(1, arrayValidator('attributes'))
-    @ValidateNested({ each: true, ...nestedValidator('mỗi phần tử trong array này') })
+    @ArrayMinSize(1, arrayMessage('attributes'))
+    @ValidateNested({ each: true, ...nestedMessage('mỗi phần tử trong array này') })
     @Type(() => ProductAttributeDto)
     attributes: ProductAttributeDto[];
 
+    //ref
+    shop: Types.ObjectId;
 
-    @IsObjectId({ each: true, ...objectIdValidator('models') })
-    @ArrayMinSize(1, arrayValidator('models'))
+    @IsObjectId({ each: true, ...objectIdMessage('models') })
+    @ArrayMinSize(1, arrayMessage('models'))
     models: Types.ObjectId[];
 
-    @IsObjectId({ each: true, ...objectIdValidator('categories') })
-    @ArrayMinSize(1, arrayValidator('categories'))
+    @IsObjectId({ each: true, ...objectIdMessage('categories') })
+    @ArrayMinSize(1, arrayMessage('categories'))
     categories: Types.ObjectId[];
 }

@@ -9,6 +9,7 @@ import { ProductsService } from './products.service';
 import { Product, ProductSchema } from './schemas/product.schema';
 import { TopsService } from './types/tops/tops.service';
 import { WatchesService } from './types/watches/watches.service';
+import { CustomService } from './types/custom/custom.service';
 
 @Module({
   controllers: [AdminProductsController, ClientProductsController],
@@ -17,6 +18,7 @@ import { WatchesService } from './types/watches/watches.service';
     ProductsRepo,
     ProductsFactory,
     ProductsContext,
+    CustomService,
     TopsService,
     WatchesService,
   ],

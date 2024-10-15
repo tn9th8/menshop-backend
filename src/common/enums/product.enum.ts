@@ -11,6 +11,7 @@ export enum ProductTypeEnum {
     // GLASSES = '66fe6161b5a91ebef12c8fc2',
     TOPS = 'tops',
     WATCHES = 'watches',
+    CUSTOM = 'watches',
 }
 
 export enum ProductNeedEnum {

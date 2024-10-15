@@ -1,19 +1,19 @@
-export const stringValidator = (attribute: string) => {
+export const stringMessage = (attribute: string) => {
     return { message: `${attribute} nên là một string không rỗng` };
 }
 
-export const notEmptyValidator = (attribute: string) => {
+export const notEmptyMessage = (attribute: string) => {
     return { message: `${attribute} không là empty/null/undefined` };
 }
 
-export const arrayValidator = (attribute: string) => {
+export const arrayMessage = (attribute: string) => {
     return { message: `${attribute} nên là một array không rỗng` };
 }
 
-export const nestedValidator = (attribute: string) => {
+export const nestedMessage = (attribute: string) => {
     return { message: `${attribute} nên là một object` };
 }
 
-export const objectIdValidator = (attribute: string) => {
+export const objectIdMessage = (attribute: string) => {
     return { message: `${attribute} nên là một objectId` };
 }

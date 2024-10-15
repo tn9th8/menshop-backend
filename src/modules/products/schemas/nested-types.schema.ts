@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import mongoose from "mongoose";
 
 /**
  * define Prop() variation
@@ -66,31 +67,32 @@ export const ProductSizeSchema = SchemaFactory.createForClass(ProductSize);
 /**
  * define Prop() Attribute
  */
-@Schema()
-export class ProductAttribute {
-    @Prop({ required: true })
-    name: string;
+// @Schema()
+// export class ProductAttribute {
+//     @Prop({ required: true })
+//     name: string;
 
-    @Prop({ required: true })
-    value: string;
+//     @Prop({ required: true })
+//     value: string;
 
-    @Prop({ required: false })
-    link: string;
-}
+//     @Prop({ required: false })
+//     link: string;
+// }
 
-export const ProductAttributeSchema = SchemaFactory.createForClass(ProductAttribute);
+// export const ProductAttributeSchema = SchemaFactory.createForClass(ProductAttribute);
 
 /**
  * another approach
  */
-// export interface IAttribute {
-//     name: string;
-//     value: string;
-//     link?: string
-// }
+export interface ProductAttribute {
+    name: string;
+    value: string;
+    link?: string
+}
 
-// export const AttributeSchema = new Schema<IAttribute>({
-//     name: { type: String, required: true },
-//     value: { type: String, required: true },
-//     link: { type: String, required: false }
-// });
+export const ProductAttributeSchema = new mongoose.Schema<ProductAttribute>({
+    name: { type: String, required: true },
+    value: { type: String, required: true },
+    link: { type: String, required: false }
+});
+

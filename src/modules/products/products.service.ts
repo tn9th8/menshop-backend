@@ -12,17 +12,17 @@ export class ProductsService {
     private readonly productsFactory: ProductsFactory,
   ) { }
 
-  // async create(createProductDto: CreateProductDto): Promise<IProduct> {
-  //   const { shop, type, attributes } = createProductDto;
-  //   if (!shop) { throw new BadRequestException(`Invalid Product Shop: ${shop}`) };
+  async create(createProductDto: CreateProductDto): Promise<IProduct> {
+    const { attributes, shop, categories } = createProductDto;
+    if (!shop) { throw new BadRequestException(`Invalid Product Shop: ${shop}`) };
 
-  //   const isValid = this.productsFactory.isValidAttrs(attributes, type);
-  //   if (!isValid) { throw new BadRequestException('Invalid Product Attributes') };
+    const isValid = this.productsFactory.isValidAttrs(attributes, categories);
+    if (!isValid) { throw new BadRequestException('Invalid Product Attributes') };
 
-  //   const result = await this.productsRepo.create(createProductDto);
-  //   if (!result) { throw new BadRequestException('Create A Product Error'); }
-  //   return result;
-  // }
+    const result = await this.productsRepo.create(createProductDto);
+    if (!result) { throw new BadRequestException('Create A Product Error'); }
+    return result;
+  }
 
   async findAllIsDraft(limit: number = 60, skip: number = 0): Promise<IProduct[]> {
     //todo: metadata
