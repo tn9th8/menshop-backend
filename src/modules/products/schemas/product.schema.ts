@@ -14,81 +14,80 @@ import {
     ProductAttribute, ProductAttributeSchema,
     ProductSize, ProductSizeSchema,
     ProductVariation, ProductVariationSchema
-} from "./nested.schemas";
+} from "./nested-types.schema";
 
 export type ProductDocument = HydratedDocument<Product>;
 export type IProduct = ProductDocument & IBaseDocument;
 
 @Schema()
 export class Product {
-    //required
-    @Prop({ trim: true, required: true })
-    name: string; //id code
+    @Prop({ trim: true, required: true }) //id code
+    name: string;
 
     @Prop({ trim: true, required: true })
     displayName: string;
 
-    @Prop()
-    slug: string; //plugin
+    @Prop() //plugin
+    slug: string;
 
-    @Prop({ trim: true, required: true })
+    @Prop({ trim: true, default: null })
     description: string;
 
-    @Prop({ required: true })
+    @Prop({ default: 0 })
     price: number;
 
-    @Prop({ required: true })
+    @Prop({ default: null })
     maxPrice: number;
 
-    @Prop()
+    @Prop({ default: null })
     discountPrice: number;
 
-    @Prop()
+    @Prop({ default: null })
     maxDiscountPrice: number;
 
-    @Prop()
-    discount: number; //unit: %
+    @Prop({ default: null })
+    discount: number; //%
 
-    @Prop()
-    maxDiscount: number; //unit: %
+    @Prop({ default: null })
+    maxDiscount: number;
 
-    @Prop(ratingStarProp)
+    @Prop(ratingStarProp) //default 5.0
     ratingStar: number;
 
-    @Prop({ type: [String], required: true })
+    @Prop({ type: [String] }) //default []
     annotations: ProductAnnotationEnum[];
 
-    @Prop({ type: ProductVariationSchema, required: true })
+    @Prop({ type: ProductVariationSchema, default: null })
     variation: ProductVariation;
 
-    @Prop({ type: ProductSizeSchema, required: true })
+    @Prop({ type: ProductSizeSchema, default: null })
     size: ProductSize;
 
-    @Prop({ type: [ProductAttributeSchema], required: true })
-    attributes: ProductAttribute[] //mongodb attribute pattern
-
     @Prop({ type: ProductAssetSchema, required: true })
-    assets: ProductAsset;
+    asset: ProductAsset;
+
+    @Prop({ type: [ProductAttributeSchema], required: true }) //mongodb attribute pattern
+    attributes: ProductAttribute[];
 
     //refer
     @Prop({ type: SchemaTypes.ObjectId, ref: Shop.name, required: true })
     shop: Types.ObjectId;
 
-    @Prop({ type: SchemaTypes.ObjectId, ref: Brand.name, required: true })
+    @Prop({ type: SchemaTypes.ObjectId, ref: Brand.name, default: null })
     brand: Types.ObjectId;
 
     @Prop({ type: [SchemaTypes.ObjectId], ref: StockModel.name, required: true })
-    model: Types.ObjectId[];
+    models: Types.ObjectId[];
 
     @Prop({ type: [SchemaTypes.ObjectId], ref: Category.name, required: true })
     categories: Types.ObjectId[];
 
-    @Prop({ type: [SchemaTypes.ObjectId], ref: Need.name, required: true })
+    @Prop({ type: [SchemaTypes.ObjectId], ref: Need.name, default: null })
     needs: Types.ObjectId[];
 
     //no select
-    @Prop({ index: true, default: false, select: false })
-    isPublished: boolean; //draft or published
+    @Prop({ index: true, default: false, select: false }) //draft or published
+    isPublished: boolean;
 
     @Prop()
     publishedDate: Date;

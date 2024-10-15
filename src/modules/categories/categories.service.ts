@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import mongoose, { ClientSession } from 'mongoose';
-import { CategoryDestinationEnum, CategoryLevelEnum } from 'src/common/enums/category.enum';
+import { CategoryLevelEnum } from 'src/common/enums/category.enum';
 import { isObjetId } from 'src/common/utils/mongo.util';
 import { CategoriesRepository } from './categories.repository';
 import { CreateCategoryDto } from './dto/create-category.dto';
@@ -29,9 +29,9 @@ export class CategoriesService {
     }
     //create
     switch (level) {
-      case CategoryLevelEnum.PARENT:
+      case CategoryLevelEnum.LV1:
         return await this.createParent(createCategoryDto, session);
-      case CategoryLevelEnum.CHILD:
+      case CategoryLevelEnum.LV2:
         return await this.createChild(createCategoryDto, session);
       default:
         throw new BadRequestException(`level không hợp lệ: ${level}`);
@@ -60,9 +60,9 @@ export class CategoriesService {
     }
     //push it to its parent
     await this.pushToParents(
-      createResult._id, parentCategories, CategoryDestinationEnum.CATEGORY, session);
+      createResult._id, parentCategories, 'CategoryDestinationEnum.CATEGORY', session);
     await this.pushToParents(
-      createResult._id, parentCollections, CategoryDestinationEnum.COLLECTION, session);
+      createResult._id, parentCollections, 'CategoryDestinationEnum.COLLECTION', session);
     return createResult;
   }
 
@@ -78,7 +78,7 @@ export class CategoriesService {
     }
     //push
     for (const parentId of parentIds) {
-      const parentDoc = await this.findByIdAndLevel(parentId, CategoryLevelEnum.PARENT);
+      const parentDoc = await this.findByIdAndLevel(parentId, CategoryLevelEnum.LV1);
       (parentDoc[destinationAttr] as mongoose.Types.ObjectId[]).push(childId);
       const updateResult = await this.categoriesRepository.updateById(
         parentId,
@@ -110,7 +110,7 @@ export class CategoriesService {
       return true;
     }
     for (const id of childIds) {
-      await this.findByIdAndLevel(id, CategoryLevelEnum.CHILD);
+      await this.findByIdAndLevel(id, CategoryLevelEnum.LV2);
     }
     return true;
   }

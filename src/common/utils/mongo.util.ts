@@ -16,7 +16,7 @@ export const isObjetId = (id: string | Types.ObjectId): boolean => {
 //>>> PROP
 /**
  * Prop() ratingStar
- * schema product
+ * @schema product
  */
 export const ratingStarProp = {
     default: 5.0,
@@ -24,9 +24,9 @@ export const ratingStarProp = {
         validator: (value: number) => value >= 1.0 && value <= 5.0,
         message: 'ratingsAverage nên ở ở giữa 1.0 và 5.0'
     },
+    set: (value: number) => Math.round(value * 10) / 10 //4.648 => 46.48 => 46 => 4.6
     // min: [1.0, 'ratingsAverage is not under 1.0'], //bug
     // max: [5.0, 'ratingsAverage is not above 5.0'],
-    set: (value: number) => Math.round(value * 10) / 10 //4.648 => 46.48 => 46 => 4.6
 };
 
 //>>>PLUGINS

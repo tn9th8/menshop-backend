@@ -2,15 +2,16 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ProductsContext } from './factory/products.context';
 import { ProductsFactory } from './factory/products.factory';
-import { ProductsController } from './products.controller';
-import { ProductsRepo } from './products.repo';
+import { AdminProductsController } from './products.controller.admin';
+import { ClientProductsController } from './products.controller.client';
+import { ProductsRepo } from './products.repository';
 import { ProductsService } from './products.service';
 import { Product, ProductSchema } from './schemas/product.schema';
-import { WatchesService } from './types/watches/watches.service';
 import { TopsService } from './types/tops/tops.service';
+import { WatchesService } from './types/watches/watches.service';
 
 @Module({
-  controllers: [ProductsController],
+  controllers: [AdminProductsController, ClientProductsController],
   providers: [
     ProductsService,
     ProductsRepo,

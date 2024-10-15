@@ -8,16 +8,16 @@ export class ProductAsset {
     @Prop({ required: true, default: true })
     thumb: string;
 
-    @Prop({ required: true })
+    @Prop({ default: null })
     video: string;
 
-    @Prop({ type: [String], required: true })
+    @Prop({ type: [String] }) //default []
     images: string[];
 
-    @Prop({ type: [String], required: true })
+    @Prop({ type: [String] })
     variationImages: string[];
 
-    @Prop({ type: String, required: true })
+    @Prop({ default: null })
     sizeChartImage: string;
 }
 
