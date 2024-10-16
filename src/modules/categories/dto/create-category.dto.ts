@@ -1,6 +1,6 @@
 import { IsEnum, IsNotEmpty, IsString } from "class-validator";
 import mongoose from "mongoose";
-import { CategoryLevelEnum, CategoryTypeEnum } from "src/common/enums/category.enum";
+import { CategoryLevelEnum } from "src/common/enums/category.enum";
 
 
 export class CreateCategoryDto {
@@ -18,11 +18,6 @@ export class CreateCategoryDto {
 
     @IsEnum(CategoryLevelEnum, { message: 'level không hợp lệ' }) //default not empty
     level: CategoryLevelEnum;
-
-    @IsEnum(CategoryTypeEnum, { message: 'type không hợp lệ' }) //default not empty
-    type: CategoryTypeEnum;
-
-    // position: number;
 
     parentCategories?: mongoose.Types.ObjectId[];
 

@@ -17,6 +17,8 @@ import { timestampsPlugin } from './common/utils/mongo.util';
 import { FilesModule } from './files/files.module';
 import { ShopsModule } from './modules/shops/shops.module';
 import { CategoriesModule } from './modules/categories/categories.module';
+import mongoose from 'mongoose';
+import { connect } from 'http2';
 
 @Module({
   controllers: [AppController],

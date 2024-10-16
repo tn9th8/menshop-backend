@@ -1,5 +1,3 @@
-import { CategoryTypeEnum } from "src/common/enums/category.enum";
-import { ProductTypeEnum } from "src/common/enums/product.enum";
 
 export const CATEGORY_SAMPLES = () => {
     return [

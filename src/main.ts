@@ -10,6 +10,7 @@ import { SignInDto } from './auth/dto/sign-in.dto';
 import metadata from './metadata';
 import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import mongoose from 'mongoose';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);

@@ -1,5 +1,6 @@
+import { ProductAttributeDto } from "../dto/nested-types.dto";
 import { IProduct } from "../schemas/product.schema";
 
 export interface IProductsStrategy {
-    isValidAttrs(inputAttrs: [{ name: string }]): boolean;
+    isValidAttrs(attributes: ProductAttributeDto[]): boolean;
 }

@@ -1,56 +1,36 @@
-import { IsArray, IsNotEmpty, IsNumber, IsString } from 'class-validator';
-import mongoose from 'mongoose';
+import { Type } from 'class-transformer';
+import { ArrayMinSize, MinLength, ValidateNested } from 'class-validator';
+import { isArrayMessage, isStringMessage, isObjectMessage, isObjectIdMessage } from 'src/common/utils/validator.util';
+import { ProductAssetDto, ProductAttributeDto } from './nested-types.dto';
+import { Types } from 'mongoose';
+import { IsObjectId } from 'src/common/decorators/is-object-id.decorator';
 
 export class CreateProductDto {
-    _id: mongoose.Types.ObjectId;
-
-    @IsNotEmpty({ message: 'name không là empty/null/undefined' })
-    @IsString({ message: 'name nên là một string' })
+    @MinLength(1, isStringMessage('name'))
     name: string;
 
-    @IsNotEmpty({ message: 'code không là empty/null/undefined' })
-    @IsString({ message: 'code nên là một string' })
-    code: string;
+    @MinLength(1, isStringMessage('displayName'))
+    displayName: string;
 
-    @IsNotEmpty({ message: 'thumb không là empty/null/undefined' })
-    @IsString({ message: 'thumb nên là một string' })
-    thumb: string;
+    description: string;
 
-    // @IsArray({ message: 'assets nên là một array' })
-    // @IsString({ each: true, message: 'each assets nên là một string' })
-    assets: string[]; //can null
+    @ValidateNested(isObjectMessage('asset')) //validate nested
+    @Type(() => ProductAssetDto) //transform the prop by type
+    asset: ProductAssetDto;
 
-    // @IsArray({ message: 'hashtags nên là một array' })
-    // @IsString({ each: true, message: 'each hashtags nên là một string' })
-    hashtags: string[]; //can null
+    @ArrayMinSize(1, isArrayMessage('attributes'))
+    @ValidateNested({ each: true, ...isObjectMessage('mỗi phần tử trong array này') })
+    @Type(() => ProductAttributeDto)
+    attributes: ProductAttributeDto[];
 
-    @IsArray({ message: 'variations nên là một array' })
-    @IsString({ each: true, message: 'each variations nên là một string' })
-    variations: string[];
+    //ref
+    shop: Types.ObjectId;
 
-    @IsString({ message: 'thumb nên là một string' })
-    description: string; //can null
+    @IsObjectId({ each: true, ...isObjectIdMessage('models') })
+    @ArrayMinSize(1, isArrayMessage('models'))
+    models: Types.ObjectId[];
 
-    @IsNumber({}, { message: 'weight nên là một number' })
-    weight: number;
-
-    @IsNumber({}, { message: 'basePrice nên là một number' })
-    basePrice: number;
-
-    @IsNumber({}, { message: 'listedPrice nên là một number' })
-    listedPrice: number;
-
-    // @IsNumber({}, { message: 'salePrice nên là một number' })
-    salePrice: number; //can null
-
-    // refer
-    shop: mongoose.Types.ObjectId;
-
-    // @IsNotEmpty({ message: 'type không là empty/null/undefined' })
-    // @IsObjectId({ message: 'type nên là objectId' })
-    // type: mongoose.Types.ObjectId;
-    type: string;
-
-    @IsNotEmpty({ message: 'attributes không là empty/null/undefined' })
-    attributes: [{ name: string, value: string }];
+    @IsObjectId({ each: true, ...isObjectIdMessage('categories') })
+    @ArrayMinSize(1, isArrayMessage('categories'))
+    categories: Types.ObjectId[];
 }
