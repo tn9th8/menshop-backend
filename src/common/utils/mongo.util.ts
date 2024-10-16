@@ -1,5 +1,4 @@
-import { BadRequestException } from "@nestjs/common";
-import mongoose, { Schema, Types } from "mongoose";
+import { Schema, Types } from "mongoose";
 import slugify from "slugify";
 
 //>>> METHODS
@@ -8,9 +7,19 @@ import slugify from "slugify";
  * @param id string or ObjectId
  * @returns boolean
  */
-export const isObjetId = (id: string | Types.ObjectId): boolean => {
-    if (!mongoose.Types.ObjectId.isValid(id)) { return false; }
-    return true;
+export const convertToObjetId = (id: string | Types.ObjectId): Types.ObjectId => {
+    try {
+        return new Types.ObjectId(id);
+    } catch (error) {
+        return null;
+    }
+}
+
+export const buildQueryByShop = (shop: Types.ObjectId, query?: object): object => {
+    if (shop) {
+        query = { ...query, shop };
+    }
+    return query;
 }
 
 //>>> PROP

@@ -23,8 +23,8 @@ export class AdminProductsController {
   @ApiMessage('create a product')
   @Post()
   create(
+    @User() user: AuthUserDto,
     @Body() createProductDto: CreateProductDto,
-    @User() user: AuthUserDto
   ) {
     return this.productsService.create({
       ...createProductDto,
@@ -42,7 +42,7 @@ export class AdminProductsController {
   @ApiMessage('find all is draft')
   @Get('/draft')
   findAllIsDraft(@User() user: AuthUserDto): Promise<IProduct[]> {
-    return this.productsService.findAllIsPublishedOrDraft(user?.shop, false);
+    return this.productsService.findAllByIsPublished(user?.shop, false);
   }
 
   /**
@@ -53,7 +53,7 @@ export class AdminProductsController {
   @ApiMessage('find all is published')
   @Get('/published')
   findAllIsPublished(@User() user: AuthUserDto): Promise<IProduct[]> {
-    return this.productsService.findAllIsPublishedOrDraft(user?.shop, true);
+    return this.productsService.findAllByIsPublished(user?.shop, true);
   }
   //END QUERY//
 
@@ -64,7 +64,16 @@ export class AdminProductsController {
     @User() user: AuthUserDto,
     @Param('id') id: Types.ObjectId
   ) {
-    return this.productsService.publishOrUnpublishOne(user?.shop, id, true);
+    return this.productsService.updateIsPublished(user?.shop, id, true);
+  }
+
+  @ApiMessage('publish a product')
+  @Patch('/unpublished/:id')
+  unpublishOne(
+    @User() user: AuthUserDto,
+    @Param('id') id: Types.ObjectId
+  ) {
+    return this.productsService.updateIsPublished(user?.shop, id, false);
   }
   //END UPDATE//
 }

@@ -1,19 +1,19 @@
-export const stringMessage = (attribute: string) => {
+export const isStringMessage = (attribute: string) => {
     return { message: `${attribute} nên là một string không rỗng` };
 }
 
-export const notEmptyMessage = (attribute: string) => {
+export const isNotEmptyMessage = (attribute: string) => {
     return { message: `${attribute} không là empty/null/undefined` };
 }
 
-export const arrayMessage = (attribute: string) => {
+export const isArrayMessage = (attribute: string) => {
     return { message: `${attribute} nên là một array không rỗng` };
 }
 
-export const nestedMessage = (attribute: string) => {
+export const isObjectMessage = (attribute: string) => {
     return { message: `${attribute} nên là một object` };
 }
 
-export const objectIdMessage = (attribute: string) => {
+export const isObjectIdMessage = (attribute: string) => {
     return { message: `${attribute} nên là một objectId` };
 }

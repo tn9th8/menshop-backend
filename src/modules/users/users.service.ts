@@ -6,7 +6,7 @@ import mongoose from 'mongoose';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { SignUpDto } from 'src/auth/dto/sign-up.dto';
 import { ICreateResult, IDeleteResult, IUpdateResult } from 'src/common/interfaces/persist-result.interface';
-import { isObjetId } from 'src/common/utils/mongo.util';
+import { convertToObjetId } from 'src/common/utils/mongo.util';
 import { hashPass } from 'src/common/utils/security.util';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -74,7 +74,7 @@ export class UsersService {
   }
 
   async findById(_id: string): Promise<IUser | undefined> {
-    isObjetId(_id);
+    convertToObjetId(_id);
     const user = await this.userModel.findById(_id).select('-password');
     return user;
   }
@@ -86,7 +86,7 @@ export class UsersService {
 
   async update(updateUserDto: UpdateUserDto): Promise<IUpdateResult> {
     const { id, email, password, phone, ...updateFields } = updateUserDto;
-    isObjetId(id);
+    convertToObjetId(id);
     const result = await this.userModel.updateOne({ _id: id }, { ...updateFields },);
     return result;
   }
@@ -108,7 +108,7 @@ export class UsersService {
   }
 
   async remove(_id: string): Promise<IDeleteResult> {
-    isObjetId(_id);
+    convertToObjetId(_id);
     const result = await this.userModel.softDelete({ _id })
     return result;
 

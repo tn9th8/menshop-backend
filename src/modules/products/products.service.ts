@@ -1,11 +1,11 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { Types } from 'mongoose';
+import { buildQueryByShop, convertToObjetId } from 'src/common/utils/mongo.util';
 import { CreateProductDto } from './dto/create-product.dto';
-import { UpdateProductDto } from './dto/update-product.dto';
+import { ProductsFactory } from './factory/products.factory';
 import { ProductsRepository } from './products.repository';
 import { IProduct } from './schemas/product.schema';
-import { ProductsFactory } from './factory/products.factory';
-import { Types } from 'mongoose';
-import { isObjetId } from 'src/common/utils/mongo.util';
+import { isObjectIdMessage, notFoundIdMessage } from 'src/common/utils/exception.util';
 
 @Injectable()
 export class ProductsService {
@@ -27,35 +27,30 @@ export class ProductsService {
   }
 
   //QUERY//
-  async findAllIsPublishedOrDraft(shop: Types.ObjectId, isPublished: boolean, limit: number = 60, skip: number = 0): Promise<IProduct[]> {
+  async findAllByIsPublished(shop: Types.ObjectId, isPublished: boolean, limit: number = 60, skip: number = 0): Promise<IProduct[]> {
     //todo: metadata
-    let query = {};
-    if (shop) {
-      query = { ...query, shop };
-    }
-    query = { ...query, isPublished };
-    const result = await this.productsRepository.findAllIsPublishedOrDraft(query, limit, skip);
+    const xxx = buildQueryByShop(shop);
+    const query = buildQueryByShop(shop, { isPublished });
+    const result = await this.productsRepository.findAllByIsPublished(query, limit, skip);
     return result;
   }
-  // END QUERY//
+  //END QUERY//
 
   //UPDATE//
-  async publishOrUnpublishOne(shop: Types.ObjectId, id: Types.ObjectId, isPublished: boolean) {
+  async updateIsPublished(shop: Types.ObjectId, id: Types.ObjectId, isPublished: boolean) {
     //check is objectId
-    if (!isObjetId(id)) {
-      throw new BadRequestException(`product id nên là một objectId, id: ${id}`);
+    if (!convertToObjetId(id)) {
+      throw new BadRequestException(isObjectIdMessage('id của product', id));
     }
-    //check is exist id
-    const foundDoc = await this.productsRepository.findByIdAndShop(id, shop);
+    //check is existId
+    const query = buildQueryByShop(shop);
+    const foundDoc = await this.productsRepository.findByIdAndQuery(id, query);
     if (!foundDoc) {
-      throw new BadRequestException(`product id không tìm thấy, id: ${id}`);
+      throw new BadRequestException(notFoundIdMessage('id của product', id));
     }
     //update
     const partialDoc = { isPublished };
     const modifiedCount = await this.productsRepository.updateById(id, partialDoc);
-    if (!modifiedCount) {
-      throw new BadRequestException(`update product không thành công, id: ${id}`);
-    }
     return { modifiedCount };
   }
   //END UPDATE//

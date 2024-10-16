@@ -17,7 +17,7 @@ export class ProductsRepository {
     return result;
   }
   //QUERY//
-  async findAllIsPublishedOrDraft(query: FilterQuery<IProduct>, limit: number, skip: number): Promise<IProduct[]> {
+  async findAllByIsPublished(query: FilterQuery<IProduct>, limit: number, skip: number): Promise<IProduct[]> {
     const result = await this.productModel.find(query)
       .populate('shop', 'name -_id') //email
       .sort({ updatedAt: -1 })
@@ -28,8 +28,8 @@ export class ProductsRepository {
     return result;
   }
 
-  async findByIdAndShop(_id: Types.ObjectId, shop: Types.ObjectId) {
-    const found = await this.productModel.find({ _id, shop });
+  async findByIdAndQuery(_id: Types.ObjectId, query: object) {
+    const found = await this.productModel.find({ _id, ...query });
     if (!found) {
       return null;
     }

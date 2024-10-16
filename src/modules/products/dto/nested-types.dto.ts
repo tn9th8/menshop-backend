@@ -1,8 +1,8 @@
 import { MinLength } from "class-validator";
-import { stringMessage } from "src/common/utils/validator.util";
+import { isStringMessage } from "src/common/utils/validator.util";
 
 export class ProductAssetDto {
-    @MinLength(1, stringMessage('name'))
+    @MinLength(1, isStringMessage('name'))
     thumb: string;
 
     video: string;
@@ -15,10 +15,10 @@ export class ProductAssetDto {
 }
 
 export class ProductAttributeDto {
-    @MinLength(1, stringMessage('name'))
+    @MinLength(1, isStringMessage('name'))
     name: string;
 
-    @MinLength(1, stringMessage('value'))
+    @MinLength(1, isStringMessage('value'))
     value: string;
 
     link: string;

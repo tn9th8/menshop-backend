@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import mongoose, { ClientSession } from 'mongoose';
 import { CategoryLevelEnum } from 'src/common/enums/category.enum';
-import { isObjetId } from 'src/common/utils/mongo.util';
+import { convertToObjetId } from 'src/common/utils/mongo.util';
 import { CategoriesRepository } from './categories.repository';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
@@ -117,7 +117,7 @@ export class CategoriesService {
 
   async findByIdAndLevel(id: mongoose.Types.ObjectId, level: CategoryLevelEnum): Promise<ICategory> {
     //is objectId
-    if (!isObjetId(id as any)) {
+    if (!convertToObjetId(id as any)) {
       throw new BadRequestException(`${CategoryLevelEnum[level].toString().toLowerCase()}Id nên là một objectId: ${id}`);
     }
     //is right level
