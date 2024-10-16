@@ -13,7 +13,7 @@ import { SignUpDto } from '../dto/sign-up.dto';
 import { LocalGuard } from '../passport/local.guard';
 
 @ApiTags('Auth Module for Members')
-@Controller('mem/auth')
+@Controller('client/auth')
 export class MembersController {
     constructor(private readonly authService: AuthService) { }
 

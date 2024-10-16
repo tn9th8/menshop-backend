@@ -1,32 +1,42 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { User } from 'src/common/decorators/user.decorator';
-import { CreateProductDto } from './dto/create-product.dto';
-import { ProductsFactory } from './factory/products.factory';
-import { AuthUserDto } from 'src/auth/dto/auth-user.dto';
-import { ProductsService } from './products.service';
-import { IProduct } from './schemas/product.schema';
 import { ApiMessage } from 'src/common/decorators/api-message.decorator';
-import { Request } from 'express';
+import { ProductsService } from './products.service';
+import { SkipJwt } from 'src/common/decorators/skip-jwt.decorator';
 
-@ApiTags('Products Module for Admins')
+@ApiTags('Products Module For Client Side')
 @Controller('/client/products')
-export class ClientProductsController {
+export class ProductsControllerClient {
   constructor(private readonly productsService: ProductsService) { }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.productsService.findOne(+id);
-  // }
-  // END QUERY //
+  //QUERY//
+  @ApiMessage('Search all products for the client side')
+  @SkipJwt()
+  @Get('/search')
+  searchAll(
+    @Query('keyword') keyword: string,
+    @Query('category') category: string,
+    @Query('subcategory') subCategory: string,
+  ) {
+    return this.productsService.searchAll(keyword, category, subCategory);
+  }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
-  //   return this.productsService.update(+id, updateProductDto);
-  // }
+  @ApiMessage('Find all products for the client side')
+  @SkipJwt()
+  @Get()
+  findAll(
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+    @Query('sort-by') sort: string,
+  ) {
+    return this.productsService.findAll({ page, limit, sort });
+  }
 
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.productsService.remove(+id);
-  // }
+  @ApiMessage('Find a product for the client side')
+  @SkipJwt()
+  @Get('/:id([a-f0-9]{24})')
+  findDetail(@Param('id') id: string) {
+    return this.productsService.findDetail(id);
+  }
+  //END QUERY//
 }

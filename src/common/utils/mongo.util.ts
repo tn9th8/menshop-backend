@@ -1,7 +1,8 @@
-import { Schema, Types } from "mongoose";
+import { FilterQuery, Schema, Types } from "mongoose";
+import { elementAt } from "rxjs";
 import slugify from "slugify";
 
-//>>> METHODS
+//>>>METHODS
 /**
  * function check is objectId
  * @param id string or ObjectId
@@ -15,14 +16,32 @@ export const convertToObjetId = (id: string | Types.ObjectId): Types.ObjectId =>
     }
 }
 
-export const buildQueryByShop = (shop: Types.ObjectId, query?: object): object => {
-    if (shop) {
-        query = { ...query, shop };
+export const buildQueryByShop = <T>(shopId: Types.ObjectId, query?: FilterQuery<T>): FilterQuery<T> => {
+    if (shopId) {
+        query = { ...query, shopId };
     }
     return query;
 }
 
-//>>> PROP
+/**
+ * convert ['name', 'thumb'] => {name: 1, thumb: 1}
+ * @param select : array of the selected attributes
+ * @returns : object of the selected attributes
+ */
+export const convertSelectAttrs = (select = []) => {
+    return Object.fromEntries(select.map(attribute => [attribute, 1]));
+};
+
+/**
+ * convert ['name', 'thumb'] => {name: 0, thumb: 0}
+ * @param select : array of the unselected attributes
+ * @returns : object of the unselected attributes
+ */
+export const convertUnselectAttrs = (select = []) => {
+    return Object.fromEntries(select.map(attribute => [attribute, 0]));
+};
+
+//>>>PROP
 /**
  * Prop() ratingStar
  * @schema product

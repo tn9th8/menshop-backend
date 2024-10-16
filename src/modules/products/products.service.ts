@@ -1,11 +1,13 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Types } from 'mongoose';
+import { isObjectIdMessage, notFoundIdMessage } from 'src/common/utils/exception.util';
+import { removeNullishAttrs } from 'src/common/utils/index.util';
 import { buildQueryByShop, convertToObjetId } from 'src/common/utils/mongo.util';
 import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductsFactory } from './factory/products.factory';
 import { ProductsRepository } from './products.repository';
 import { IProduct } from './schemas/product.schema';
-import { isObjectIdMessage, notFoundIdMessage } from 'src/common/utils/exception.util';
 
 @Injectable()
 export class ProductsService {
@@ -14,6 +16,7 @@ export class ProductsService {
     private readonly productsFactory: ProductsFactory,
   ) { }
 
+  //CREATE//
   async create(createProductDto: CreateProductDto): Promise<IProduct> {
     const { attributes, shop, categories } = createProductDto;
     if (!shop) { throw new BadRequestException(`Invalid Product Shop: ${shop}`) };
@@ -25,33 +28,90 @@ export class ProductsService {
     if (!result) { throw new BadRequestException('Create A Product Error'); }
     return result;
   }
+  //END CREATE//
 
   //QUERY//
   async findAllByIsPublished(shop: Types.ObjectId, isPublished: boolean, limit: number = 60, skip: number = 0): Promise<IProduct[]> {
     //todo: metadata
-    const xxx = buildQueryByShop(shop);
     const query = buildQueryByShop(shop, { isPublished });
     const result = await this.productsRepository.findAllByIsPublished(query, limit, skip);
     return result;
   }
+
+  async searchAll(keyword: string, category: string, subCategory: string) {
+    const regexKeyword = new RegExp(keyword);
+    const categories = [category, subCategory];
+    const result = await this.productsRepository.searchAll(regexKeyword, categories);
+    const sum = result.length;
+    return {
+      metadata: { sum },
+      result,
+    };
+  }
+
+  findAll({ limit = 50, page = 1, sort = 'ctime' }) {
+    const filter = { isPublished: true };
+    const select = ['name', 'displayName', 'price', 'discount', 'asset.thumb'];
+    const result = this.productsRepository.findAll(limit, page, sort, filter, select);
+    return result;
+  }
+
+  async findDetail(productId: string) {
+    //check is objectId
+    const objectId = convertToObjetId(productId);
+    if (!objectId) {
+      throw new BadRequestException(isObjectIdMessage('id của product', objectId));
+    }
+    //find
+    const filter = { productId: objectId, isPublished: true };
+    const unselect = ['__v'];
+    const populate = {
+      shop: {
+        path: 'shop',
+        select: ['name'],
+        unselect: ['_id']
+      },
+      categories: {
+        path: 'categories',
+        select: ['name', 'displayName'],
+        unselect: ['__v']
+      },
+      models: {
+        path: 'models',
+        select: ['name', 'sku'],
+        unselect: ['__v']
+      }
+    };
+    const foundDoc = await this.productsRepository.findDetail(filter, unselect, populate);
+    return foundDoc;
+  }
   //END QUERY//
 
   //UPDATE//
-  async updateIsPublished(shop: Types.ObjectId, id: Types.ObjectId, isPublished: boolean) {
+  async updateIsPublished(shop: Types.ObjectId, id: string, isPublished: boolean) {
     //check is objectId
-    if (!convertToObjetId(id)) {
-      throw new BadRequestException(isObjectIdMessage('id của product', id));
+    const objectId = convertToObjetId(id);
+    if (!objectId) {
+      throw new BadRequestException(isObjectIdMessage('id của product', objectId));
     }
     //check is existId
     const query = buildQueryByShop(shop);
-    const foundDoc = await this.productsRepository.findByIdAndQuery(id, query);
+    const foundDoc = await this.productsRepository.findByIdAndQuery(objectId, query);
     if (!foundDoc) {
-      throw new BadRequestException(notFoundIdMessage('id của product', id));
+      throw new BadRequestException(notFoundIdMessage('id của product', objectId));
     }
     //update
     const partialDoc = { isPublished };
-    const modifiedCount = await this.productsRepository.updateById(id, partialDoc);
+    const modifiedCount = await this.productsRepository.updateById(objectId, partialDoc);
     return { modifiedCount };
+  }
+
+  async updateOne(shopId: Types.ObjectId, payload: UpdateProductDto) {
+    payload = removeNullishAttrs(payload);
+    const { id: productId, attributes } = payload;
+    const query = buildQueryByShop(shopId, { productId });
+    const updatedProduct = await this.productsRepository.updateByQuery(query, payload);
+    return updatedProduct;
   }
   //END UPDATE//
 }

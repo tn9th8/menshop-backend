@@ -4,8 +4,8 @@ import { IBaseDocument } from "src/common/interfaces/base-document.interface";
 import { Shop } from "src/modules/shops/schemas/shop.schema";
 import { ModelSpecification, ModelSpecificationSchema } from "./nested.schemas";
 
-export type ModelDocument = HydratedDocument<StockModel>;
-export type IModel = ModelDocument & IBaseDocument;
+export type StockModelDocument = HydratedDocument<StockModel>;
+export type IStockModel = StockModelDocument & IBaseDocument;
 
 @Schema()
 export class StockModel {
