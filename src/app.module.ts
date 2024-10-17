@@ -19,6 +19,7 @@ import { ShopsModule } from './modules/shops/shops.module';
 import { CategoriesModule } from './modules/categories/categories.module';
 import mongoose from 'mongoose';
 import { connect } from 'http2';
+import { StockModelsModule } from './modules/stock-models/stock-models.module';
 
 @Module({
   controllers: [AppController],
@@ -76,10 +77,11 @@ import { connect } from 'http2';
     MailsModule,
     FilesModule,
     // Business Module
-    UsersModule,
-    ProductsModule,
     ShopsModule,
+    UsersModule,
     CategoriesModule,
+    ProductsModule,
+    StockModelsModule,
   ],
 })
 export class AppModule { }

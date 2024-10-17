@@ -101,3 +101,4 @@ export class Product {
 export const ProductSchema = SchemaFactory.createForClass(Product);
 ProductSchema.plugin(slugPlugin);
 ProductSchema.plugin(publishPlugin);
+ProductSchema.index({ displayName: 'text', description: 'text' })

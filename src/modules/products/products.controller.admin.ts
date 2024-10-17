@@ -7,10 +7,11 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { ProductsService } from './products.service';
 import { IProduct } from './schemas/product.schema';
 import { Types } from 'mongoose';
+import { UpdateProductDto } from './dto/update-product.dto';
 
 @ApiTags('Products Module for Admins')
 @Controller('/admin/products')
-export class AdminProductsController {
+export class ProductsControllerAdmin {
   constructor(private readonly productsService: ProductsService) { }
 
   //CREATE//
@@ -20,7 +21,7 @@ export class AdminProductsController {
    * @param { user} user
    * @returns { JSON }
    */
-  @ApiMessage('create a product')
+  @ApiMessage('create a product for admin side')
   @Post()
   create(
     @User() user: AuthUserDto,
@@ -28,7 +29,7 @@ export class AdminProductsController {
   ) {
     return this.productsService.create({
       ...createProductDto,
-      shop: user?.shop || null,
+      shop: user?.shop,
     });
   }
   //END CREATE//
@@ -39,7 +40,7 @@ export class AdminProductsController {
    * @param { request.user } user
    * @returns { JSON }
    */
-  @ApiMessage('find all is draft')
+  @ApiMessage('find all is draft for admin side')
   @Get('/draft')
   findAllIsDraft(@User() user: AuthUserDto): Promise<IProduct[]> {
     return this.productsService.findAllByIsPublished(user?.shop, false);
@@ -50,7 +51,7 @@ export class AdminProductsController {
    * @param { request.user } user
    * @returns { JSON }
    */
-  @ApiMessage('find all is published')
+  @ApiMessage('find all is published for admin side')
   @Get('/published')
   findAllIsPublished(@User() user: AuthUserDto): Promise<IProduct[]> {
     return this.productsService.findAllByIsPublished(user?.shop, true);
@@ -58,22 +59,31 @@ export class AdminProductsController {
   //END QUERY//
 
   //UPDATE//
-  @ApiMessage('publish a product')
+  @ApiMessage('publish a product for admin side')
   @Patch('/published/:id')
   publishOne(
     @User() user: AuthUserDto,
-    @Param('id') id: Types.ObjectId
+    @Param('id') id: string
   ) {
     return this.productsService.updateIsPublished(user?.shop, id, true);
   }
 
-  @ApiMessage('publish a product')
+  @ApiMessage('publish a product for admin side')
   @Patch('/unpublished/:id')
   unpublishOne(
     @User() user: AuthUserDto,
-    @Param('id') id: Types.ObjectId
+    @Param('id') id: string
   ) {
     return this.productsService.updateIsPublished(user?.shop, id, false);
+  }
+
+  @ApiMessage('update a product for admin side')
+  @Patch()
+  updateOne(
+    @User() user: AuthUserDto,
+    @Body() payload: UpdateProductDto
+  ) {
+    return this.productsService.updateOne(user?.shop, payload);
   }
   //END UPDATE//
 }

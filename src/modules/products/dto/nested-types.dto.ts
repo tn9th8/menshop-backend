@@ -2,7 +2,7 @@ import { MinLength } from "class-validator";
 import { isStringMessage } from "src/common/utils/validator.util";
 
 export class ProductAssetDto {
-    @MinLength(1, isStringMessage('name'))
+    @MinLength(1, isStringMessage('thumb'))
     thumb: string;
 
     video: string;
