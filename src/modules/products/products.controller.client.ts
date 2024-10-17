@@ -16,9 +16,12 @@ export class ProductsControllerClient {
   searchAll(
     @Query('keyword') keyword: string,
     @Query('category') category: string,
-    @Query('subcategory') subCategory: string,
+    @Query('page') page: number,
+    @Query('size') limit: number,
+    @Query('sort') sort: string,
+
   ) {
-    return this.productsService.searchAll(keyword, category, subCategory);
+    return this.productsService.searchAll(keyword, category, limit, page, sort);
   }
 
   @ApiMessage('Find all products for the client side')
@@ -26,8 +29,8 @@ export class ProductsControllerClient {
   @Get()
   findAll(
     @Query('page') page: number,
-    @Query('limit') limit: number,
-    @Query('sort-by') sort: string,
+    @Query('size') limit: number,
+    @Query('sort') sort: string,
   ) {
     return this.productsService.findAll({ page, limit, sort });
   }

@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { Types } from 'mongoose';
 import { isObjectIdMessage, notFoundIdMessage } from 'src/common/utils/exception.util';
 import { removeNullishAttrs } from 'src/common/utils/index.util';
-import { buildQueryByShop, convertToObjetId } from 'src/common/utils/mongo.util';
+import { buildQueryByShop, computeTotalItemsAndPages, convertToObjetId } from 'src/common/utils/mongo.util';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductsFactory } from './factory/products.factory';
@@ -38,21 +38,31 @@ export class ProductsService {
     return result;
   }
 
-  async searchAll(keyword: string, category: string, subCategory: string) {
-    const regexKeyword = new RegExp(keyword);
-    const categories = [category, subCategory];
-    const result = await this.productsRepository.searchAll(regexKeyword, categories);
-    const sum = result.length;
+  async searchAll(
+    keyword: string,
+    category: string,
+    limit = 50, page = 1, sort = 'relevant',
+    isPublished = true
+  ) {
+    const regWord = (new RegExp(keyword)).source;
+    const query = { category, isPublished };
+    const select = ['name', 'displayName', 'price', 'discount', 'asset.thumb'];
+
+    const { metadata, result } = await this.productsRepository.searchAll(
+      limit, page, sort, query, regWord, select
+    );
+    const { items, pages } = computeTotalItemsAndPages(metadata, limit);
+
     return {
-      metadata: { sum },
-      result,
+      metadata: { page, limit, items, pages },
+      result
     };
   }
 
-  findAll({ limit = 50, page = 1, sort = 'ctime' }) {
-    const filter = { isPublished: true };
+  findAll({ limit = 50, page = 1, sort = 'relevant' }) {
+    const query = { isPublished: true };
     const select = ['name', 'displayName', 'price', 'discount', 'asset.thumb'];
-    const result = this.productsRepository.findAll(limit, page, sort, filter, select);
+    const result = this.productsRepository.findAll(limit, page, sort, query, select);
     return result;
   }
 
