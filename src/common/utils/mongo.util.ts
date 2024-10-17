@@ -1,8 +1,24 @@
-import { FilterQuery, Schema, Types } from "mongoose";
+import { Expression, FilterQuery, Schema, Types } from "mongoose";
 import { elementAt } from "rxjs";
 import slugify from "slugify";
 
 //>>>METHODS
+export const computeSkipAndSort = (limit: number = 60, page: number = 1, rawSort: string = 'ctime') => {
+    const skip = limit * (page - 1);
+    const sort: Record<string, 1 | -1 | Expression.Meta> =
+        rawSort === 'ctime' ?
+            { updatedAt: -1 } :
+            { score: { $meta: 'textScore' } };
+    return { skip, sort };
+}
+
+export const computeTotalItemsAndPages = (metadata: any, limit: number = 60) => {
+    const items = metadata.count;
+    const pages = Math.ceil(items / limit);
+    return { items, pages };
+}
+
+
 /**
  * function check is objectId
  * @param id string or ObjectId
