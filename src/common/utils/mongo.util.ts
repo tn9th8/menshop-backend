@@ -1,14 +1,16 @@
 import { Expression, FilterQuery, Schema, Types } from "mongoose";
-import { elementAt } from "rxjs";
 import slugify from "slugify";
+import { SortBy } from "../enums/query.enum";
 
 //>>>METHODS
-export const computeSkipAndSort = (limit: number = 60, page: number = 1, rawSort: string = 'ctime') => {
+export const computeSkipAndSort = (
+    limit: number = 60, page: number = 1, rawSort: string = SortBy.POPULATE
+) => {
     const skip = limit * (page - 1);
     const sort: Record<string, 1 | -1 | Expression.Meta> =
-        rawSort === 'ctime' ?
+        rawSort === SortBy.CTIME ?
             { updatedAt: -1 } :
-            { score: { $meta: 'textScore' } };
+            { updatedAt: 1 };
     return { skip, sort };
 }
 
@@ -22,7 +24,7 @@ export const computeTotalItemsAndPages = (metadata: any, limit: number = 60) => 
 /**
  * function check is objectId
  * @param id string or ObjectId
- * @returns boolean
+ * @returns true or boolean
  */
 export const convertToObjetId = (id: string | Types.ObjectId): Types.ObjectId => {
     try {

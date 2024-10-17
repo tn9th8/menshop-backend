@@ -8,6 +8,7 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductsFactory } from './factory/products.factory';
 import { ProductsRepository } from './products.repository';
 import { IProduct } from './schemas/product.schema';
+import { SortBy } from 'src/common/enums/query.enum';
 
 @Injectable()
 export class ProductsService {
@@ -31,21 +32,28 @@ export class ProductsService {
   //END CREATE//
 
   //QUERY//
-  async findAllByIsPublished(shop: Types.ObjectId, isPublished: boolean, limit: number = 60, skip: number = 0): Promise<IProduct[]> {
+  async findAllByIsPublished(
+    shop: Types.ObjectId,
+    isPublished: boolean,
+    limit: number = 60, skip: number = 0
+  ): Promise<IProduct[]> {
     //todo: metadata
     const query = buildQueryByShop(shop, { isPublished });
     const result = await this.productsRepository.findAllByIsPublished(query, limit, skip);
     return result;
   }
 
-  async searchAll(
-    keyword: string,
-    category: string,
-    limit = 50, page = 1, sort = 'relevant',
-    isPublished = true
-  ) {
-    const regWord = (new RegExp(keyword)).source;
-    const query = { category, isPublished };
+  async searchAll({
+    keyword = '',
+    category = '',
+    page = 1, limit = 50,
+    sort = SortBy.RELEVANT.toString()
+  }) {
+    const regWord = keyword ? (new RegExp(keyword)).source : ''; //!falsy
+    const query = {
+      category: convertToObjetId(category),
+      isPublished: true
+    };
     const select = ['name', 'displayName', 'price', 'discount', 'asset.thumb'];
 
     const { metadata, result } = await this.productsRepository.searchAll(
@@ -59,8 +67,15 @@ export class ProductsService {
     };
   }
 
-  findAll({ limit = 50, page = 1, sort = 'relevant' }) {
-    const query = { isPublished: true };
+  findAll({
+    category = '',
+    page = 1, limit = 50,
+    sort = SortBy.POPULATE.toString()
+  }) {
+    const query = {
+      category: convertToObjetId(category),
+      isPublished: true
+    };
     const select = ['name', 'displayName', 'price', 'discount', 'asset.thumb'];
     const result = this.productsRepository.findAll(limit, page, sort, query, select);
     return result;
