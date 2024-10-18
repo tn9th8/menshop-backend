@@ -5,26 +5,26 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { softDeletePlugin } from 'soft-delete-plugin-mongoose';
 import { AppController } from './app.controller';
+import { AppRepository } from './app.repository';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { JwtGuard } from './auth/passport/jwt.guard';
-import { TransformInterceptor } from './core/interceptor/transform.interceptor';
-import { MailsModule } from './mails/mails.module';
-import { ProductsModule } from './modules/products/products.module';
-import { UsersModule } from './modules/users/users.module';
-import { DatabasesModule } from './databases/databases.module';
 import { timestampsPlugin } from './common/utils/mongo.util';
+import { TransformInterceptor } from './core/interceptor/transform.interceptor';
+import { DatabasesModule } from './databases/databases.module';
 import { FilesModule } from './files/files.module';
-import { ShopsModule } from './modules/shops/shops.module';
+import { MailsModule } from './mails/mails.module';
 import { CategoriesModule } from './modules/categories/categories.module';
-import mongoose from 'mongoose';
-import { connect } from 'http2';
+import { ProductsModule } from './modules/products/products.module';
+import { ShopsModule } from './modules/shops/shops.module';
 import { StockModelsModule } from './modules/stock-models/stock-models.module';
+import { UsersModule } from './modules/users/users.module';
 
 @Module({
   controllers: [AppController],
   providers: [
     AppService,
+    AppRepository,
     // bind to all endpoints
     {
       provide: APP_GUARD,
@@ -83,5 +83,6 @@ import { StockModelsModule } from './modules/stock-models/stock-models.module';
     ProductsModule,
     StockModelsModule,
   ],
+  exports: [AppRepository]
 })
 export class AppModule { }

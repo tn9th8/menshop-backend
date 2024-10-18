@@ -8,7 +8,7 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductsFactory } from './factory/products.factory';
 import { ProductsRepository } from './products.repository';
 import { IProduct } from './schemas/product.schema';
-import { SortBy } from 'src/common/enums/query.enum';
+import { ProductSortEnum } from 'src/common/enums/query.enum';
 
 @Injectable()
 export class ProductsService {
@@ -47,7 +47,7 @@ export class ProductsService {
     keyword = '',
     category = '',
     page = 1, limit = 50,
-    sort = SortBy.RELEVANT.toString()
+    sort = ProductSortEnum.RELEVANT.toString()
   }) {
     const regWord = keyword ? (new RegExp(keyword)).source : ''; //!falsy
     const query = {
@@ -70,7 +70,7 @@ export class ProductsService {
   findAll({
     category = '',
     page = 1, limit = 50,
-    sort = SortBy.POPULATE.toString()
+    sort = ProductSortEnum.POPULATE.toString()
   }) {
     const query = {
       category: convertToObjetId(category),

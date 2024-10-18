@@ -2,7 +2,12 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import mongoose from "mongoose";
 
 /**
- * define Prop() variation
+ * define a nest object ProductAsset for schema
+ * @property thumb: string,required
+ * @property video: string
+ * @property images: string[]
+ * @property variationImages: string[]
+ * @property sizeChartImage: string
  */
 @Schema()
 export class ProductAsset {

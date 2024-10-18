@@ -1,21 +1,22 @@
 import { Expression, FilterQuery, Schema, Types } from "mongoose";
 import slugify from "slugify";
-import { SortBy } from "../enums/query.enum";
+import { ProductSortEnum } from "../enums/query.enum";
+import { MongoSort } from "../interfaces/mongo.interface";
 
 //>>>METHODS
 export const computeSkipAndSort = (
-    limit: number = 60, page: number = 1, rawSort: string = SortBy.POPULATE
+    limit: number = 60, page: number = 1, rawSort: string = ProductSortEnum.POPULATE
 ) => {
     const skip = limit * (page - 1);
-    const sort: Record<string, 1 | -1 | Expression.Meta> =
-        rawSort === SortBy.CTIME ?
+    const sort: MongoSort =
+        rawSort === ProductSortEnum.CTIME ?
             { updatedAt: -1 } :
             { updatedAt: 1 };
     return { skip, sort };
 }
 
-export const computeTotalItemsAndPages = (metadata: any, limit: number = 60) => {
-    const items = metadata.count;
+export const computeTotalItemsAndPages = (meta: any, limit: number = 60) => {
+    const items = meta.count;
     const pages = Math.ceil(items / limit);
     return { items, pages };
 }
@@ -66,6 +67,7 @@ export const convertUnselectAttrs = (select = []) => {
  */
 export const ratingStarProp = {
     default: 5.0,
+    required: true,
     validate: {
         validator: (value: number) => value >= 1.0 && value <= 5.0,
         message: 'ratingsAverage nên ở ở giữa 1.0 và 5.0'

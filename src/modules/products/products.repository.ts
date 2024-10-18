@@ -31,11 +31,14 @@ export class ProductsRepository {
     return result;
   }
 
+  /**
+   * find one by id and query
+   * @param _id ObjectId
+   * @param query FilterQuery<IProduct>
+   * @returns a found document or nullish
+   */
   async findByIdAndQuery(_id: Types.ObjectId, query: object) {
     const found = await this.productModel.find({ _id, ...query });
-    if (!found) {
-      return null;
-    }
     return found;
   }
 
@@ -64,7 +67,7 @@ export class ProductsRepository {
     //skip, query, select
     const skip = limit * (page - 1);
     const { category, ...query } = rawQuery;
-    const inCategories = category ? { categories: { $elemMatch: { $eq: category } } } : {}; //!falsy
+    const inCategories = category ? { categories: { $elemMatch: { $eq: category } } } : {}; //!falsy: ?: || if() - falsy: if(!!)
     const select = convertSelectAttrs(selectArr);
 
     const [{ metadata, result }] = await this.productModel.aggregate([
@@ -95,7 +98,7 @@ export class ProductsRepository {
       }
     ]);
     return {
-      metadata: { count: metadata[0]?.count ?? 0 }, //!nullish
+      metadata: { count: metadata[0]?.count ?? 0 }, //!nullish: ?. ??
       result
     }
   }

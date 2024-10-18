@@ -6,7 +6,7 @@ import { IBaseDocument } from "src/common/interfaces/base-document.interface";
 import { publishPlugin, ratingStarProp, slugPlugin } from "src/common/utils/mongo.util";
 import { Brand } from "src/modules/brands/schemas/brand.schema";
 import { Category } from "src/modules/categories/schemas/category.schema";
-import { Need } from "src/modules/needs/shemas/need.schema";
+import { Need } from "src/modules/needs/schemas/need.schema";
 import { Shop } from "src/modules/shops/schemas/shop.schema";
 import { StockModel } from "src/modules/stock-models/schemas/stock-model.schema";
 import {
@@ -23,19 +23,19 @@ export type IProduct = ProductDocument & IBaseDocument;
 
 @Schema()
 export class Product {
-    @Prop({ trim: true, required: true }) //id code
+    @Prop({ trim: true, required: true }) //code
     name: string;
 
     @Prop({ trim: true, required: true })
     displayName: string;
 
-    @Prop() //plugin
+    @Prop({ required: true }) //plugin
     slug: string;
 
     @Prop({ trim: true, default: null })
     description: string;
 
-    @Prop({ default: 0 })
+    @Prop({ default: 0, required: true })
     price: number;
 
     @Prop({ default: null })
@@ -47,13 +47,13 @@ export class Product {
     @Prop({ default: null })
     maxDiscountPrice: number;
 
-    @Prop({ default: null })
-    discount: number; //%
+    @Prop({ default: null }) //%
+    discount: number;
 
     @Prop({ default: null })
     maxDiscount: number;
 
-    @Prop(ratingStarProp) //default 5.0
+    @Prop(ratingStarProp) //default 5.0, required: true
     ratingStar: number;
 
     @Prop({ type: [String] }) //default []
@@ -66,7 +66,7 @@ export class Product {
     size: ProductSize;
 
     @Prop({ type: Object, required: true })
-    asset: ProductAsset;
+    asset: ProductAsset; //todo: thumb, file
 
     @Prop({ type: [Object], required: true }) //mongodb attribute pattern
     attributes: ProductAttribute[];
@@ -88,13 +88,13 @@ export class Product {
     needs: Types.ObjectId[];
 
     //no select
-    @Prop({ index: true, default: false, select: false }) //draft or published
+    @Prop({ index: true, select: false, default: false, required: true }) //draft or published
     isPublished: boolean;
 
-    @Prop()
+    @Prop({ default: null }) //plugin //todo: method instead of plugin
     publishedDate: Date;
 
-    @Prop({ index: true, type: String, default: ProductStatusEnum.NORMAL, select: false })
+    @Prop({ index: true, type: String, default: ProductStatusEnum.NORMAL, select: false, required: true })
     status: ProductStatusEnum;
 }
 

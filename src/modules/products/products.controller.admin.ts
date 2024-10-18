@@ -9,7 +9,7 @@ import { IProduct } from './schemas/product.schema';
 import { Types } from 'mongoose';
 import { UpdateProductDto } from './dto/update-product.dto';
 
-@ApiTags('Products Module for Admins')
+@ApiTags('Products Module For Admin Side')
 @Controller('/admin/products')
 export class ProductsControllerAdmin {
   constructor(private readonly productsService: ProductsService) { }

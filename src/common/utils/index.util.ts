@@ -32,3 +32,24 @@ export const badRemoveNullishAttrs = <T>(object: T) => {
     });
     return object;
 }
+
+/**
+ * get and join all values of enum to string
+ * @param enumType enum
+ * @param join default ", "
+ * @returns a enum values string
+ */
+export const joinEnumValues = <T>(enumType: T, join: string = ", ") => {
+    const enumValues = Object.keys(enumType)
+        .filter((key) => {
+            const enumKey = isNaN(Number(key));
+            return enumKey;
+        })
+        .map((key) => {
+            //Type Safety: chỉ định key là 1 key type theo enum. So, ts suy ra value type. So, tránh lỗi runtime
+            const enumValue = enumType[key as keyof typeof enumType];
+            return enumValue;
+        })
+        .join(join);
+    return enumValues;
+}
