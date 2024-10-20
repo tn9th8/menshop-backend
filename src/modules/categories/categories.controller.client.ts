@@ -2,14 +2,17 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { ApiTags } from '@nestjs/swagger';
 
-@Controller('/clients/categories')
+@ApiTags('Categories Module For Client Side')
+@Controller('/client/categories')
 export class ClientsCategoriesController {
   constructor(private readonly categoriesService: CategoriesService) { }
 
   @Post()
   create(@Body() createCategoryDto: CreateCategoryDto) {
-    return this.categoriesService.create(createCategoryDto);
+    return createCategoryDto;
+    //return this.categoriesService.create(createCategoryDto);
   }
 
   @Get()

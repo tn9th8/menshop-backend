@@ -4,50 +4,49 @@ import { CategoryLevelEnum } from "src/common/enums/category.enum";
 import { IBaseDocument } from "src/common/interfaces/base-document.interface";
 import { slugPlugin } from "src/common/utils/mongo.util";
 import { Brand } from "src/modules/brands/schemas/brand.schema";
+import { Need } from "src/modules/needs/schemas/need.schema";
 import { Variation } from "src/modules/variations/schemas/variation.schema";
 
 export type CategoryDocument = HydratedDocument<Category>;
 export type ICategory = CategoryDocument & IBaseDocument;
 
-//plus: position
 @Schema()
 export class Category {
-    //required
-    @Prop({ trim: true, required: true })
+    @Prop({ required: true }) //code
     name: string;
 
-    @Prop({ trim: true, required: true })
+    @Prop({ required: true })
     displayName: string;
 
-    @Prop()
-    slug: string; //plugin
+    @Prop() //plugin
+    slug: string;
 
-    @Prop({ trim: true, required: true })
+    @Prop({ default: null })
     description: string;
 
-    @Prop({ type: Number, default: CategoryLevelEnum.LV1, required: true })
+    @Prop({ type: Number, required: true, default: CategoryLevelEnum.LV3 })
     level: CategoryLevelEnum;
 
-    @Prop({ default: true, required: true })
+    @Prop({ default: false })
     isOnBar: boolean;
 
-    @Prop({ type: [String], required: true })
+    @Prop({ type: [String], default: null })
     attributes: string[];
 
-    @Prop({ type: [String], required: true })
+    @Prop({ type: [String], default: null })
     specifications: string[];
 
     //ref
-    @Prop({ type: [SchemaTypes.ObjectId], ref: Category.name })
+    @Prop({ type: [SchemaTypes.ObjectId], ref: Category.name, default: null })
     children: Types.ObjectId[];
 
-    @Prop({ type: [SchemaTypes.ObjectId], ref: Brand.name })
+    @Prop({ type: [SchemaTypes.ObjectId], ref: Brand.name, default: null })
     brands: Types.ObjectId[];
 
-    @Prop({ type: [SchemaTypes.ObjectId], ref: Variation.name })
+    @Prop({ type: [SchemaTypes.ObjectId], ref: Variation.name, default: null })
     variations: Types.ObjectId[];
 
-    @Prop({ type: [SchemaTypes.ObjectId], ref: Variation.name })
+    @Prop({ type: [SchemaTypes.ObjectId], ref: Need.name, default: null })
     needs: Types.ObjectId[];
 }
 

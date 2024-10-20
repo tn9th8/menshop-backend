@@ -21,18 +21,19 @@ export class ProductsControllerClient {
     @Query('sort') sort: string,
 
   ) {
-    return this.productsService.searchAll(keyword, category, limit, page, sort);
+    return this.productsService.searchAll({ keyword, category, page, limit, sort });
   }
 
   @ApiMessage('Find all products for the client side')
   @SkipJwt()
   @Get()
   findAll(
+    @Query('category') category: string,
     @Query('page') page: number,
     @Query('size') limit: number,
     @Query('sort') sort: string,
   ) {
-    return this.productsService.findAll({ page, limit, sort });
+    return this.productsService.findAll({ category, page, limit, sort });
   }
 
   @ApiMessage('Find a product for the client side')

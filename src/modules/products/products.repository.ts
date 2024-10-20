@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery, QueryOptions, Types, UpdateQuery } from 'mongoose';
+import { FilterQuery, QueryOptions, Types, UpdateQuery, Expression } from 'mongoose';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { computeSkipAndSort, convertSelectAttrs, convertUnselectAttrs } from 'src/common/utils/mongo.util';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -31,35 +31,56 @@ export class ProductsRepository {
     return result;
   }
 
+  /**
+   * find one by id and query
+   * @param _id ObjectId
+   * @param query FilterQuery<IProduct>
+   * @returns a found document or nullish
+   */
   async findByIdAndQuery(_id: Types.ObjectId, query: object) {
     const found = await this.productModel.find({ _id, ...query });
-    if (!found) {
-      return null;
-    }
     return found;
   }
 
   async searchAll(
     limit: number, page: number,
-    rawSort: string, rawQuery: FilterQuery<IProduct>, keyword: string,
+    rawSort: string,
+    rawQuery: FilterQuery<IProduct>, keyword: string,
     selectArr: string[]
   ) {
-    const { skip, sort } = computeSkipAndSort(limit, page, rawSort);
-    const { category, ...query } = rawQuery;
-    console.log(query);
+    //search, score, sort
+    let fullTextSearch = {};
+    let score: {};
+    let sort: Record<string, 1 | -1 | Expression.Meta>;
+    if (!!keyword) {
+      //truthy
+      fullTextSearch = { $text: { $search: keyword } };
+      score = { $meta: 'textScore' };
+      sort = rawSort === 'relevant' ? { score: { $meta: 'textScore' } } : { updatedAt: -1 };
+    } else {
+      //falsy
+      fullTextSearch = {};
+      score = null;
+      sort = { updatedAt: -1 };
+    }
 
+    //skip, query, select
+    const skip = limit * (page - 1);
+    const { category, ...query } = rawQuery;
+    const inCategories = category ? { categories: { $elemMatch: { $eq: category } } } : {}; //!falsy: ?: || if() - falsy: if(!!)
     const select = convertSelectAttrs(selectArr);
+
     const [{ metadata, result }] = await this.productModel.aggregate([
       {
         $match: {
           ...query,
-          ...(category ? { categories: { $elemMatch: { $eq: category } } } : {}), //!nullish
-          $text: { $search: keyword }
+          ...inCategories,
+          ...fullTextSearch
         }
       },
       {
         $project: {
-          score: { $meta: 'textScore' },
+          score,
           ...select
         }
       },
@@ -77,19 +98,30 @@ export class ProductsRepository {
       }
     ]);
     return {
-      metadata: { count: metadata[0]?.count ?? 0 },
+      metadata: { count: metadata[0]?.count ?? 0 }, //!nullish: ?. ??
       result
     }
   }
 
   async findAll(
     limit: number, page: number,
-    rawSort: string, filter: FilterQuery<IProduct>,
-    selectArr: string[]) {
+    rawSort: string,
+    rawQuery: FilterQuery<IProduct>,
+    selectArr: string[]
+  ) {
+    //skip, sort
     const { skip, sort } = computeSkipAndSort(limit, page, rawSort);
+    //query, select
+    const { category, ...query } = rawQuery;
+    const inCategories = category ? { categories: { $elemMatch: { $eq: category } } } : {}; //!falsy
     const select = convertSelectAttrs(selectArr);
     const [result] = await this.productModel.aggregate([
-      { $match: filter }, //step 1: query
+      {
+        $match: { //step 1: query
+          ...query,
+          ...inCategories
+        }
+      },
       { $project: select },  //step 2: select attributes
       {
         $facet: {
