@@ -11,6 +11,7 @@ import { CategoriesRepository } from './categories.repository';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { ICategory } from './schemas/category.schema';
+import { removeNullishAttrs } from 'src/common/utils/index.util';
 
 @Injectable()
 export class CategoriesService {
@@ -36,6 +37,7 @@ export class CategoriesService {
     }
     //children, brands, variations, needs
     let alert = [];
+    //todo: map return undefined => filter
     const validChildren = Promise.all(children.map(async (categoryId) => {
       const objId = convertToObjetId(categoryId);
       if (!objId) {
@@ -63,6 +65,47 @@ export class CategoriesService {
     };
   }
 
+  //UPDATE//
+  async update(updateCategoryDto: UpdateCategoryDto) {
+    const payload: UpdateCategoryDto = removeNullishAttrs(updateCategoryDto);
+    let { name, displayName, children } = payload;
+    //check unique name, displayName
+    const isExist = await this.categoriesRepository.isExistNameOrDisplayName(name, displayName);
+    if (isExist) {
+      throw new BadRequestException(`name hoặc displayName đã tồn tại, name: ${name}, displayName: ${displayName}`);
+    }
+    //check item is valid in the children array
+    const existChildren = await Promise.all(
+      children.map(async cateId => {
+        const objId = convertToObjetId(cateId);
+        if (!objId) return null;
+        const isExist = await this.categoriesRepository.isExistId(cateId);
+        return isExist ? cateId : null;
+      })
+    );
+    //filter the null items
+    const cleanChildren = existChildren.filter(cateId => cateId !== null);
+    //todo: check other ref
+    const updatedProduct = await this.categoriesRepository.findOneAndUpdate(
+      { categoryId: payload.id },
+      {
+        ...payload,
+        children: cleanChildren
+      }
+    );
+    return updatedProduct;
+  }
+
+  async updateIsPublished(id: IKey, isPublished: boolean) {
+    //update
+    const payload = { isPublished };
+    const query = { categoryId: id };
+    const result = await this.categoriesRepository.update(query, payload);
+    return result;
+  }
+
+
+  // QUERY//
   async findAll({
     page = 1,
     limit = 24,
@@ -107,28 +150,5 @@ export class CategoriesService {
     ];
     const foundDoc = await this.categoriesRepository.findOne(filter, unselect, references);
     return foundDoc;
-    return `This action returns a #${id} category`;
-  }
-
-  update(id: number, updateCategoryDto: UpdateCategoryDto) {
-    return `This action updates a #${id} category`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} category`;
-  }
-
-  //disable
-  async findByIdAndLevel(id: mongoose.Types.ObjectId, level: CategoryLevelEnum): Promise<ICategory> {
-    //is objectId
-    if (!convertToObjetId(id as any)) {
-      throw new BadRequestException(`${CategoryLevelEnum[level].toString().toLowerCase()}Id nên là một objectId: ${id}`);
-    }
-    //is right level
-    const doc = await this.categoriesRepository.findByIdAndLevel(id, level);
-    if (!doc) {
-      throw new BadRequestException(`${CategoryLevelEnum[level].toString().toLowerCase()}Id không tồn tại hoặc không thuộc level ${level}: ${id}`);
-    }
-    return doc;
   }
 }

@@ -191,8 +191,12 @@ export class ProductsRepository {
    * @param isNew : default true, method will return the result after updated
    * @returns : Promise<IProduct> if found, null if not found
    */
-  async updateByQuery(rawQuery: FilterQuery<IProduct>, payload: UpdateQuery<IProduct>, isNew: boolean = true): Promise<IProduct> {
-    const options: QueryOptions = { new: isNew };
+  async updateByQuery(
+    rawQuery: FilterQuery<IProduct>,
+    payload: UpdateQuery<IProduct>,
+    isNew: boolean = true
+  ): Promise<IProduct> {
+    const options: QueryOptions = { new: isNew }; //return result after updated
     let { productId, shopId, ...query } = rawQuery;
     query = {
       ...query,

@@ -3,15 +3,13 @@ import { ArrayMinSize, IsBoolean, IsEnum, IsOptional, isString, IsString, MinLen
 import { Types } from "mongoose";
 import { IsObjectId } from "src/common/decorators/is-object-id.decorator";
 import { CategoryLevelEnum } from "src/common/enums/category.enum";
-import { minArrayMessage, isBoolMessage, isEnumMessage, isObjectIdMessage, minStringMessage, isStringMessage, trim, trimArray } from "src/common/utils/validator.util";
+import { minArrayMessage, isBoolMessage, isEnumMessage, isObjectIdMessage, minStringMessage, isStringMessage, trim, trimArray } from "src/common/utils/pipe.util";
 
 
 export class CreateCategoryDto {
-    @Transform(trim)
-    @MinLength(1, minStringMessage('name'))
+    @MinLength(1, minStringMessage('name')) //plus: transform instead of validate
     name: string;
 
-    @Transform(trim, { toPlainOnly: true })
     @MinLength(1, minStringMessage('displayName'))
     displayName: string;
 
@@ -23,17 +21,11 @@ export class CreateCategoryDto {
     level: CategoryLevelEnum;
 
     @IsOptional()
-    @IsBoolean(isBoolMessage('isOnBar'))
-    isOnBar: boolean;
-
-    @IsOptional()
-    @Transform(trimArray)
     @ArrayMinSize(1, minArrayMessage('attributes'))
     @MinLength(1, { each: true, ...minStringMessage('mỗi item trong attributes') })
     attributes: string[];
 
     @IsOptional()
-    @Transform(trimArray)
     @ArrayMinSize(1, minArrayMessage('specifications'))
     @MinLength(1, { each: true, ...minStringMessage('mỗi item trong specifications') })
     specifications: string[];

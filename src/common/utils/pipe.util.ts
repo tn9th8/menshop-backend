@@ -40,13 +40,24 @@ export const isBoolMessage = (attribute: string) => {
 //END MESSAGE//
 
 //TRANSFORM//
-//END TRANSFORM//
-export const trim = ({ value }: { value: string }) => {
-    const clean = value?.trim();
+export const trim = (value: string) => {
+    if (!value) {
+        return null;
+    }
+    const clean = value.trim();
     return clean;
 }
 
-export const trimArray = ({ value }: { value: string[] }) => {
-    const cleanArray = value.map((item) => trim({ value: item }));
-    return cleanArray;
+// [un, un]
+export const trimArray = (values: string[]) => {
+    if (!values) {
+        return null;
+    }
+    const cleanArray = values.map((value) => {
+        const clean = trim(value);
+        if (clean) { return clean; }
+    });
+    if (cleanArray.length) { return cleanArray; }
+
 }
+//END TRANSFORM//

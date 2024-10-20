@@ -27,8 +27,9 @@ export class Category {
     @Prop({ type: Number, required: true, default: CategoryLevelEnum.LV3 })
     level: CategoryLevelEnum;
 
-    @Prop({ default: false })
-    isOnBar: boolean;
+    @Prop({ index: true, select: false, default: false, required: true }) //draft or published
+    isPublished: boolean;
+
 
     @Prop({ type: [String], default: null })
     attributes: string[];

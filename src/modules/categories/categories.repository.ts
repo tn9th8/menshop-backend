@@ -1,15 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { ClientSession, FilterQuery, Types } from 'mongoose';
+import { FilterQuery, QueryOptions, Types, UpdateQuery } from 'mongoose';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
-import { CategoryLevelEnum } from 'src/common/enums/category.enum';
 import { CategorySortEnum } from 'src/common/enums/query.enum';
+import { IKey, IReference } from 'src/common/interfaces/index.interface';
 import { MongoPage, MongoSort } from 'src/common/interfaces/mongo.interface';
-import { IUpdateResult } from 'src/common/interfaces/persist-result.interface';
 import { convertSelectAttrs, convertUnselectAttrs } from 'src/common/utils/mongo.util';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { Category, ICategory } from './schemas/category.schema';
-import { IReference } from 'src/common/interfaces/index.interface';
 
 @Injectable()
 export class CategoriesRepository {
@@ -23,6 +21,32 @@ export class CategoriesRepository {
     const newCate = await this.categoryModel.create(createCategoryDto);
     return newCate;
   }
+
+  //UPDATE//
+  async findOneAndUpdate(
+    query: FilterQuery<ICategory>,
+    payload: UpdateQuery<ICategory>,
+    isNew: boolean = true
+  ): Promise<ICategory> {
+    query = { _id: query.categoryId };
+    const options: QueryOptions = { new: isNew };
+    const updatedProduct = await this.categoryModel.findOneAndUpdate(
+      query, payload, options
+    );
+    return updatedProduct;
+  }
+
+  async update(
+    query: FilterQuery<ICategory>,
+    payload: UpdateQuery<ICategory>,
+    isNew: boolean = true
+  ) {
+    query = { _id: query.categoryId };
+    const options: QueryOptions = { new: isNew };
+    const { modifiedCount } = await this.categoryModel.updateOne(query, payload);
+    return { modifiedCount };
+  }
+
 
   //EXIST//
   async isExistNameOrDisplayName(name: string, displayName: string): Promise<boolean> {
@@ -112,22 +136,5 @@ export class CategoriesRepository {
       return null;
     }
     return found;
-  }
-
-  //disable
-  async updateById(
-    _id: Types.ObjectId,
-    partialDoc: Partial<ICategory>,
-    session: ClientSession | null = null,
-  ): Promise<IUpdateResult> {
-    const updateResult = await this.categoryModel.updateOne({ _id }, { ...partialDoc }).session(session);
-    return updateResult;
-  }
-
-  async findByIdAndLevel(_id: Types.ObjectId, level: CategoryLevelEnum): Promise<ICategory> {
-    const doc = await this.categoryModel
-      .findOne(({ _id, level }))
-      .select({ _id: 1, childCategories: 1, childCollections: 1 });
-    return doc;
   }
 }

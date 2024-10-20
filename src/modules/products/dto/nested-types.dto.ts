@@ -1,5 +1,5 @@
 import { MinLength } from "class-validator";
-import { isStringMessage } from "src/common/utils/validator.util";
+import { isStringMessage } from "src/common/utils/pipe.util";
 
 export class ProductAssetDto {
     @MinLength(1, isStringMessage('thumb'))

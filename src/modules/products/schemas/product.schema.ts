@@ -91,14 +91,10 @@ export class Product {
     @Prop({ index: true, select: false, default: false, required: true }) //draft or published
     isPublished: boolean;
 
-    @Prop({ default: null }) //plugin //todo: method instead of plugin
-    publishedDate: Date;
-
     @Prop({ index: true, type: String, default: ProductStatusEnum.NORMAL, select: false, required: true })
     status: ProductStatusEnum;
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);
 ProductSchema.plugin(slugPlugin);
-ProductSchema.plugin(publishPlugin);
 ProductSchema.index({ displayName: 'text', description: 'text' })
