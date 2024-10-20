@@ -2,6 +2,7 @@ import { Expression, FilterQuery, Schema, Types } from "mongoose";
 import slugify from "slugify";
 import { ProductSortEnum } from "../enums/query.enum";
 import { MongoSort } from "../interfaces/mongo.interface";
+import { IKey } from "../interfaces/index.interface";
 
 //>>>METHODS
 export const computeSkipAndSort = (
@@ -30,6 +31,16 @@ export const computeTotalItemsAndPages = (meta: any, limit: number = 60) => {
 export const convertToObjetId = (id: string | Types.ObjectId): Types.ObjectId => {
     try {
         return new Types.ObjectId(id);
+    } catch (error) {
+        return null;
+    }
+}
+
+export const toObjetId = (id: IKey | string): IKey => {
+    //check !falsy
+    if (!id) { return null; }
+    try {
+        return new Types.ObjectId(id); //new a object when id is undefined => bad
     } catch (error) {
         return null;
     }
@@ -112,8 +123,8 @@ export const slugPlugin = (schema: Schema) => {
  */
 export const publishPlugin = (schema: Schema) => {
     schema.pre('save', function (next) {
-        if (this.isPublished) {
-            this.publishedDate = Date.now();
+        if (this.isPublished === true || this.isPublished === false) {
+            this.publishedAt = Date.now();
         }
         next();
     })

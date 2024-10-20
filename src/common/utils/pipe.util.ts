@@ -41,10 +41,9 @@ export const isBoolMessage = (attribute: string) => {
 
 //TRANSFORM//
 export const trim = (value: string) => {
-    if (!value) {
-        return null;
-    }
-    const clean = value.trim();
+    //check !falsy
+    if (!value) { return null }
+    const clean = value.trim(); //value is null => bad
     return clean;
 }
 

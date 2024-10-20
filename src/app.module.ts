@@ -19,6 +19,7 @@ import { ProductsModule } from './modules/products/products.module';
 import { ShopsModule } from './modules/shops/shops.module';
 import { StockModelsModule } from './modules/stock-models/stock-models.module';
 import { UsersModule } from './modules/users/users.module';
+import { NeedsModule } from './modules/needs/needs.module';
 
 @Module({
   controllers: [AppController],
@@ -80,6 +81,7 @@ import { UsersModule } from './modules/users/users.module';
     ShopsModule,
     UsersModule,
     CategoriesModule,
+    NeedsModule,
     ProductsModule,
     StockModelsModule,
   ],

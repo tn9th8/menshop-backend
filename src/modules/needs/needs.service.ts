@@ -1,10 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { CreateNeedDto } from './dto/create-need.dto';
 import { UpdateNeedDto } from './dto/update-need.dto';
+import { NeedsRepository } from './needs.repository';
 
 @Injectable()
 export class NeedsService {
-  create(createNeedDto: CreateNeedDto) {
+  constructor(
+    private readonly needsRepository: NeedsRepository,
+
+  ) { }
+  async create(createNeedDto: CreateNeedDto) {
     return 'This action adds a new need';
   }
 

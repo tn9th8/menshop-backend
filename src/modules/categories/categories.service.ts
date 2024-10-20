@@ -11,7 +11,7 @@ import { CategoriesRepository } from './categories.repository';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { ICategory } from './schemas/category.schema';
-import { removeNullishAttrs } from 'src/common/utils/index.util';
+import { cleanNullishNestedAttrs } from 'src/common/utils/index.util';
 
 @Injectable()
 export class CategoriesService {
@@ -67,7 +67,7 @@ export class CategoriesService {
 
   //UPDATE//
   async update(updateCategoryDto: UpdateCategoryDto) {
-    const payload: UpdateCategoryDto = removeNullishAttrs(updateCategoryDto);
+    const payload: UpdateCategoryDto = cleanNullishNestedAttrs(updateCategoryDto);
     let { name, displayName, children } = payload;
     //check unique name, displayName
     const isExist = await this.categoriesRepository.isExistNameOrDisplayName(name, displayName);
