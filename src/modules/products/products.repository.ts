@@ -147,7 +147,7 @@ export class ProductsRepository {
   async findDetail(filter: FilterQuery<IProduct>, unselect: string[], populate: any) {
     const { shop, models, categories } = populate;
     filter = { ...filter, _id: filter.productId }
-    const found = await this.productModel.find()
+    const found = await this.productModel.find(filter)
       .select(convertUnselectAttrs(unselect))
       .populate({
         ...shop,

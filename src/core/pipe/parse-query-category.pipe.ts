@@ -1,5 +1,4 @@
-import { PipeTransform, Injectable, BadRequestException } from '@nestjs/common';
-import { Types } from 'mongoose';
+import { Injectable, PipeTransform } from '@nestjs/common';
 import { CategoryLevelEnum } from 'src/common/enums/category.enum';
 import { CategorySortEnum } from 'src/common/enums/query.enum';
 import { convertToObjetId } from 'src/common/utils/mongo.util';

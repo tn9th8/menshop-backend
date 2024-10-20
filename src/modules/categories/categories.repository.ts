@@ -6,9 +6,10 @@ import { CategoryLevelEnum } from 'src/common/enums/category.enum';
 import { CategorySortEnum } from 'src/common/enums/query.enum';
 import { MongoPage, MongoSort } from 'src/common/interfaces/mongo.interface';
 import { IUpdateResult } from 'src/common/interfaces/persist-result.interface';
-import { convertUnselectAttrs } from 'src/common/utils/mongo.util';
+import { convertSelectAttrs, convertUnselectAttrs } from 'src/common/utils/mongo.util';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { Category, ICategory } from './schemas/category.schema';
+import { IReference } from 'src/common/interfaces/index.interface';
 
 @Injectable()
 export class CategoriesRepository {
@@ -41,7 +42,7 @@ export class CategoriesRepository {
   //QUERY
   async findAll(
     page: number, limit: number,
-    sort: string,
+    sort: CategorySortEnum,
     unselect: string[],
     query: FilterQuery<ICategory>
   ): Promise<MongoPage<ICategory>> {
@@ -69,6 +70,48 @@ export class CategoriesRepository {
       metadata: { count: metadata[0]?.count ?? 0 },
       data
     };
+  }
+
+  async findOne(
+    filter: FilterQuery<ICategory>,
+    unselect: string[],
+    references: IReference[]
+  ) {
+    filter = { _id: filter.categoryId }
+    const found = await this.categoryModel.find(filter)
+      .select(convertUnselectAttrs(unselect))
+      .populate({
+        path: references[0].attribute,
+        select: {
+          ...convertSelectAttrs(references[0].select),
+          ...convertUnselectAttrs(references[0].unselect)
+        }
+      })
+    // .populate({
+    //   path: references[1].attribute,
+    //   select: {
+    //     ...convertSelectAttrs(references[1].select),
+    //     ...convertUnselectAttrs(references[1].unselect)
+    //   }
+    // })
+    // .populate({
+    //   path: references[2].attribute,
+    //   select: {
+    //     ...convertSelectAttrs(references[2].select),
+    //     ...convertUnselectAttrs(references[2].unselect)
+    //   }
+    // })
+    // .populate({
+    //   path: references[3].attribute,
+    //   select: {
+    //     ...convertSelectAttrs(references[3].select),
+    //     ...convertUnselectAttrs(references[3].unselect)
+    //   }
+    // });
+    if (!found) {
+      return null;
+    }
+    return found;
   }
 
   //disable

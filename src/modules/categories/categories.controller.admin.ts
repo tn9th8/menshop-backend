@@ -1,15 +1,12 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UsePipes } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiMessage } from 'src/common/decorators/api-message.decorator';
-import { Result } from 'src/common/interfaces/response.interface';
+import { IKey } from 'src/common/interfaces/index.interface';
+import { ParseObjectIdPipe } from 'src/core/pipe/parse-object-id.pipe';
+import { ParseQueryCategoryPipe } from 'src/core/pipe/parse-query-category.pipe';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
-import { ICategory } from './schemas/category.schema';
-import { CategoryLevelEnum } from 'src/common/enums/category.enum';
-import { CategorySortEnum, ProductSortEnum } from 'src/common/enums/query.enum';
-import { ParseQueryCategoryPipe } from 'src/core/pipe/parse-query-category.pipe';
-import { FilterQuery } from 'mongoose';
 
 @ApiTags('Categories Module For Admin Side')
 @Controller('admin/categories')
@@ -19,7 +16,7 @@ export class AdminsCategoriesController {
   //CREATE//
   @ApiMessage('create a category for admin side')
   @Post()
-  async create(@Body() createCategoryDto: CreateCategoryDto): Promise<Result<ICategory>> {
+  async create(@Body() createCategoryDto: CreateCategoryDto) {
     return await this.categoriesService.create(createCategoryDto);
   }
 
@@ -31,9 +28,15 @@ export class AdminsCategoriesController {
     return await this.categoriesService.findAll(queryString);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.categoriesService.findOne(+id);
+  @Get('/tree')
+  findTree() {
+    return 'tree';
+  }
+
+  @Get('/:id([a-f0-9]{24})') //
+  @UsePipes(ParseObjectIdPipe)
+  findOne(@Param('id') id: IKey) {
+    return this.categoriesService.findOne(id);
   }
 
   @Patch(':id')

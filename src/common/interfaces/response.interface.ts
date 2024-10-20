@@ -1,6 +1,10 @@
 export interface Result<T> {
     metadata: {
-        alert?: string[]
+        alert?: string[],
+        items?: number,
+        pages?: number,
+        page?: number,
+        limit?: number
     },
     data: T
 }

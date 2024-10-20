@@ -1,7 +1,9 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import mongoose, { ClientSession } from 'mongoose';
 import { AppRepository } from 'src/app.repository';
 import { CategoryLevelEnum } from 'src/common/enums/category.enum';
+import { CategorySortEnum } from 'src/common/enums/query.enum';
+import { IKey, IReference } from 'src/common/interfaces/index.interface';
 import { Result } from 'src/common/interfaces/response.interface';
 import { isObjectIdMessage, notFoundIdMessage } from 'src/common/utils/exception.util';
 import { computeTotalItemsAndPages, convertToObjetId } from 'src/common/utils/mongo.util';
@@ -9,7 +11,6 @@ import { CategoriesRepository } from './categories.repository';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { ICategory } from './schemas/category.schema';
-import { CategorySortEnum, ProductSortEnum } from 'src/common/enums/query.enum';
 
 @Injectable()
 export class CategoriesService {
@@ -65,9 +66,9 @@ export class CategoriesService {
   async findAll({
     page = 1,
     limit = 24,
-    sort = CategorySortEnum.ASC_DISPLAY_NAME.toString(),
+    sort = CategorySortEnum.ASC_DISPLAY_NAME,
     ...query
-  }) {
+  }): Promise<Result<ICategory[]>> {
     const unselect = ['deletedAt', 'isDeleted'];
     const { data, metadata } = await this.categoriesRepository.findAll(
       page, limit, sort, unselect, query
@@ -79,7 +80,33 @@ export class CategoriesService {
     };
   }
 
-  findOne(id: number) {
+  async findOne(id: IKey) {
+    const filter = { categoryId: id };
+    const unselect = ['__v'];
+    const references: IReference[] = [
+      {
+        attribute: 'children',
+        select: ['name'],
+        unselect: ['_id']
+      },
+      // {
+      //   attribute: 'brands',
+      //   select: ['name'],
+      //   unselect: ['__v']
+      // },
+      // {
+      //   attribute: 'needs',
+      //   select: ['name'],
+      //   unselect: ['__v']
+      // },
+      // {
+      //   attribute: 'variations',
+      //   select: ['name'],
+      //   unselect: ['__v']
+      // }
+    ];
+    const foundDoc = await this.categoriesRepository.findOne(filter, unselect, references);
+    return foundDoc;
     return `This action returns a #${id} category`;
   }
 

@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 
-export const isObjectIdMessage = (attribute: string, id: Types.ObjectId) => {
+export const isObjectIdMessage = (attribute: string, id: Types.ObjectId | string) => {
     return `${attribute} nên là một objectId, id: ${id}`;
 }
 
