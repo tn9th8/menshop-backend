@@ -1,7 +1,9 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import mongoose, { ClientSession } from 'mongoose';
 import { AppRepository } from 'src/app.repository';
 import { CategoryLevelEnum } from 'src/common/enums/category.enum';
+import { CategorySortEnum } from 'src/common/enums/query.enum';
+import { IKey, IReference } from 'src/common/interfaces/index.interface';
 import { Result } from 'src/common/interfaces/response.interface';
 import { isObjectIdMessage, notFoundIdMessage } from 'src/common/utils/exception.util';
 import { computeTotalItemsAndPages, convertToObjetId } from 'src/common/utils/mongo.util';
@@ -9,7 +11,7 @@ import { CategoriesRepository } from './categories.repository';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { ICategory } from './schemas/category.schema';
-import { CategorySortEnum, ProductSortEnum } from 'src/common/enums/query.enum';
+import { removeNullishAttrs } from 'src/common/utils/index.util';
 
 @Injectable()
 export class CategoriesService {
@@ -35,6 +37,7 @@ export class CategoriesService {
     }
     //children, brands, variations, needs
     let alert = [];
+    //todo: map return undefined => filter
     const validChildren = Promise.all(children.map(async (categoryId) => {
       const objId = convertToObjetId(categoryId);
       if (!objId) {
@@ -62,12 +65,53 @@ export class CategoriesService {
     };
   }
 
+  //UPDATE//
+  async update(updateCategoryDto: UpdateCategoryDto) {
+    const payload: UpdateCategoryDto = removeNullishAttrs(updateCategoryDto);
+    let { name, displayName, children } = payload;
+    //check unique name, displayName
+    const isExist = await this.categoriesRepository.isExistNameOrDisplayName(name, displayName);
+    if (isExist) {
+      throw new BadRequestException(`name hoặc displayName đã tồn tại, name: ${name}, displayName: ${displayName}`);
+    }
+    //check item is valid in the children array
+    const existChildren = await Promise.all(
+      children.map(async cateId => {
+        const objId = convertToObjetId(cateId);
+        if (!objId) return null;
+        const isExist = await this.categoriesRepository.isExistId(cateId);
+        return isExist ? cateId : null;
+      })
+    );
+    //filter the null items
+    const cleanChildren = existChildren.filter(cateId => cateId !== null);
+    //todo: check other ref
+    const updatedProduct = await this.categoriesRepository.findOneAndUpdate(
+      { categoryId: payload.id },
+      {
+        ...payload,
+        children: cleanChildren
+      }
+    );
+    return updatedProduct;
+  }
+
+  async updateIsPublished(id: IKey, isPublished: boolean) {
+    //update
+    const payload = { isPublished };
+    const query = { categoryId: id };
+    const result = await this.categoriesRepository.update(query, payload);
+    return result;
+  }
+
+
+  // QUERY//
   async findAll({
     page = 1,
     limit = 24,
-    sort = CategorySortEnum.ASC_DISPLAY_NAME.toString(),
+    sort = CategorySortEnum.ASC_DISPLAY_NAME,
     ...query
-  }) {
+  }): Promise<Result<ICategory[]>> {
     const unselect = ['deletedAt', 'isDeleted'];
     const { data, metadata } = await this.categoriesRepository.findAll(
       page, limit, sort, unselect, query
@@ -79,29 +123,32 @@ export class CategoriesService {
     };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} category`;
-  }
-
-  update(id: number, updateCategoryDto: UpdateCategoryDto) {
-    return `This action updates a #${id} category`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} category`;
-  }
-
-  //disable
-  async findByIdAndLevel(id: mongoose.Types.ObjectId, level: CategoryLevelEnum): Promise<ICategory> {
-    //is objectId
-    if (!convertToObjetId(id as any)) {
-      throw new BadRequestException(`${CategoryLevelEnum[level].toString().toLowerCase()}Id nên là một objectId: ${id}`);
-    }
-    //is right level
-    const doc = await this.categoriesRepository.findByIdAndLevel(id, level);
-    if (!doc) {
-      throw new BadRequestException(`${CategoryLevelEnum[level].toString().toLowerCase()}Id không tồn tại hoặc không thuộc level ${level}: ${id}`);
-    }
-    return doc;
+  async findOne(id: IKey) {
+    const filter = { categoryId: id };
+    const unselect = ['__v'];
+    const references: IReference[] = [
+      {
+        attribute: 'children',
+        select: ['name'],
+        unselect: ['_id']
+      },
+      // {
+      //   attribute: 'brands',
+      //   select: ['name'],
+      //   unselect: ['__v']
+      // },
+      // {
+      //   attribute: 'needs',
+      //   select: ['name'],
+      //   unselect: ['__v']
+      // },
+      // {
+      //   attribute: 'variations',
+      //   select: ['name'],
+      //   unselect: ['__v']
+      // }
+    ];
+    const foundDoc = await this.categoriesRepository.findOne(filter, unselect, references);
+    return foundDoc;
   }
 }

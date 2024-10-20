@@ -147,7 +147,7 @@ export class ProductsRepository {
   async findDetail(filter: FilterQuery<IProduct>, unselect: string[], populate: any) {
     const { shop, models, categories } = populate;
     filter = { ...filter, _id: filter.productId }
-    const found = await this.productModel.find()
+    const found = await this.productModel.find(filter)
       .select(convertUnselectAttrs(unselect))
       .populate({
         ...shop,
@@ -191,8 +191,12 @@ export class ProductsRepository {
    * @param isNew : default true, method will return the result after updated
    * @returns : Promise<IProduct> if found, null if not found
    */
-  async updateByQuery(rawQuery: FilterQuery<IProduct>, payload: UpdateQuery<IProduct>, isNew: boolean = true): Promise<IProduct> {
-    const options: QueryOptions = { new: isNew };
+  async updateByQuery(
+    rawQuery: FilterQuery<IProduct>,
+    payload: UpdateQuery<IProduct>,
+    isNew: boolean = true
+  ): Promise<IProduct> {
+    const options: QueryOptions = { new: isNew }; //return result after updated
     let { productId, shopId, ...query } = rawQuery;
     query = {
       ...query,

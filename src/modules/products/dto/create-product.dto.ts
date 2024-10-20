@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { ArrayMinSize, MinLength, ValidateNested } from 'class-validator';
-import { isArrayMessage, isStringMessage, isObjectMessage, isObjectIdMessage } from 'src/common/utils/validator.util';
+import { isArrayMessage, isStringMessage, isObjectMessage, isObjectIdMessage } from 'src/common/utils/pipe.util';
 import { ProductAssetDto, ProductAttributeDto } from './nested-types.dto';
 import { Types } from 'mongoose';
 import { IsObjectId } from 'src/common/decorators/is-object-id.decorator';

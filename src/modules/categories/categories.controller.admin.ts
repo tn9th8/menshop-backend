@@ -1,15 +1,13 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UsePipes } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiMessage } from 'src/common/decorators/api-message.decorator';
-import { Result } from 'src/common/interfaces/response.interface';
+import { IKey } from 'src/common/interfaces/index.interface';
+import { ParseObjectIdPipe } from 'src/core/pipe/parse-object-id.pipe';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
-import { ICategory } from './schemas/category.schema';
-import { CategoryLevelEnum } from 'src/common/enums/category.enum';
-import { CategorySortEnum, ProductSortEnum } from 'src/common/enums/query.enum';
-import { ParseQueryCategoryPipe } from 'src/core/pipe/parse-query-category.pipe';
-import { FilterQuery } from 'mongoose';
+import { QueryCategoryPipe } from './transformation/query-category.pipe';
+import { UpdatedCategoryPipe } from './transformation/updated-category.pipe';
 
 @ApiTags('Categories Module For Admin Side')
 @Controller('admin/categories')
@@ -19,30 +17,46 @@ export class AdminsCategoriesController {
   //CREATE//
   @ApiMessage('create a category for admin side')
   @Post()
-  async create(@Body() createCategoryDto: CreateCategoryDto): Promise<Result<ICategory>> {
+  async create(@Body() createCategoryDto: CreateCategoryDto) {
     return await this.categoriesService.create(createCategoryDto);
   }
 
   //QUERY//
   @ApiMessage('get all categories for admin side')
   @Get()
-  @UsePipes(ParseQueryCategoryPipe)
+  @UsePipes(QueryCategoryPipe)
   async findAll(@Query() queryString: any) {
     return await this.categoriesService.findAll(queryString);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.categoriesService.findOne(+id);
+  @Get('/:id([a-f0-9]{24})') //
+  @UsePipes(ParseObjectIdPipe)
+  findOne(@Param('id') id: IKey) {
+    return this.categoriesService.findOne(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCategoryDto: UpdateCategoryDto) {
-    return this.categoriesService.update(+id, updateCategoryDto);
+  //UPDATE//
+  @ApiMessage('update a category for admin side')
+  @Patch()
+  update(@Body() updateCategoryDto: UpdateCategoryDto) {
+    return this.categoriesService.update(updateCategoryDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.categoriesService.remove(+id);
+  @ApiMessage('publish a product for admin side')
+  @Patch('/published/:id')
+  @UsePipes(ParseObjectIdPipe)
+  publishOne(
+    @Param('id') id: IKey
+  ) {
+    return this.categoriesService.updateIsPublished(id, true);
+  }
+
+  @ApiMessage('publish a product for admin side')
+  @Patch('/unpublished/:id')
+  @UsePipes(ParseObjectIdPipe)
+  unpublishOne(
+    @Param('id') id: IKey
+  ) {
+    return this.categoriesService.updateIsPublished(id, false);
   }
 }

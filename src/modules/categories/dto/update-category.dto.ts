@@ -1,7 +1,11 @@
-import { PartialType } from '@nestjs/mapped-types';
+
+import { IsObjectId } from 'src/common/decorators/is-object-id.decorator';
+import { IKey } from 'src/common/interfaces/index.interface';
 import { CreateCategoryDto } from './create-category.dto';
-import mongoose from 'mongoose';
+import { PartialType } from '@nestjs/mapped-types';
+import { isObjectIdMessage } from 'src/common/utils/pipe.util';
 
 export class UpdateCategoryDto extends PartialType(CreateCategoryDto) {
-    _id: mongoose.Types.ObjectId;
+    @IsObjectId(isObjectIdMessage('id'))
+    id: IKey;
 }

@@ -1,13 +1,12 @@
-import { PipeTransform, Injectable, BadRequestException } from '@nestjs/common';
-import { Types } from 'mongoose';
+import { Injectable, PipeTransform } from '@nestjs/common';
 import { CategoryLevelEnum } from 'src/common/enums/category.enum';
 import { CategorySortEnum } from 'src/common/enums/query.enum';
 import { convertToObjetId } from 'src/common/utils/mongo.util';
 
 @Injectable()
-export class ParseQueryCategoryPipe implements PipeTransform {
+export class QueryCategoryPipe implements PipeTransform {
     transform(query: any) {
-        const { page, limit, sort, level, isOnBar, child } = query;
+        const { page, limit, sort, level, isPublished, child } = query;
 
         let limitNumber: number;
         if (limit) {
@@ -42,14 +41,14 @@ export class ParseQueryCategoryPipe implements PipeTransform {
             }
         }
 
-        let isOnBarObj: object;
-        if (isOnBar) {
-            if (isOnBar === 'true') {
-                isOnBarObj = { isOnBar: true };
-            } else if (isOnBar === 'false') {
-                isOnBarObj = { isOnBar: false };
+        let isPublishedObj: object;
+        if (isPublished) {
+            if (isPublished === 'true') {
+                isPublishedObj = { isPublished: true };
+            } else if (isPublished === 'false') {
+                isPublishedObj = { isPublished: false };
             } else {
-                isOnBarObj = {};
+                isPublishedObj = {};
             }
         }
 
@@ -63,7 +62,7 @@ export class ParseQueryCategoryPipe implements PipeTransform {
             limit: limitNumber,
             sort: sortEnum,
             ...levelObj,
-            ...isOnBarObj,
+            ...isPublishedObj,
             ...childIdObj
         }
         return transformed;
