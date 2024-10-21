@@ -7,9 +7,6 @@ export class CreateNeedDto {
     @IsString(isStringMessage('name'))
     name: string; //trim, not empty, not exist
 
-    @IsString(isStringMessage('displayName'))
-    displayName: string; //trim, not empty, not exist
-
     @IsOptional()
     @IsString(isStringMessage('description'))
     description?: string; //trim

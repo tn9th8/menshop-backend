@@ -15,14 +15,14 @@ export class AdminsCategoriesController {
   constructor(private readonly categoriesService: CategoriesService) { }
 
   //CREATE//
-  @ApiMessage('create a category for admin side')
+  @ApiMessage('create a category')
   @Post()
   async create(@Body() createCategoryDto: CreateCategoryDto) {
     return await this.categoriesService.create(createCategoryDto);
   }
 
   //QUERY//
-  @ApiMessage('get all categories for admin side')
+  @ApiMessage('get all categories')
   @Get()
   @UsePipes(QueryCategoryPipe)
   async findAll(@Query() queryString: any) {
@@ -36,13 +36,13 @@ export class AdminsCategoriesController {
   }
 
   //UPDATE//
-  @ApiMessage('update a category for admin side')
+  @ApiMessage('update a category')
   @Patch()
   update(@Body() updateCategoryDto: UpdateCategoryDto) {
     return this.categoriesService.update(updateCategoryDto);
   }
 
-  @ApiMessage('publish a product for admin side')
+  @ApiMessage('publish a product')
   @Patch('/published/:id')
   @UsePipes(IdParamTransform)
   publishOne(
@@ -51,7 +51,7 @@ export class AdminsCategoriesController {
     return this.categoriesService.updateIsPublished(id, true);
   }
 
-  @ApiMessage('publish a product for admin side')
+  @ApiMessage('publish a product')
   @Patch('/unpublished/:id')
   @UsePipes(IdParamTransform)
   unpublishOne(

@@ -4,6 +4,7 @@ import { CreateNeedDto } from "../dto/create-need.dto";
 import { CreateNeedTransform } from "../transform/create-need.transform";
 import { IKey } from "src/common/interfaces/index.interface";
 import { UtilNeedsService } from "./util-needs.service";
+import { UpdateNeedDto } from "../dto/update-need.dto";
 
 @Injectable()
 export class Level2NeedsService {
@@ -25,6 +26,10 @@ export class Level2NeedsService {
         //push createdNeed to parent sync-ly
         this.utilNeedsService.pushToParent(createdNeed._id, parent);
         return createdNeed;
+    }
+
+    async updateOne(needId: IKey, payload: UpdateNeedDto) {
+
     }
 
 }

@@ -12,9 +12,6 @@ export class Need {
     @Prop({ trim: true, required: true })
     name: string;
 
-    @Prop({ trim: true, required: true })
-    displayName: string;
-
     @Prop() //plugin
     slug: string;
 

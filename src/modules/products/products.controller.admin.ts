@@ -21,7 +21,7 @@ export class ProductsControllerAdmin {
    * @param { user} user
    * @returns { JSON }
    */
-  @ApiMessage('create a product for admin side')
+  @ApiMessage('create a product')
   @Post()
   create(
     @User() user: AuthUserDto,
@@ -40,7 +40,7 @@ export class ProductsControllerAdmin {
    * @param { request.user } user
    * @returns { JSON }
    */
-  @ApiMessage('find all is draft for admin side')
+  @ApiMessage('find all is draft')
   @Get('/draft')
   findAllIsDraft(@User() user: AuthUserDto): Promise<IProduct[]> {
     return this.productsService.findAllByIsPublished(user?.shop, false);
@@ -51,7 +51,7 @@ export class ProductsControllerAdmin {
    * @param { request.user } user
    * @returns { JSON }
    */
-  @ApiMessage('find all is published for admin side')
+  @ApiMessage('find all is published')
   @Get('/published')
   findAllIsPublished(@User() user: AuthUserDto): Promise<IProduct[]> {
     return this.productsService.findAllByIsPublished(user?.shop, true);
@@ -59,7 +59,7 @@ export class ProductsControllerAdmin {
   //END QUERY//
 
   //UPDATE//
-  @ApiMessage('publish a product for admin side')
+  @ApiMessage('publish a product')
   @Patch('/published/:id')
   publishOne(
     @User() user: AuthUserDto,
@@ -68,7 +68,7 @@ export class ProductsControllerAdmin {
     return this.productsService.updateIsPublished(user?.shop, id, true);
   }
 
-  @ApiMessage('publish a product for admin side')
+  @ApiMessage('publish a product')
   @Patch('/unpublished/:id')
   unpublishOne(
     @User() user: AuthUserDto,
@@ -77,7 +77,7 @@ export class ProductsControllerAdmin {
     return this.productsService.updateIsPublished(user?.shop, id, false);
   }
 
-  @ApiMessage('update a product for admin side')
+  @ApiMessage('update a product')
   @Patch()
   updateOne(
     @User() user: AuthUserDto,

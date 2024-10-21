@@ -11,10 +11,10 @@ export class CreateNeedTransform implements PipeTransform {
     constructor(private readonly needsRepository: NeedsRepository) { }
 
     async transform(value: CreateNeedDto) {
-        let { name, displayName, description, children, parent } = value
+        let { name, description, children, parent } = value
         const transformed = value;
 
-        //trim name, displayName, description, not empty, not exist
+        //trim name, description, not empty, not exist
         name = trim(name); //null
         if (!name) {
             throw new BadRequestException(notEmptyMessage('name'));
@@ -23,15 +23,6 @@ export class CreateNeedTransform implements PipeTransform {
             throw new BadRequestException(isExistMessage('name'));
         }
         transformed.name = name;
-
-        displayName = trim(displayName); //null
-        if (!displayName) {
-            throw new BadRequestException(notEmptyMessage('displayName'));
-        }
-        if (await this.needsRepository.isExistByQuery({ name })) {
-            throw new BadRequestException(isExistMessage('displayName'));
-        }
-        transformed.displayName = displayName;
 
         description = trim(description)//null, ""
 

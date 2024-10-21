@@ -7,28 +7,41 @@ import { ApiMessage } from 'src/common/decorators/api-message.decorator';
 import { IdParamTransform } from 'src/core/pipe/id-param.transform';
 import { IKey } from 'src/common/interfaces/index.interface';
 import { IsPublishedEnum } from 'src/common/enums/index.enum';
+import { QueryNeedTransform } from './transform/query-need.transform';
+import { QueryNeedDto } from './dto/query-need.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Needs Module For Admin Side')
 @Controller('admin/needs')
 export class NeedsControllerAdmin {
   constructor(private readonly needsService: NeedsService) { }
 
   //CREATE//
-  @ApiMessage('create a draft need for admin side')
+  @ApiMessage('create a draft need')
   @Post('/draft')
   @UsePipes(CreateNeedTransform)
-  create(@Body() createNeedDto: CreateNeedDto) {
-    return this.needsService.create(createNeedDto);
+  createOne(@Body() createNeedDto: CreateNeedDto) {
+    return this.needsService.createOne(createNeedDto);
   }
 
   //UPDATE//
-  @ApiMessage('publish a need for admin side')
+  @ApiMessage('update a need')
+  @Patch(':id')
+  updateOne(
+    @Param('id', IdParamTransform) id: IKey,
+    @Body() updateNeedDto: UpdateNeedDto
+  ) {
+    return this.needsService.updateOne(id, updateNeedDto);
+  }
+
+  @ApiMessage('publish a need')
   @Patch('/published/:id')
   @UsePipes(IdParamTransform)
   publishOne(@Param('id') id: IKey) {
     return this.needsService.updateIsPublished(id, IsPublishedEnum.PUBLISH);
   }
 
-  @ApiMessage('publish a need for admin side')
+  @ApiMessage('unpublish a need')
   @Patch('/unpublished/:id')
   @UsePipes(IdParamTransform)
   unpublishOne(@Param('id') id: IKey) {
@@ -36,19 +49,17 @@ export class NeedsControllerAdmin {
   }
 
   //QUERY//
+  @ApiMessage('find all needs')
   @Get()
-  findAll(@Query() queryString: any) {
-    return this.needsService.findAll();
+  @UsePipes(QueryNeedTransform)
+  findAll(@Query() query: QueryNeedDto) {
+    return this.needsService.findAllByQuery(query);
   }
 
+  @ApiMessage('find one needs')
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.needsService.findOne(+id);
+  @UsePipes(IdParamTransform)
+  findOne(@Param('id') id: IKey) {
+    return this.needsService.findOneById(id);
   }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateNeedDto: UpdateNeedDto) {
-    return this.needsService.update(+id, updateNeedDto);
-  }
-
 }

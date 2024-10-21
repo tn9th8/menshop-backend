@@ -1,4 +1,23 @@
-//nested
+export const toEnum = <T>(enumValue: T, enumType: any) => {
+    return Object.values(enumType).includes(enumValue) //string
+        ? enumValue
+        : Object.keys(enumType).includes(enumValue as any) //number
+            ? +enumValue as any
+            : null;
+}
+
+export const toBoolean = (value: any): boolean => {
+    return value === 'true'
+        ? true
+        : value === 'false'
+            ? false
+            : null;
+}
+
+export const toNumber = (value: any): number => {
+    return +value || null;
+}
+
 export const cleanNullishNestedAttrs = <T>(object: T) => {
     const final: any = {};
     Object.keys(object).forEach(key => {
@@ -17,11 +36,11 @@ export const cleanNullishNestedAttrs = <T>(object: T) => {
     })
     return final;
 }
-//not nested
+
 export const cleanNullishAttrs = <T>(object: T) => {
     const final: any = {};
     Object.keys(object).forEach(key => {
-        if (object[key] === null) { return; }
+        if (object[key] === null || object[key] === undefined) { return; }
         final[key] = object[key];
     })
     return final;

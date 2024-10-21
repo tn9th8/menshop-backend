@@ -9,7 +9,7 @@ export class UtilNeedsService {
     //UPDATE//
     async pushToParent(needId: IKey, parentId: IKey) {
         const select = ['children'];
-        const foundParent = await this.needsRepository.findById(parentId, select);
+        const foundParent = await this.needsRepository.findLeanById(parentId, select);
         //check: no include => push
         //but new => always no include => no check
         foundParent.children.push(needId)

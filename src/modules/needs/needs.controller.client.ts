@@ -13,23 +13,4 @@ export class NeedsControllerClient {
     return this.needsService.create(createNeedDto);
   }
 
-  @Get()
-  findAll() {
-    return this.needsService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.needsService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateNeedDto: UpdateNeedDto) {
-    return this.needsService.update(+id, updateNeedDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.needsService.remove(+id);
-  }
 }
