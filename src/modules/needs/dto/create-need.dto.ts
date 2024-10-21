@@ -5,23 +5,23 @@ import { isArrayMessage, isEnumMessage, isStringMessage } from "src/common/utils
 
 export class CreateNeedDto {
     @IsString(isStringMessage('name'))
-    name: string; //unique
+    name: string; //trim, not empty, not exist
 
     @IsString(isStringMessage('displayName'))
-    displayName: string; //unique
+    displayName: string; //trim, not empty, not exist
 
     @IsOptional()
     @IsString(isStringMessage('description'))
-    description?: string;
+    description?: string; //trim
 
     @IsOptional()
     @IsEnum(NeedLevelEnum, isEnumMessage('level', NeedLevelEnum))
-    level?: NeedLevelEnum; //default: LV1
+    level?: NeedLevelEnum; //default LV1
     //ref
     @IsOptional()
     @IsArray(isArrayMessage('children'))
-    children?: IKey[];
+    children?: IKey[]; //each objId, not nullish
 
     @IsOptional()
-    parent?: IKey;
+    parent?: IKey; //objId
 }

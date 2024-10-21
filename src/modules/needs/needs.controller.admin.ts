@@ -14,7 +14,6 @@ export class NeedsControllerAdmin {
   @Post('/draft')
   @UsePipes(CreateNeedTransform)
   create(@Body() createNeedDto: CreateNeedDto) {
-    return createNeedDto;
     return this.needsService.create(createNeedDto);
   }
 

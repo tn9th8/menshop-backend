@@ -1,5 +1,5 @@
 import { ArgumentMetadata, BadRequestException, Injectable, PipeTransform } from '@nestjs/common';
-import { notEmptyMessage } from 'src/common/utils/exception.util';
+import { isExistMessage, notEmptyMessage } from 'src/common/utils/exception.util';
 import { toObjetId } from 'src/common/utils/mongo.util';
 import { trim } from 'src/common/utils/pipe.util';
 import { CreateNeedDto } from '../dto/create-need.dto';
@@ -10,20 +10,26 @@ import { cleanNullishAttrs } from 'src/common/utils/index.util';
 export class CreateNeedTransform implements PipeTransform {
     constructor(private readonly needsRepository: NeedsRepository) { }
 
-    async transform(value: CreateNeedDto, metadata: ArgumentMetadata) {
+    async transform(value: CreateNeedDto) {
         let { name, displayName, description, children, parent } = value
         const transformed = value;
 
-        //trim name, displayName, description
+        //trim name, displayName, description, not empty, not exist
         name = trim(name); //null
         if (!name) {
             throw new BadRequestException(notEmptyMessage('name'));
+        }
+        if (await this.needsRepository.isExistByQuery({ name })) {
+            throw new BadRequestException(isExistMessage('name'));
         }
         transformed.name = name;
 
         displayName = trim(displayName); //null
         if (!displayName) {
             throw new BadRequestException(notEmptyMessage('displayName'));
+        }
+        if (await this.needsRepository.isExistByQuery({ name })) {
+            throw new BadRequestException(isExistMessage('displayName'));
         }
         transformed.displayName = displayName;
 
@@ -37,7 +43,7 @@ export class CreateNeedTransform implements PipeTransform {
             children = await Promise.all(children.map(async child => {
                 child = toObjetId(child);
                 if (!child) { return null; }
-                const isExist = await this.needsRepository.isExistId(child);
+                const isExist = await this.needsRepository.isExistById(child);
                 return isExist ? child : null;
             }));
             children = children.filter(Boolean);

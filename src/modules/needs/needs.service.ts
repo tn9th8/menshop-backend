@@ -2,15 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { CreateNeedDto } from './dto/create-need.dto';
 import { UpdateNeedDto } from './dto/update-need.dto';
 import { NeedsRepository } from './needs.repository';
+import { NeedsFactory } from './factory/needs.factory';
 
 @Injectable()
 export class NeedsService {
   constructor(
     private readonly needsRepository: NeedsRepository,
-
+    private readonly needsFactory: NeedsFactory,
   ) { }
-  async create(createNeedDto: CreateNeedDto) {
-    return 'This action adds a new need';
+  async create(payload: CreateNeedDto) {
+    const created = this.needsFactory.createOne(payload);
+    return created;
   }
 
   findAll() {

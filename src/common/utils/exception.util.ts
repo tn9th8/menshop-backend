@@ -11,3 +11,7 @@ export const notFoundIdMessage = (attribute: string, id: IKey) => {
 export const notEmptyMessage = (attribute: string) => {
     return `${attribute} không nên rỗng`;
 }
+
+export const isExistMessage = (attribute: string) => {
+    return `${attribute} đã tồn tại`;
+}

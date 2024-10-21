@@ -1,0 +1,20 @@
+import { Injectable } from "@nestjs/common";
+import { NeedsRepository } from "../needs.repository";
+import { IKey } from "src/common/interfaces/index.interface";
+
+@Injectable()
+export class UtilNeedsService {
+    constructor(private readonly needsRepository: NeedsRepository) { }
+
+    //UPDATE//
+    async pushToParent(needId: IKey, parentId: IKey) {
+        const select = ['children'];
+        const foundParent = await this.needsRepository.findById(parentId, select);
+        //check: no include => push
+        //but new => always no include => no check
+        foundParent.children.push(needId)
+        const updatedParent = await this.needsRepository.updateById(parentId, foundParent);
+        return updatedParent;
+    }
+
+}
