@@ -123,6 +123,7 @@ export const slugPlugin = (schema: Schema) => {
  */
 export const publishPlugin = (schema: Schema) => {
     schema.pre('save', function (next) {
+        console.log('update');
         if (this.isPublished === true || this.isPublished === false) {
             this.publishedAt = Date.now();
         }

@@ -23,14 +23,12 @@ export class NeedsRepository {
 
   //UPDATE
   async updateById(
-    id: IKey,
-    payload: any,
-    isReturnNew: boolean = true
+    needId: IKey,
+    payload: any
   ) {
-    const queryDb: FilterQuery<ICategory> = { _id: id };
-    const optionsDb: QueryOptions = { new: isReturnNew };
+    const queryDb: FilterQuery<ICategory> = { _id: needId };
     const { modifiedCount } = await this.needModel.updateOne(queryDb, payload);
-    return { modifiedCount };
+    return { updatedCount: modifiedCount };
   }
 
   //EXIST

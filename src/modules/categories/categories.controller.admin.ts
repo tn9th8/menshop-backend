@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UsePipes } fr
 import { ApiTags } from '@nestjs/swagger';
 import { ApiMessage } from 'src/common/decorators/api-message.decorator';
 import { IKey } from 'src/common/interfaces/index.interface';
-import { ParseObjectIdPipe } from 'src/core/pipe/parse-object-id.pipe';
+import { IdParamTransform } from 'src/core/pipe/id-param.transform';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
@@ -30,7 +30,7 @@ export class AdminsCategoriesController {
   }
 
   @Get('/:id([a-f0-9]{24})') //
-  @UsePipes(ParseObjectIdPipe)
+  @UsePipes(IdParamTransform)
   findOne(@Param('id') id: IKey) {
     return this.categoriesService.findOne(id);
   }
@@ -44,7 +44,7 @@ export class AdminsCategoriesController {
 
   @ApiMessage('publish a product for admin side')
   @Patch('/published/:id')
-  @UsePipes(ParseObjectIdPipe)
+  @UsePipes(IdParamTransform)
   publishOne(
     @Param('id') id: IKey
   ) {
@@ -53,7 +53,7 @@ export class AdminsCategoriesController {
 
   @ApiMessage('publish a product for admin side')
   @Patch('/unpublished/:id')
-  @UsePipes(ParseObjectIdPipe)
+  @UsePipes(IdParamTransform)
   unpublishOne(
     @Param('id') id: IKey
   ) {
