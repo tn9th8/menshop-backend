@@ -49,15 +49,22 @@ export class NeedsControllerAdmin {
   }
 
   //QUERY//
-  @ApiMessage('find all needs')
-  @Get()
+  @ApiMessage('find all draft needs')
+  @Get('/draft')
   @UsePipes(QueryNeedTransform)
-  findAll(@Query() query: QueryNeedDto) {
-    return this.needsService.findAllByQuery(query);
+  findAllDraft(@Query() query: QueryNeedDto) {
+    return this.needsService.findAllByQuery(query, IsPublishedEnum.DRAFT);
+  }
+
+  @ApiMessage('find all published needs')
+  @Get('/published')
+  @UsePipes(QueryNeedTransform)
+  findAllPublished(@Query() query: QueryNeedDto) {
+    return this.needsService.findAllByQuery(query, IsPublishedEnum.PUBLISHED);
   }
 
   @ApiMessage('find one needs')
-  @Get(':id')
+  @Get(':id([a-f0-9]{24})')
   @UsePipes(IdParamTransform)
   findOne(@Param('id') id: IKey) {
     return this.needsService.findOneById(id);

@@ -7,9 +7,9 @@ import { publishPlugin, slugPlugin } from "src/common/utils/mongo.util";
 export type NeedDocument = HydratedDocument<Need>;
 export type INeed = NeedDocument & IBaseDocument;
 
-@Schema()
+@Schema({ timestamps: true })
 export class Need {
-    @Prop({ trim: true, required: true })
+    @Prop({ trim: true, required: true, unique: true })
     name: string;
 
     @Prop() //plugin
@@ -28,11 +28,7 @@ export class Need {
     //status
     @Prop({ index: true, select: false, default: false, required: true }) //draft or published (isOnBar)
     isPublished: boolean;
-
-    @Prop({ select: false }) //plugin
-    publishedAt: Date;
 }
 
 export const NeedSchema = SchemaFactory.createForClass(Need);
 NeedSchema.plugin(slugPlugin);
-NeedSchema.plugin(publishPlugin);

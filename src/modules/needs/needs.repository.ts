@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, QueryOptions } from 'mongoose';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
-import { NeedSortEnum } from 'src/common/enums/sort.enum';
+import { SortEnum } from 'src/common/enums/index.enum';
 import { IKey, IReference } from 'src/common/interfaces/index.interface';
 import { IDbSort } from 'src/common/interfaces/mongo.interface';
 import { Result } from 'src/common/interfaces/response.interface';
@@ -94,7 +94,7 @@ export class NeedsRepository {
   async findAllByQuery(
     page: number,
     limit: number,
-    sort: NeedSortEnum,
+    sort: SortEnum,
     unselect: string[],
     query: QueryNeedDto
   ): Promise<Result<INeed>> {
@@ -104,20 +104,20 @@ export class NeedsRepository {
     }
     const dbUnselect = toDbUnselect(unselect);
     const dbSort: IDbSort =
-      sort == NeedSortEnum.LATEST ? { updatedAt: -1 }
-        : sort == NeedSortEnum.OLDEST ? { updatedAt: 1 }
-          : sort == NeedSortEnum.NAME_AZ ? { name: 1 }
-            : sort == NeedSortEnum.NAME_ZA ? { name: -1 }
-              : { updatedAt: -1 } //default NeedSortEnum.LATEST
+      sort == SortEnum.LATEST ? { updatedAt: -1 }
+        : sort == SortEnum.OLDEST ? { updatedAt: 1 }
+          : sort == SortEnum.NAME_AZ ? { name: 1 }
+            : sort == SortEnum.NAME_ZA ? { name: -1 }
+              : { updatedAt: -1 } //default SortEnum.LATEST
     const skip = limit * (page - 1);
 
     const [queriedCount, data] = await Promise.all([
       this.needModel.countDocuments(dbQuery),
       this.needModel.find(dbQuery)
         .select(dbUnselect)
+        .sort(dbSort)
         .skip(skip)
         .limit(limit)
-        .sort(dbSort)
         .exec()
     ]);
 
@@ -127,4 +127,17 @@ export class NeedsRepository {
     }
   }
 
+  async findTree(
+    query: QueryNeedDto,
+    select: string[],
+    references: IReference[]
+  ) {
+    const tree = await this.needModel.find(query)
+      .select(toDbSelect(select))
+      .populate({
+        path: references[0].attribute,
+        select: toDbSelect(references[0].select),
+      });
+    return tree;
+  }
 }
