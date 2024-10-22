@@ -40,14 +40,14 @@ export const isBoolMessage = (attribute: string) => {
 //END MESSAGE//
 
 //TRANSFORM//
-export const trim = (value: string) => {
-    //check !falsy
+export const trim = (value: string): string | "" | null => {
+    //check !falsy, because null.trim() => bug
     if (!value) { return null }
-    const clean = value.trim(); //value is null => bad
+    const clean = value.trim();
     return clean;
 }
 
-// [un, un]
+// [undef, undef]
 export const trimArray = (values: string[]) => {
     if (!values) {
         return null;

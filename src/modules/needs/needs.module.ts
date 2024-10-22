@@ -12,6 +12,8 @@ import { Level2NeedsService } from './factory/level2-needs.service';
 import { Level3NeedsService } from './factory/level3-needs.service';
 import { DefaultNeedsService } from './factory/default-needs.service';
 import { UtilNeedsService } from './factory/util-needs.service';
+import { UpdateNeedTransform } from './transform/update-need.transform';
+import { QueryNeedTransform } from './transform/query-need.transform';
 
 @Module({
   controllers: [NeedsControllerAdmin, NeedsControllerClient],
@@ -19,6 +21,8 @@ import { UtilNeedsService } from './factory/util-needs.service';
     NeedsService,
     NeedsRepository,
     CreateNeedTransform,
+    UpdateNeedTransform,
+    QueryNeedTransform,
     NeedsFactory,
     Level1NeedsService,
     Level2NeedsService,

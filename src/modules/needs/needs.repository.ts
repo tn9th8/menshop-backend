@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery } from 'mongoose';
+import { FilterQuery, QueryOptions } from 'mongoose';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { NeedSortEnum } from 'src/common/enums/sort.enum';
 import { IKey, IReference } from 'src/common/interfaces/index.interface';
@@ -35,6 +35,16 @@ export class NeedsRepository {
     return { updatedCount: modifiedCount };
   }
 
+  async updateOneById(
+    needId: IKey,
+    payload: any,
+    isUpdated: boolean = true
+  ) {
+    const dbOptions: QueryOptions = { new: isUpdated };
+    const updated = await this.needModel.findByIdAndUpdate(needId, payload, dbOptions); //checked needId in factory
+    return updated;
+  }
+
   //EXIST
   async isExistById(needId: IKey) {
     const isExist = await this.needModel.exists({ _id: needId });
@@ -44,6 +54,14 @@ export class NeedsRepository {
 
   async isExistByQuery(query: any) {
     const isExist = await this.needModel.exists(query); //null
+    return isExist ? true : false;
+  }
+
+  async isExistByQueryAndExcludeId(query: any, id: IKey) {
+    const isExist = await this.needModel.exists({
+      ...query,
+      _id: { $ne: id } //exclude the id document
+    }); //{_id} | null
     return isExist ? true : false;
   }
 
@@ -86,10 +104,10 @@ export class NeedsRepository {
     }
     const dbUnselect = toDbUnselect(unselect);
     const dbSort: IDbSort =
-      NeedSortEnum.LATEST ? { updatedAt: -1 }
-        : NeedSortEnum.OLDEST ? { updatedAt: 1 }
-          : NeedSortEnum.NAME_AZ ? { name: 1 }
-            : NeedSortEnum.NAME_ZA ? { name: -1 }
+      sort == NeedSortEnum.LATEST ? { updatedAt: -1 }
+        : sort == NeedSortEnum.OLDEST ? { updatedAt: 1 }
+          : sort == NeedSortEnum.NAME_AZ ? { name: 1 }
+            : sort == NeedSortEnum.NAME_ZA ? { name: -1 }
               : { updatedAt: -1 } //default NeedSortEnum.LATEST
     const skip = limit * (page - 1);
 
@@ -107,11 +125,6 @@ export class NeedsRepository {
       metadata: { queriedCount },
       data: (data as any)
     }
-
-  }
-
-  update(id: number, updateNeedDto: UpdateNeedDto) {
-    return `This action updates a #${id} need`;
   }
 
 }

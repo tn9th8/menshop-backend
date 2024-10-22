@@ -5,6 +5,7 @@ import { CreateNeedTransform } from "../transform/create-need.transform";
 import { UtilNeedsService } from "./util-needs.service";
 import { UpdateNeedDto } from "../dto/update-need.dto";
 import { IKey } from "src/common/interfaces/index.interface";
+import { UpdateNeedTransform } from "../transform/update-need.transform";
 
 
 @Injectable()
@@ -18,6 +19,7 @@ export class Level3NeedsService {
     constructor(
         private readonly needsRepository: NeedsRepository,
         private readonly createNeedTransform: CreateNeedTransform,
+        private readonly updateNeedTransform: UpdateNeedTransform,
         private readonly utilNeedsService: UtilNeedsService,
     ) { }
 
@@ -31,6 +33,10 @@ export class Level3NeedsService {
     }
 
     async updateOne(needId: IKey, payload: UpdateNeedDto) {
-
+        const { parent, ...cleanPayload } = await this.updateNeedTransform.transform(needId, payload);
+        const updatedNeed = await this.needsRepository.updateOneById(needId, cleanPayload);
+        //push createdNeed to parent sync-ly
+        this.utilNeedsService.pushToParent(updatedNeed._id, parent);
+        return updatedNeed;
     }
 }

@@ -29,7 +29,7 @@ export class TransformInterceptor<T> implements NestInterceptor<T, Response<T>> 
                     statusCode: context.switchToHttp().getResponse().statusCode,
                     message: this.reflector.get<string>(API_MESSAGE, context.getHandler())
                         || 'Menshop Anonymous Api',
-                    metadata: routerResult.metadata
+                    metadata: routerResult?.metadata
                         || undefined,
                     data: routerResult?.data
                         || routerResult,

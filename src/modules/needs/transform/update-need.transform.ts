@@ -5,29 +5,30 @@ import { trim } from 'src/common/utils/pipe.util';
 import { CreateNeedDto } from '../dto/create-need.dto';
 import { NeedsRepository } from '../needs.repository';
 import { cleanNullishAttrs } from 'src/common/utils/index.util';
+import { UpdateNeedDto } from '../dto/update-need.dto';
+import { IKey } from 'src/common/interfaces/index.interface';
 
 @Injectable()
-export class CreateNeedTransform implements PipeTransform {
+export class UpdateNeedTransform {
     constructor(private readonly needsRepository: NeedsRepository) { }
 
-    async transform(value: CreateNeedDto) {
-        let { name, description, children, parent } = value
-        const transformed = value;
+    async transform(needId: IKey, payload: UpdateNeedDto) {
+        let { name, description, children, parent } = payload
+        const transformed = payload;
 
         //trim name, description, not empty, not exist
-        name = trim(name); //null
-        if (!name) {
-            throw new BadRequestException(notEmptyMessage('name'));
-        }
-        if (await this.needsRepository.isExistByQuery({ name })) {
-            throw new BadRequestException(isExistMessage('name'));
+        name = trim(name) || null;
+        if (name) {
+            if (await this.needsRepository.isExistByQueryAndExcludeId({ name }, needId)) {
+                throw new BadRequestException(isExistMessage('name'));
+            }
         }
         transformed.name = name;
 
-        description = trim(description)//null, ""
+        description = trim(description)
 
         //children, parent to objectId
-        parent = toObjetId(parent); //null
+        parent = toObjetId(parent);
         transformed.parent = await this.needsRepository.isExistById(parent)
             ? parent
             : null;

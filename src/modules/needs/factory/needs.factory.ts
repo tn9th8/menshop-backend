@@ -36,7 +36,7 @@ export class NeedsFactory {
 
     async updateOne(needId: IKey, payload: UpdateNeedDto) {
         const foundNeed = await this.needsRepository.findLeanById(needId, ['level'])
-        if (!!foundNeed) {
+        if (!foundNeed) {
             throw new NotFoundException(notFoundIdMessage('id param', needId));
         }
         switch (foundNeed.level) {

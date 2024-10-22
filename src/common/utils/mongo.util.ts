@@ -65,7 +65,7 @@ export const convertToObjetId = (id: string | Types.ObjectId): Types.ObjectId =>
     }
 }
 
-export const toObjetId = (id: IKey | string): IKey => {
+export const toObjetId = (id: IKey | string): IKey | null => {
     //check !falsy
     if (!id) { return null; }
     try {
