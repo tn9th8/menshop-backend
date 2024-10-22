@@ -1,15 +1,24 @@
 import { Injectable } from '@nestjs/common';
 import { CreateShopDto } from './dto/create-shop.dto';
 import { UpdateShopDto } from './dto/update-shop.dto';
-import { ShopsRepo } from './shops.repo';
+import { ShopsRepository } from './shops.repository';
+import { AuthUserDto } from 'src/auth/dto/auth-user.dto';
+import { UsersRepository } from '../users/users.repository';
+import { CreateShopTransform } from './transform/create-shop.transform';
 
 @Injectable()
 export class ShopsService {
-  constructor(private readonly shopsRepo: ShopsRepo) { }
+  constructor(
+    private readonly shopsRepo: ShopsRepository,
+    private readonly usersRepo: UsersRepository,
+    private readonly createShopTransform: CreateShopTransform,
+  ) { }
 
-  create(createShopDto: CreateShopDto) {
-    const result = this.shopsRepo.create(createShopDto);
-    return result;
+  async create(payload: CreateShopDto, user: AuthUserDto) {
+    payload = await this.createShopTransform.transform(payload);
+    const { _id: shopId } = await this.usersRepo.findLeanByQuery({ email: user.email }, ['_id'])
+    const created = this.shopsRepo.create(payload, shopId);
+    return created;
   }
 
   findAll() {

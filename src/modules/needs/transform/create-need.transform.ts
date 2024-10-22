@@ -7,7 +7,7 @@ import { NeedsRepository } from '../needs.repository';
 import { cleanNullishAttrs } from 'src/common/utils/index.util';
 
 @Injectable()
-export class CreateNeedTransform implements PipeTransform {
+export class CreateNeedTransform {
     constructor(private readonly needsRepository: NeedsRepository) { }
 
     async transform(value: CreateNeedDto) {
@@ -25,12 +25,12 @@ export class CreateNeedTransform implements PipeTransform {
         transformed.name = name;
 
         description = trim(description)//null, ""
+        transformed.description = description;
 
         //children, parent to objectId
         parent = toObjetId(parent); //null
-        transformed.parent = await this.needsRepository.isExistById(parent)
-            ? parent
-            : null;
+        parent = await this.needsRepository.isExistById(parent) ? parent : null;
+        transformed.parent = parent;
 
         if (Array.isArray(children)) {
             children = await Promise.all(children.map(async child => {

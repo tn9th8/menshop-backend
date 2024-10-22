@@ -4,18 +4,27 @@ import { UpdateShopDto } from './dto/update-shop.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { IShop, Shop } from './schemas/shop.schema';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
+import { IKey } from 'src/common/interfaces/index.interface';
 
 @Injectable()
-export class ShopsRepo {
+export class ShopsRepository {
   constructor(
     @InjectModel(Shop.name)
     private readonly shopModel: SoftDeleteModel<IShop>
   ) { }
 
-  async create(createShopDto: CreateShopDto) {
-    //todo: check unique name
-    const result = await this.shopModel.create(createShopDto);
-    return result;
+  async create(
+    payload: CreateShopDto,
+    shopId: IKey,
+  ): Promise<IShop> {
+    const created = await this.shopModel.create({ ...payload, shop: shopId });
+    return created;
+  }
+
+  //EXIST
+  async isExistByQuery(query: any) {
+    const isExist = await this.shopModel.exists(query); //{_id} | null
+    return isExist ? true : false;
   }
 
   findAll() {
