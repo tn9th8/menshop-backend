@@ -58,6 +58,22 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
+## Git branches
+
+```bash
+# master is default
+$ git checkout master
+
+# dev1 for user, auth
+$ git checkout dev1
+
+# dev2 for product, category, need, model
+$ git checkout dev2
+
+# dev3 for shop, collection, brand
+$ git checkout dev3
+```
+
 ## Resources
 
 Check out a few resources that may come in handy when working with NestJS:

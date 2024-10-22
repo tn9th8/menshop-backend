@@ -8,8 +8,8 @@ import { User } from 'src/common/decorators/user.decorator';
 import { ApiMessage } from 'src/common/decorators/api-message.decorator';
 
 @ApiTags('Shops Module for Admins')
-@Controller('/adm/shops')
-export class ShopsController {
+@Controller('/admin/shops')
+export class ShopsControllerAdmin {
   constructor(private readonly shopsService: ShopsService) { }
 
   // CREATE //
@@ -25,9 +25,8 @@ export class ShopsController {
     @Body() createShopDto: CreateShopDto,
     @User() user: AuthUserDto
   ) {
-    return this.shopsService.create(createShopDto);
+    return this.shopsService.create(createShopDto, user);
   }
-  // END CREATE //
 
   @Get()
   findAll() {

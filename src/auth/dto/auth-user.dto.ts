@@ -8,5 +8,5 @@ export class AuthUserDto extends PickType(CreateUserDto, ['name', 'email', 'phon
     @IsObjectId({ message: "id của AuthUserDto phải là ObjectId" })
     id: mongoose.Types.ObjectId;
 
-    shop: mongoose.Types.ObjectId;
+    // shop: mongoose.Types.ObjectId;
 }

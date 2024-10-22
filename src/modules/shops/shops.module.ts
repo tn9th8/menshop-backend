@@ -1,14 +1,25 @@
 import { Module } from '@nestjs/common';
 import { ShopsService } from './shops.service';
-import { ShopsController } from './shops.controller';
+import { ShopsControllerAdmin } from './shops.controller.admin';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Shop, ShopSchema } from './schemas/shop.schema';
-import { ShopsRepo } from './shops.repo';
+import { ShopsRepository } from './shops.repository';
+import { ShopsControllerClient } from './shops.controller.client';
+import { CreateShopTransform } from './transform/create-shop.transform';
+import { UsersModule } from '../users/users.module';
+import { UsersRepository } from '../users/users.repository';
 
 @Module({
-  controllers: [ShopsController],
-  providers: [ShopsService, ShopsRepo],
-  imports: [MongooseModule.forFeature([{ name: Shop.name, schema: ShopSchema }])],
-  exports: [ShopsRepo]
+  controllers: [ShopsControllerAdmin, ShopsControllerClient],
+  providers: [
+    ShopsService,
+    ShopsRepository,
+    CreateShopTransform
+  ],
+  imports: [
+    MongooseModule.forFeature([{ name: Shop.name, schema: ShopSchema }]),
+    UsersModule
+  ],
+  exports: [ShopsRepository]
 })
 export class ShopsModule { }

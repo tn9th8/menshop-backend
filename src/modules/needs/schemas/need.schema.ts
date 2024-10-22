@@ -9,13 +9,13 @@ export type INeed = NeedDocument & IBaseDocument;
 
 @Schema({ timestamps: true })
 export class Need {
-    @Prop({ trim: true, required: true, unique: true })
+    @Prop({ required: true })
     name: string;
 
     @Prop() //plugin
     slug: string;
 
-    @Prop({ trim: true, required: true })
+    @Prop({ default: null })
     description: string;
 
     @Prop({ type: Number, default: NeedLevelEnum.LV1, required: true })
