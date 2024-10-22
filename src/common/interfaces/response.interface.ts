@@ -1,11 +1,15 @@
+export interface Metadata {
+    items?: number,
+    pages?: number,
+    page?: number,
+    limit?: number,
+    alert?: string[],
+    updatedCount?: number,
+    queriedCount?: number,
+}
+
 export interface Result<T> {
-    metadata: {
-        alert?: string[],
-        items?: number,
-        pages?: number,
-        page?: number,
-        limit?: number
-    },
+    metadata: Metadata,
     data: T
 }
 

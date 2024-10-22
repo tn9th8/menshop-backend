@@ -1,9 +1,33 @@
-import { Expression, FilterQuery, Schema, Types } from "mongoose";
+import { FilterQuery, Schema, Types } from "mongoose";
 import slugify from "slugify";
 import { ProductSortEnum } from "../enums/query.enum";
+import { IKey } from "../interfaces/index.interface";
 import { MongoSort } from "../interfaces/mongo.interface";
+import { Metadata } from "../interfaces/response.interface";
 
 //>>>METHODS
+// export const queryLike = (fieldName: string, fieldValue: string) => {
+//     if (!fieldValue) {
+//         return {};
+//     }
+//     const obj: object = {};
+//     obj[fieldName] = { $regex: new RegExp(fieldValue, 'i') };
+//     return obj;
+// }
+
+export const toDbLikeQuery = (fields: string[], values: string[]) => {
+    const obj: any = {};
+
+    fields.forEach((field, index) => {
+        const value = values[index];
+        if (value) {
+            obj[field] = { $regex: new RegExp(value, 'i') };
+        }
+    });
+
+    return obj;
+};
+
 export const computeSkipAndSort = (
     limit: number = 60, page: number = 1, rawSort: string = ProductSortEnum.POPULATE
 ) => {
@@ -13,6 +37,12 @@ export const computeSkipAndSort = (
             { updatedAt: -1 } :
             { updatedAt: 1 };
     return { skip, sort };
+}
+
+export const computeItemsAndPages = (metadata: Metadata, limit: number = 24) => {
+    const items = metadata.queriedCount;
+    const pages = Math.ceil(items / limit);
+    return { items, pages };
 }
 
 export const computeTotalItemsAndPages = (meta: any, limit: number = 60) => {
@@ -35,6 +65,16 @@ export const convertToObjetId = (id: string | Types.ObjectId): Types.ObjectId =>
     }
 }
 
+export const toObjetId = (id: IKey | string): IKey | null => {
+    //check !falsy
+    if (!id) { return null; }
+    try {
+        return new Types.ObjectId(id); //new a object when id is undefined => bad
+    } catch (error) {
+        return null;
+    }
+}
+
 export const buildQueryByShop = <T>(shopId: Types.ObjectId, query?: FilterQuery<T>): FilterQuery<T> => {
     if (shopId) {
         query = { ...query, shopId };
@@ -51,12 +91,20 @@ export const convertSelectAttrs = (select = []) => {
     return Object.fromEntries(select.map(attribute => [attribute, 1]));
 };
 
+export const toDbSelect = (select = []) => {
+    return Object.fromEntries(select.map(attribute => [attribute, 1]));
+};
+
 /**
  * convert ['name', 'thumb'] => {name: 0, thumb: 0}
  * @param select : array of the unselected attributes
  * @returns : object of the unselected attributes
  */
 export const convertUnselectAttrs = (select = []) => {
+    return Object.fromEntries(select.map(attribute => [attribute, 0]));
+};
+
+export const toDbUnselect = (select = []) => {
     return Object.fromEntries(select.map(attribute => [attribute, 0]));
 };
 
@@ -112,8 +160,9 @@ export const slugPlugin = (schema: Schema) => {
  */
 export const publishPlugin = (schema: Schema) => {
     schema.pre('save', function (next) {
-        if (this.isPublished) {
-            this.publishedDate = Date.now();
+        console.log('update');
+        if (this.isPublished === true || this.isPublished === false) {
+            this.publishedAt = Date.now();
         }
         next();
     })

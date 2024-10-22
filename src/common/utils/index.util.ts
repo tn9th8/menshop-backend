@@ -1,12 +1,31 @@
+export const toEnum = <T>(enumValue: T, enumType: any) => {
+    return Object.values(enumType).includes(enumValue) //string
+        ? enumValue
+        : Object.keys(enumType).includes(enumValue as any) //number
+            ? +enumValue as any
+            : null;
+}
 
-export const removeNullishAttrs = <T>(object: T) => {
+export const toBoolean = (value: any): boolean => {
+    return value === 'true'
+        ? true
+        : value === 'false'
+            ? false
+            : null;
+}
+
+export const toNumber = (value: any): number => {
+    return +value || null;
+}
+
+export const cleanNullishNestedAttrs = <T>(object: T) => {
     const final: any = {};
     Object.keys(object).forEach(key => {
         if (object[key] === null) {
             return;
         }
         if (typeof object[key] === 'object' && !Array.isArray(object[key])) {
-            const cleanObject = removeNullishAttrs(object[key]);
+            const cleanObject = cleanNullishNestedAttrs(object[key]);
             Object.keys(cleanObject).forEach(i => {
                 final[`${key}.${i}`] = cleanObject[i];
             })
@@ -18,13 +37,22 @@ export const removeNullishAttrs = <T>(object: T) => {
     return final;
 }
 
+export const cleanNullishAttrs = <T>(object: T) => {
+    const final: any = {};
+    Object.keys(object).forEach(key => {
+        if (object[key] === null || object[key] === undefined) { return; }
+        final[key] = object[key];
+    })
+    return final;
+}
+
 //use delete => should not
 export const badRemoveNullishAttrs = <T>(object: T) => {
     Object.keys(object).forEach(key => {
         if (object[key] === null || object[key] === undefined) {
             delete object[key];
         } else if (typeof object[key] === 'object' && !Array.isArray(object[key])) {
-            object[key] = removeNullishAttrs(object[key]);
+            object[key] = cleanNullishNestedAttrs(object[key]);
             if (Object.keys(object[key]).length === 0) {
                 delete object[key];
             }

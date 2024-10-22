@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UsePipes } fr
 import { ApiTags } from '@nestjs/swagger';
 import { ApiMessage } from 'src/common/decorators/api-message.decorator';
 import { IKey } from 'src/common/interfaces/index.interface';
-import { ParseObjectIdPipe } from 'src/core/pipe/parse-object-id.pipe';
+import { IdParamTransform } from 'src/core/pipe/id-param.transform';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
@@ -15,14 +15,14 @@ export class AdminsCategoriesController {
   constructor(private readonly categoriesService: CategoriesService) { }
 
   //CREATE//
-  @ApiMessage('create a category for admin side')
+  @ApiMessage('create a category')
   @Post()
   async create(@Body() createCategoryDto: CreateCategoryDto) {
     return await this.categoriesService.create(createCategoryDto);
   }
 
   //QUERY//
-  @ApiMessage('get all categories for admin side')
+  @ApiMessage('get all categories')
   @Get()
   @UsePipes(QueryCategoryPipe)
   async findAll(@Query() queryString: any) {
@@ -30,30 +30,30 @@ export class AdminsCategoriesController {
   }
 
   @Get('/:id([a-f0-9]{24})') //
-  @UsePipes(ParseObjectIdPipe)
+  @UsePipes(IdParamTransform)
   findOne(@Param('id') id: IKey) {
     return this.categoriesService.findOne(id);
   }
 
   //UPDATE//
-  @ApiMessage('update a category for admin side')
+  @ApiMessage('update a category')
   @Patch()
   update(@Body() updateCategoryDto: UpdateCategoryDto) {
     return this.categoriesService.update(updateCategoryDto);
   }
 
-  @ApiMessage('publish a product for admin side')
+  @ApiMessage('publish a product')
   @Patch('/published/:id')
-  @UsePipes(ParseObjectIdPipe)
+  @UsePipes(IdParamTransform)
   publishOne(
     @Param('id') id: IKey
   ) {
     return this.categoriesService.updateIsPublished(id, true);
   }
 
-  @ApiMessage('publish a product for admin side')
+  @ApiMessage('publish a product')
   @Patch('/unpublished/:id')
-  @UsePipes(ParseObjectIdPipe)
+  @UsePipes(IdParamTransform)
   unpublishOne(
     @Param('id') id: IKey
   ) {

@@ -1,0 +1,53 @@
+import { ArgumentMetadata, BadRequestException, Injectable, PipeTransform } from '@nestjs/common';
+import { isExistMessage, notEmptyMessage } from 'src/common/utils/exception.util';
+import { toObjetId } from 'src/common/utils/mongo.util';
+import { trim } from 'src/common/utils/pipe.util';
+import { CreateNeedDto } from '../dto/create-need.dto';
+import { NeedsRepository } from '../needs.repository';
+import { cleanNullishAttrs } from 'src/common/utils/index.util';
+import { UpdateNeedDto } from '../dto/update-need.dto';
+import { IKey } from 'src/common/interfaces/index.interface';
+
+@Injectable()
+export class UpdateNeedTransform {
+    constructor(private readonly needsRepository: NeedsRepository) { }
+
+    async transform(needId: IKey, payload: UpdateNeedDto) {
+        let { name, description, children, parent } = payload
+        const transformed = payload;
+
+        //trim name, description, not empty, not exist
+        name = trim(name) || null;
+        if (name) {
+            if (await this.needsRepository.isExistByQueryAndExcludeId({ name }, needId)) {
+                throw new BadRequestException(isExistMessage('name'));
+            }
+        }
+        transformed.name = name;
+
+        description = trim(description)
+
+        //children, parent to objectId
+        parent = toObjetId(parent);
+        transformed.parent = await this.needsRepository.isExistById(parent)
+            ? parent
+            : null;
+
+        if (Array.isArray(children)) {
+            children = await Promise.all(children.map(async child => {
+                child = toObjetId(child);
+                if (!child) { return null; }
+                const isExist = await this.needsRepository.isExistById(child);
+                return isExist ? child : null;
+            }));
+            children = children.filter(Boolean);
+        } //[]
+        else {
+            children = null;
+        } //item: null
+        transformed.children = children;
+
+        const cleaned: CreateNeedDto = cleanNullishAttrs(transformed);
+        return cleaned;
+    }
+}

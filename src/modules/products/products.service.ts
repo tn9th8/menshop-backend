@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Types } from 'mongoose';
 import { isObjectIdMessage, notFoundIdMessage } from 'src/common/utils/exception.util';
-import { removeNullishAttrs } from 'src/common/utils/index.util';
+import { cleanNullishNestedAttrs } from 'src/common/utils/index.util';
 import { buildQueryByShop, computeTotalItemsAndPages, convertToObjetId } from 'src/common/utils/mongo.util';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -132,7 +132,7 @@ export class ProductsService {
   }
 
   async updateOne(shopId: Types.ObjectId, payload: UpdateProductDto) {
-    payload = removeNullishAttrs(payload);
+    payload = cleanNullishNestedAttrs(payload);
     const { id: productId, attributes } = payload;
     const query = buildQueryByShop(shopId, { productId });
     const updatedProduct = await this.productsRepository.updateByQuery(query, payload);
