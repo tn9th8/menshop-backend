@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { IsPublishedEnum } from 'src/common/enums/index.enum';
-import { NeedSortEnum } from 'src/common/enums/sort.enum';
+import { SortEnum } from 'src/common/enums/index.enum';
 import { IKey, IReference } from 'src/common/interfaces/index.interface';
 import { notFoundIdMessage } from 'src/common/utils/exception.util';
 import { computeItemsAndPages } from 'src/common/utils/mongo.util';
@@ -39,21 +39,37 @@ export class NeedsService {
   }
 
   //QUERY//
-  async findAllByQuery({
-    page = 1,
-    limit = 24,
-    sort = NeedSortEnum.LATEST,
-    ...query
-  }: QueryNeedDto) {
+  async findAllByQuery(
+    {
+      page = 1,
+      limit = 24,
+      sort = SortEnum.LATEST,
+      ...query
+    }: QueryNeedDto,
+    isPublished: IsPublishedEnum = IsPublishedEnum.PUBLISHED
+  ) {
     const unselect = ['deletedAt', 'isDeleted', '__v'];
     const { data, metadata } = await this.needsRepository.findAllByQuery(
-      page, limit, sort, unselect, query
+      page, limit, sort, unselect, { ...query, isPublished: isPublished ? true : false }
     );
     const { items, pages } = computeItemsAndPages(metadata, limit);
     return {
       data,
       metadata: { page, limit, items, pages },
     };
+  }
+
+  async findTree(isPublished: IsPublishedEnum = IsPublishedEnum.PUBLISHED) {
+    const query = { isPublished: isPublished ? true : false };
+    const select = ['_id', 'name', 'slug', 'level'];
+    const references: IReference[] = [
+      {
+        attribute: 'children',
+        select: ['_id', 'name', 'slug', 'level']
+      },
+    ];
+    const tree = await this.needsRepository.findTree(query, select, references);
+    return tree;
   }
 
   async findOneById(needId: IKey) {

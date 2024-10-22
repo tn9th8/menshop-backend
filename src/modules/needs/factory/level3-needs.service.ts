@@ -33,7 +33,7 @@ export class Level3NeedsService {
     }
 
     async updateOne(needId: IKey, payload: UpdateNeedDto) {
-        const { parent, ...cleanPayload } = await this.updateNeedTransform.transform(needId, payload);
+        const { parent, children, ...cleanPayload } = await this.updateNeedTransform.transform(needId, payload);
         const updatedNeed = await this.needsRepository.updateOneById(needId, cleanPayload);
         //push createdNeed to parent sync-ly
         this.utilNeedsService.pushToParent(updatedNeed._id, parent);

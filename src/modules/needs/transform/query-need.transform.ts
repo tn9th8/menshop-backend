@@ -1,6 +1,6 @@
 import { Injectable, PipeTransform } from '@nestjs/common';
 import { QueryNeedDto } from '../dto/query-need.dto';
-import { NeedSortEnum } from 'src/common/enums/sort.enum';
+import { SortEnum } from 'src/common/enums/index.enum';
 import { NeedLevelEnum } from 'src/common/enums/need.enum';
 import { toObjetId } from 'src/common/utils/mongo.util';
 import { cleanNullishAttrs, toBoolean, toEnum, toNumber } from 'src/common/utils/index.util';
@@ -15,7 +15,7 @@ export class QueryNeedTransform implements PipeTransform {
 
         transformed.page = toNumber(page);
         transformed.limit = toNumber(limit);
-        transformed.sort = toEnum(sort, NeedSortEnum);
+        transformed.sort = toEnum(sort, SortEnum);
         //name is string => no transform
         transformed.level = toEnum(level, NeedLevelEnum);
         transformed.isPublished = toBoolean(isPublished);

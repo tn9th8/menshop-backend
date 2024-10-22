@@ -1,16 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import { ApiMessage } from 'src/common/decorators/api-message.decorator';
 import { NeedsService } from './needs.service';
-import { CreateNeedDto } from './dto/create-need.dto';
-import { UpdateNeedDto } from './dto/update-need.dto';
 
-@Controller('needs')
+@ApiTags('Needs Module For Admin Side')
+@Controller('client/needs')
 export class NeedsControllerClient {
   constructor(private readonly needsService: NeedsService) { }
 
-  @Post()
-  create(@Body() createNeedDto: CreateNeedDto) {
-    return createNeedDto;
-    return this.needsService.create(createNeedDto);
+  //QUERY//
+  @ApiMessage('find tree needs')
+  @Get('/tree')
+  findTree() {
+    return this.needsService.findTree();
   }
 
 }
