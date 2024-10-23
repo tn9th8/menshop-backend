@@ -35,7 +35,7 @@ export class NeedsControllerAdmin {
   @Patch('/published/:id([a-f0-9]{24})')
   @UsePipes(IdParamTransform)
   publishOne(@Param('id') id: IKey) {
-    return this.needsService.updateIsPublished(id, IsPublishedEnum.PUBLISH);
+    return this.needsService.updateIsPublished(id, IsPublishedEnum.PUBLISHED);
   }
 
   @ApiMessage('draft (unpublished) a need')

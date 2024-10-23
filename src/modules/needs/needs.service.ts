@@ -85,7 +85,6 @@ export class NeedsService {
       {
         attribute: 'children',
         select: ['_id', 'name', 'slug', 'level'],
-        unselect: ['_id']
       },
     ];
     const found = await this.needsRepository.findOneById(needId, unselect, references);

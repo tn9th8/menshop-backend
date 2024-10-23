@@ -80,10 +80,7 @@ export class NeedsRepository {
       .select(toDbUnselect(unselect))
       .populate({
         path: references[0].attribute,
-        select: {
-          ...toDbSelect(references[0].select),
-          ...toDbUnselect(references[0].unselect)
-        }
+        select: toDbSelect(references[0].select)
       });
     return found || null;
   }

@@ -65,4 +65,11 @@ export class ShopsControllerAdmin {
   findAllDraft(@Query() query: QueryShopDto) {
     return this.shopsService.findAllByQuery(query, IsActiveEnum.DISABLE);
   }
+
+  @ApiMessage('find one needs')
+  @Get(':id([a-f0-9]{24})')
+  @UsePipes(IdParamTransform)
+  findOne(@Param('id') id: IKey) {
+    return this.shopsService.findOneById(id);
+  }
 }

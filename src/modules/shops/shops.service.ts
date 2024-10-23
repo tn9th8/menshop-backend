@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateShopDto } from './dto/create-shop.dto';
 import { UpdateShopDto } from './dto/update-shop.dto';
 import { ShopsRepository } from './shops.repository';
@@ -7,8 +7,8 @@ import { UsersRepository } from '../users/users.repository';
 import { CreateShopTransform } from './transform/create-shop.transform';
 import { UpdateShopTransform } from './transform/update-shop.transform';
 import { IsActiveEnum, SortEnum } from 'src/common/enums/index.enum';
-import { IKey } from 'src/common/interfaces/index.interface';
-import { notFoundIdMessage } from 'src/common/utils/exception.util';
+import { IKey, IReference } from 'src/common/interfaces/index.interface';
+import { isExistMessage, notFoundIdMessage } from 'src/common/utils/exception.util';
 import { QueryShopDto } from './dto/query-shop.dto';
 import { computeItemsAndPages } from 'src/common/utils/mongo.util';
 
@@ -25,6 +25,9 @@ export class ShopsService {
   async create(payload: CreateShopDto, user: AuthUserDto) {
     payload = await this.createShopTransform.transform(payload);
     const { _id: userId } = await this.usersRepo.findLeanByQuery({ email: user.email }, ['_id']);
+    if (await this.shopsRepo.isExistByQuery({ user: userId })) {
+      throw new BadRequestException(isExistMessage('seller'));
+    }
     const newPayload = { ...payload, userId };
     const created = this.shopsRepo.create(newPayload);
     return created;
@@ -69,13 +72,17 @@ export class ShopsService {
     };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} shop`;
+  async findOneById(shopId: IKey) {
+    const unselect = ['deletedAt', 'isDeleted', '__v'];
+    const references: IReference[] = [{
+      attribute: 'user',
+      select: ['_id', 'name', 'email', 'phone']
+    }];
+    const found = await this.shopsRepo.findOneById(shopId, unselect, references);
+    if (!found) {
+      throw new NotFoundException(notFoundIdMessage('id param', shopId));
+    }
+    return found;
   }
 
-
-
-  remove(id: number) {
-    return `This action removes a #${id} shop`;
-  }
 }

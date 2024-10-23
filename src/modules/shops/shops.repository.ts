@@ -4,12 +4,12 @@ import { UpdateShopDto } from './dto/update-shop.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { IShop, Shop } from './schemas/shop.schema';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
-import { IKey } from 'src/common/interfaces/index.interface';
+import { IKey, IReference } from 'src/common/interfaces/index.interface';
 import { FilterQuery, QueryOptions } from 'mongoose';
 import { SortEnum } from 'src/common/enums/index.enum';
 import { IQueryShop } from './dto/query-shop.dto';
 import { Result } from 'src/common/interfaces/response.interface';
-import { toDbLikeQuery, toDbUnselect } from 'src/common/utils/mongo.util';
+import { toDbLikeQuery, toDbSelect, toDbUnselect } from 'src/common/utils/mongo.util';
 import { IDbSort } from 'src/common/interfaces/mongo.interface';
 
 @Injectable()
@@ -102,6 +102,20 @@ export class ShopsRepository {
       metadata: { queriedCount },
       data: (data as any)
     }
+  }
+
+  async findOneById(
+    needId: IKey,
+    unselect: string[],
+    references: IReference[]
+  ): Promise<IShop | null> {
+    const found = await this.shopModel.findById(needId)
+      .select(toDbUnselect(unselect))
+      .populate({
+        path: references[0].attribute,
+        select: toDbSelect(references[0].select)
+      });
+    return found || null;
   }
 
   //COMPUTE
