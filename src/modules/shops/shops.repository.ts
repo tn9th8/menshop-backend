@@ -6,6 +6,11 @@ import { IShop, Shop } from './schemas/shop.schema';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { IKey } from 'src/common/interfaces/index.interface';
 import { FilterQuery, QueryOptions } from 'mongoose';
+import { SortEnum } from 'src/common/enums/index.enum';
+import { IQueryShop } from './dto/query-shop.dto';
+import { Result } from 'src/common/interfaces/response.interface';
+import { toDbLikeQuery, toDbUnselect } from 'src/common/utils/mongo.util';
+import { IDbSort } from 'src/common/interfaces/mongo.interface';
 
 @Injectable()
 export class ShopsRepository {
@@ -62,22 +67,44 @@ export class ShopsRepository {
     return isExist ? true : false;
   }
 
-  findAll() {
-    return `This action returns all shops`;
+  //QUERY//
+  async findAllByQuery(
+    page: number,
+    limit: number,
+    sort: SortEnum,
+    unselect: string[],
+    query: IQueryShop
+  ): Promise<Result<IShop>> {
+    const dbQuery = {
+      ...query,
+      ...toDbLikeQuery(['name'], [query.name])
+    }
+    const dbUnselect = toDbUnselect(unselect);
+    const dbSort: IDbSort =
+      sort == SortEnum.LATEST ? { updatedAt: -1 }
+        : sort == SortEnum.OLDEST ? { updatedAt: 1 }
+          : sort == SortEnum.NAME_AZ ? { name: 1 }
+            : sort == SortEnum.NAME_ZA ? { name: -1 }
+              : { updatedAt: -1 } //default SortEnum.LATEST
+    const skip = limit * (page - 1);
+
+    const [queriedCount, data] = await Promise.all([
+      this.shopModel.countDocuments(dbQuery),
+      this.shopModel.find(dbQuery)
+        .select(dbUnselect)
+        .sort(dbSort)
+        .skip(skip)
+        .limit(limit)
+        .exec()
+    ]);
+
+    return {
+      metadata: { queriedCount },
+      data: (data as any)
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} shop`;
-  }
-
-  update(id: number, updateShopDto: UpdateShopDto) {
-    return `This action updates a #${id} shop`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} shop`;
-  }
-
+  //COMPUTE
   async count() {
     const result = await this.shopModel.count();
     return result;

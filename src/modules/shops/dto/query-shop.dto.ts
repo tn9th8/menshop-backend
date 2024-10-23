@@ -15,5 +15,5 @@ export class QueryShopDto {
 }
 
 export interface IQueryShop extends QueryShopDto {
-    isPublished?: boolean;
+    isActive?: boolean;
 }

@@ -6,9 +6,11 @@ import { AuthUserDto } from 'src/auth/dto/auth-user.dto';
 import { UsersRepository } from '../users/users.repository';
 import { CreateShopTransform } from './transform/create-shop.transform';
 import { UpdateShopTransform } from './transform/update-shop.transform';
-import { IsActiveEnum } from 'src/common/enums/index.enum';
+import { IsActiveEnum, SortEnum } from 'src/common/enums/index.enum';
 import { IKey } from 'src/common/interfaces/index.interface';
 import { notFoundIdMessage } from 'src/common/utils/exception.util';
+import { QueryShopDto } from './dto/query-shop.dto';
+import { computeItemsAndPages } from 'src/common/utils/mongo.util';
 
 @Injectable()
 export class ShopsService {
@@ -45,8 +47,26 @@ export class ShopsService {
     }
     return result;
   }
-  findAll() {
-    return `This action returns all shops`;
+
+  //QUERY//
+  async findAllByQuery(
+    {
+      page = 1,
+      limit = 24,
+      sort = SortEnum.LATEST,
+      ...query
+    }: QueryShopDto,
+    isActive = IsActiveEnum.ACTIVE
+  ) {
+    const unselect = ['deletedAt', 'isDeleted', '__v'];
+    const { data, metadata } = await this.shopsRepo.findAllByQuery(
+      page, limit, sort, unselect, { ...query, isActive: isActive ? true : false }
+    );
+    const { items, pages } = computeItemsAndPages(metadata, limit);
+    return {
+      data,
+      metadata: { page, limit, items, pages },
+    };
   }
 
   findOne(id: number) {

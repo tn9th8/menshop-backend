@@ -53,7 +53,7 @@ export class NeedsService {
       sort = SortEnum.LATEST,
       ...query
     }: QueryNeedDto,
-    isPublished: IsPublishedEnum = IsPublishedEnum.PUBLISHED
+    isPublished = IsPublishedEnum.PUBLISHED
   ) {
     const unselect = ['deletedAt', 'isDeleted', '__v'];
     const { data, metadata } = await this.needsRepository.findAllByQuery(
