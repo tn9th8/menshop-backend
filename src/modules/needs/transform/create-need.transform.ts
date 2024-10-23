@@ -12,7 +12,6 @@ export class CreateNeedTransform {
 
     async transform(value: CreateNeedDto) {
         let { name, description, children, parent } = value
-        const transformed = value;
 
         //trim name, description, not empty, not exist
         name = trim(name); //null
@@ -22,15 +21,12 @@ export class CreateNeedTransform {
         if (await this.needsRepository.isExistByQuery({ name })) {
             throw new BadRequestException(isExistMessage('name'));
         }
-        transformed.name = name;
 
         description = trim(description)//null, ""
-        transformed.description = description;
 
         //children, parent to objectId
         parent = toObjetId(parent); //null
         parent = await this.needsRepository.isExistById(parent) ? parent : null;
-        transformed.parent = parent;
 
         if (Array.isArray(children)) {
             children = await Promise.all(children.map(async child => {
@@ -44,9 +40,8 @@ export class CreateNeedTransform {
         else {
             children = null;
         } //item: null
-        transformed.children = children;
 
-        const cleaned: CreateNeedDto = cleanNullishAttrs(transformed);
+        const cleaned: CreateNeedDto = cleanNullishAttrs({ name, description, children, parent });
         return cleaned;
     }
 }

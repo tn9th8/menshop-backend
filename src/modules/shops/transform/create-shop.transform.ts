@@ -11,7 +11,6 @@ export class CreateShopTransform {
 
     async transform(value: CreateShopDto) {
         let { name, description, image } = value;
-        const transformed = value;
 
         //name: trim, not empty, not exist
         name = trim(name);
@@ -21,20 +20,17 @@ export class CreateShopTransform {
         if (await this.shopsRepository.isExistByQuery({ name })) {
             throw new BadRequestException(isExistMessage('name'));
         }
-        transformed.name = name;
 
         //description: trim
         description = trim(description);
-        transformed.description = description;
 
         //name: trim, not empty
         image = trim(image);
         if (!image) {
             throw new BadRequestException(notEmptyMessage('name'));
         }
-        transformed.image = image;
 
-        const cleaned: CreateShopDto = cleanNullishAttrs(transformed);
-        return cleaned;
+        const transformed: CreateShopDto = cleanNullishAttrs({ name, description, image });
+        return transformed;
     }
 }

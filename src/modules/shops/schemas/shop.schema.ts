@@ -25,7 +25,7 @@ export class Shop {
     isActive: boolean;
 
     //ref
-    @Prop({ type: [SchemaTypes.ObjectId], ref: User.name, required: true })
+    @Prop({ type: SchemaTypes.ObjectId, ref: User.name, required: true })
     user: IKey;
 }
 

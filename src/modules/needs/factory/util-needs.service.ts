@@ -13,7 +13,7 @@ export class UtilNeedsService {
         //check: no include => push
         //but new => always no include => no check
         foundParent.children.push(needId)
-        const updatedParent = await this.needsRepository.updateById(parentId, foundParent);
+        const updatedParent = await this.needsRepository.updateLeanById(parentId, foundParent);
         return updatedParent;
     }
 
