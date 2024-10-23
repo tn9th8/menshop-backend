@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { IUser, User } from './schemas/user.scheme';
 import { toDbSelect } from 'src/common/utils/mongo.util';
+import { SignUpSellerDto } from 'src/auth/dto/signup-seller.dto';
 
 @Injectable()
 export class UsersRepository {
@@ -16,6 +17,19 @@ export class UsersRepository {
     return result;
   }
 
+  //CREATE//
+  async createOne(payload: User): Promise<IUser> {
+    const created = await this.userModel.create(payload);
+    return (created as any)._doc || null;
+  }
+
+  //EXIST//
+  async isExistByQuery(query: any) {
+    const isExist = await this.userModel.exists(query).lean()
+      ? true
+      : false;
+    return isExist;
+  }
   //QUERY//
   async findLeanByQuery(
     query: any, //{email}

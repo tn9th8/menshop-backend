@@ -1,37 +1,20 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { CategoriesService } from './categories.service';
-import { CreateCategoryDto } from './dto/create-category.dto';
-import { UpdateCategoryDto } from './dto/update-category.dto';
+import { Controller, Get } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { ApiMessage } from 'src/common/decorators/api-message.decorator';
+import { SkipJwt } from 'src/common/decorators/skip-jwt.decorator';
+import { CategoriesService } from './categories.service';
 
 @ApiTags('Categories Module For Client Side')
 @Controller('/client/categories')
-export class ClientsCategoriesController {
+export class CategoriesControllerClient {
   constructor(private readonly categoriesService: CategoriesService) { }
 
-  // @Post()
-  // create(@Body() createCategoryDto: CreateCategoryDto) {
-  //   return createCategoryDto;
-  //   //return this.categoriesService.create(createCategoryDto);
-  // }
+  //QUERY//
+  @ApiMessage('find tree categories')
+  @Get('/tree')
+  @SkipJwt()
+  findTree() {
+    return this.categoriesService.findTree();
+  }
 
-  // @Get()
-  // findAll() {
-  //   // return this.categoriesService.findAll();
-  // }
-
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.categoriesService.findOne(+id);
-  // }
-
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateCategoryDto: UpdateCategoryDto) {
-  //   return this.categoriesService.update(+id, updateCategoryDto);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.categoriesService.remove(+id);
-  // }
 }

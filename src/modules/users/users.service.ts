@@ -1,30 +1,89 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import aqp from 'api-query-params';
 import { Moment } from 'moment';
 import mongoose from 'mongoose';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
-import { SignUpDto } from 'src/auth/dto/sign-up.dto';
+import { SignUpClientDto } from 'src/auth/dto/signup-client.dto';
 import { ICreateResult, IDeleteResult, IUpdateResult } from 'src/common/interfaces/persist-result.interface';
 import { convertToObjetId } from 'src/common/utils/mongo.util';
 import { hashPass } from 'src/common/utils/security.util';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { IUser, User } from './schemas/user.scheme';
+import { isExistMessage } from 'src/common/utils/exception.util';
+import { SignUpSellerDto } from 'src/auth/dto/signup-seller.dto';
+import { UsersRepository } from './users.repository';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User.name)
-    private readonly userModel: SoftDeleteModel<IUser>
+    private readonly userModel: SoftDeleteModel<IUser>,
+    private readonly usersRepo: UsersRepository
   ) { }
+  //CREATE//
+  async createSeller(payload: SignUpSellerDto) {
+    try {
+      //is not exist email
+      const { email, password: plain } = payload;
+      if (await this.usersRepo.isExistByQuery({ email })) {
+        throw new ConflictException(isExistMessage('email'));
+      }
+      //hash password
+      const password = await hashPass(plain);
+      //role
+      const role = "SELLER";
+      //create a user
+      let created = await this.usersRepo.createOne({
+        ...payload,
+        password,
+        role
+      } as any); //{ password: unselect, ... }
+      if (!created) {
+        throw new BadRequestException("Có lỗi khi tạo một seller");
+      }
+      const { password: hide, ...newUser } = created;
+      return newUser;
+    } catch (error) {
+      throw error;
+    }
+  }
 
-  async create(createUserDto: CreateUserDto | SignUpDto): Promise<ICreateResult> {
+  async createClient(payload: SignUpSellerDto) {
+    try {
+      //is not exist email
+      const { email, password: plain } = payload;
+      if (await this.usersRepo.isExistByQuery({ email })) {
+        throw new ConflictException(isExistMessage('email'));
+      }
+      //hash password
+      const password = await hashPass(plain);
+      //role
+      const role = "CLIENT";
+      //create a user
+      let created = await this.usersRepo.createOne({
+        ...payload,
+        password,
+        role
+      } as any); //{ password: unselect, ... }
+      if (!created) {
+        throw new BadRequestException("Có lỗi khi tạo một seller");
+      }
+      const { password: hide, ...newUser } = created;
+      return newUser;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  //OLD//
+  async create(createUserDto: CreateUserDto | SignUpClientDto): Promise<ICreateResult> {
     // is exist mail
     const { email, password } = createUserDto;
     const isExist = await this.userModel.findOne({ email });
     if (isExist) {
-      throw new BadRequestException(`Email ${email} đã tồn tại. Vui lòng sử dụng email khác`);
+      throw new ConflictException(isExistMessage('email'));
     }
 
     // hash password

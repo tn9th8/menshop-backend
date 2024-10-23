@@ -149,7 +149,7 @@ export const timestampsPlugin = (schema: Schema) => {
  */
 export const slugPlugin = (schema: Schema) => {
     schema.pre('save', function (next) {
-        this.slug = slugify(this.displayName, { lower: true })
+        this.slug = slugify(this.name, { lower: true })
         next();
     })
 }

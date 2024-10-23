@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, PipeTransform } from '@nestjs/common';
 import { isExistMessage, notEmptyMessage } from 'src/common/utils/exception.util';
 import { cleanNullishAttrs } from 'src/common/utils/index.util';
 import { trim } from 'src/common/utils/pipe.util';
@@ -6,7 +6,7 @@ import { CreateShopDto } from '../dto/create-shop.dto';
 import { ShopsRepository } from '../shops.repository';
 
 @Injectable()
-export class CreateShopTransform {
+export class CreateShopTransform implements PipeTransform {
     constructor(private readonly shopsRepository: ShopsRepository) { }
 
     async transform(value: CreateShopDto) {

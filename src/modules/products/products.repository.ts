@@ -2,9 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, QueryOptions, Types, UpdateQuery, Expression } from 'mongoose';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
-import { computeSkipAndSort, convertSelectAttrs, convertUnselectAttrs } from 'src/common/utils/mongo.util';
+import { computeSkipAndSort, convertSelectAttrs, convertUnselectAttrs, toDbLikeQuery, toDbSelect, toDbUnselect } from 'src/common/utils/mongo.util';
 import { CreateProductDto } from './dto/create-product.dto';
 import { IProduct, Product } from './schemas/product.schema';
+import { IKey } from 'src/common/interfaces/index.interface';
+import { Result } from 'src/common/interfaces/response.interface';
+import { IQueryProduct } from './dto/query-product.dto';
+import { SortEnum } from 'src/common/enums/index.enum';
+import { IDbSort } from 'src/common/interfaces/mongo.interface';
 
 @Injectable()
 export class ProductsRepository {
@@ -12,6 +17,26 @@ export class ProductsRepository {
     @InjectModel(Product.name)
     private readonly productModel: SoftDeleteModel<IProduct>
   ) { }
+
+  //EXIST// the exists method return {_id} | null
+  async isExistById(needId: IKey) {
+    const isExist = await this.productModel.exists({ _id: needId });
+    return isExist ? true : false;
+  }
+
+  async isExistByQuery(query: any) {
+    const isExist = await this.productModel.exists(query);
+    return isExist ? true : false;
+  }
+
+  async isExistByQueryAndExcludeId(query: any, id: IKey) {
+    const isExist = await this.productModel.exists({
+      ...query,
+      _id: { $ne: id } //exclude the id document
+    });
+    return isExist ? true : false;
+  }
+
   //CREATE//
   async create(createProductDto: CreateProductDto) {
     const result = await this.productModel.create(createProductDto);
@@ -20,6 +45,42 @@ export class ProductsRepository {
   //END CREATE//
 
   //QUERY//
+  async findAllByQuery(
+    page: number,
+    limit: number,
+    sort: SortEnum,
+    unselect: string[],
+    query: IQueryProduct
+  ): Promise<Result<IProduct>> {
+    const dbQuery = {
+      ...query,
+      ...toDbLikeQuery(['name'], [query.name])
+    }
+    const dbUnselect = toDbUnselect(unselect);
+    const dbSort: IDbSort =
+      sort == SortEnum.LATEST ? { updatedAt: -1 }
+        : sort == SortEnum.OLDEST ? { updatedAt: 1 }
+          : sort == SortEnum.NAME_AZ ? { name: 1 }
+            : sort == SortEnum.NAME_ZA ? { name: -1 }
+              : { updatedAt: -1 } //default SortEnum.LATEST
+    const skip = limit * (page - 1);
+
+    const [queriedCount, data] = await Promise.all([
+      this.productModel.countDocuments(dbQuery),
+      this.productModel.find(dbQuery)
+        .select(dbUnselect)
+        .sort(dbSort)
+        .skip(skip)
+        .limit(limit)
+        .exec()
+    ]);
+
+    return {
+      metadata: { queriedCount },
+      data: (data as any)
+    }
+  }
+
   async findAllByIsPublished(query: FilterQuery<IProduct>, limit: number, skip: number): Promise<IProduct[]> {
     const result = await this.productModel.find(query)
       .populate('shop', 'name -_id') //email
@@ -66,8 +127,8 @@ export class ProductsRepository {
 
     //skip, query, select
     const skip = limit * (page - 1);
-    const { category, ...query } = rawQuery;
-    const inCategories = category ? { categories: { $elemMatch: { $eq: category } } } : {}; //!falsy: ?: || if() - falsy: if(!!)
+    const { product, ...query } = rawQuery;
+    const inCategories = product ? { categories: { $elemMatch: { $eq: product } } } : {}; //!falsy: ?: || if() - falsy: if(!!)
     const select = convertSelectAttrs(selectArr);
 
     const [{ metadata, result }] = await this.productModel.aggregate([
@@ -112,8 +173,8 @@ export class ProductsRepository {
     //skip, sort
     const { skip, sort } = computeSkipAndSort(limit, page, rawSort);
     //query, select
-    const { category, ...query } = rawQuery;
-    const inCategories = category ? { categories: { $elemMatch: { $eq: category } } } : {}; //!falsy
+    const { product, ...query } = rawQuery;
+    const inCategories = product ? { categories: { $elemMatch: { $eq: product } } } : {}; //!falsy
     const select = convertSelectAttrs(selectArr);
     const [result] = await this.productModel.aggregate([
       {

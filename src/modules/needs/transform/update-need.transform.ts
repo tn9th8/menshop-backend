@@ -10,12 +10,11 @@ import { IKey } from 'src/common/interfaces/index.interface';
 import { NeedLevelEnum } from 'src/common/enums/need.enum';
 
 @Injectable()
-export class UpdateNeedTransform {
+export class UpdateNeedTransform implements PipeTransform {
     constructor(private readonly needsRepository: NeedsRepository) { }
 
     async transform(value: UpdateNeedDto) {
-        let { id, name, description, children, parent } = value
-        const transformed = value;
+        let { id, name, description, children, parent } = value;
 
         //id: objectId, get level
         id = toObjetId(id);

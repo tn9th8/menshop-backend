@@ -1,15 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UsePipes, Query } from '@nestjs/common';
-import { NeedsService } from './needs.service';
-import { CreateNeedDto } from './dto/create-need.dto';
-import { UpdateNeedDto } from './dto/update-need.dto';
-import { CreateNeedTransform } from './transform/create-need.transform';
-import { ApiMessage } from 'src/common/decorators/api-message.decorator';
-import { IdParamTransform } from 'src/core/pipe/id-param.transform';
-import { IKey } from 'src/common/interfaces/index.interface';
-import { IsPublishedEnum } from 'src/common/enums/index.enum';
-import { QueryNeedTransform } from './transform/query-need.transform';
-import { QueryNeedDto } from './dto/query-need.dto';
+import { Body, Controller, Get, Param, Patch, Post, Query, UsePipes } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { ApiMessage } from 'src/common/decorators/api-message.decorator';
+import { IsPublishedEnum } from 'src/common/enums/index.enum';
+import { IKey } from 'src/common/interfaces/index.interface';
+import { IdParamTransform } from 'src/core/pipe/id-param.transform';
+import { CreateNeedDto } from './dto/create-need.dto';
+import { QueryNeedDto } from './dto/query-need.dto';
+import { UpdateNeedDto } from './dto/update-need.dto';
+import { NeedsService } from './needs.service';
+import { QueryNeedTransform } from './transform/query-need.transform';
 
 @ApiTags('Needs Module For Admin Side')
 @Controller('admin/needs')
@@ -18,8 +17,7 @@ export class NeedsControllerAdmin {
 
   //CREATE//
   @ApiMessage('create a need')
-  @Post('')
-  @UsePipes(CreateNeedTransform)
+  @Post()
   createOne(@Body() createNeedDto: CreateNeedDto) {
     return this.needsService.createOne(createNeedDto);
   }

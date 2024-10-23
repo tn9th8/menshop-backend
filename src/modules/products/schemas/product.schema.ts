@@ -1,41 +1,38 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import mongoose, { HydratedDocument, SchemaTypes, Types } from "mongoose";
-import { ProductAnnotationEnum } from "src/common/enums/product.enum";
-import { ProductStatusEnum } from "src/common/enums/status.enum";
 import { IBaseDocument } from "src/common/interfaces/base-document.interface";
-import { publishPlugin, ratingStarProp, slugPlugin } from "src/common/utils/mongo.util";
-import { Brand } from "src/modules/brands/schemas/brand.schema";
+import { ratingStarProp, slugPlugin } from "src/common/utils/mongo.util";
 import { Category } from "src/modules/categories/schemas/category.schema";
 import { Need } from "src/modules/needs/schemas/need.schema";
 import { Shop } from "src/modules/shops/schemas/shop.schema";
 import { StockModel } from "src/modules/stock-models/schemas/stock-model.schema";
-import {
-    ProductAsset,
-    ProductAttribute,
-    ProductSize,
-    ProductVariation,
-} from "./nested-types.schema";
-
-mongoose.set('applyPluginsToChildSchemas', false);
+import { ProductAsset, ProductAttribute, ProductSize, ProductVariation } from "./nested-types.schema";
+import { IKey } from "src/common/interfaces/index.interface";
 
 export type ProductDocument = HydratedDocument<Product>;
 export type IProduct = ProductDocument & IBaseDocument;
 
-@Schema()
+@Schema({ timestamps: true })
 export class Product {
-    @Prop({ trim: true, required: true }) //code
+    @Prop({ required: true })
     name: string;
-
-    @Prop({ trim: true, required: true })
-    displayName: string;
 
     @Prop({ required: true }) //plugin
     slug: string;
 
-    @Prop({ trim: true, default: null })
+    @Prop({ default: null })
     description: string;
 
-    @Prop({ default: 0, required: true })
+    @Prop({ required: true })
+    thumb: string;
+
+    @Prop({ type: Object, default: null })
+    asset: ProductAsset;
+
+    @Prop({ type: [Object], default: null }) //mongodb attribute pattern
+    attributes: ProductAttribute[];
+
+    @Prop({ default: 1000, required: true }) //model
     price: number;
 
     @Prop({ default: null })
@@ -56,43 +53,27 @@ export class Product {
     @Prop(ratingStarProp) //default 5.0, required: true
     ratingStar: number;
 
-    @Prop({ type: [String] }) //default []
-    annotations: ProductAnnotationEnum[];
-
-    @Prop({ type: Object, default: null })
+    @Prop({ type: Object, default: null }) //model
     variation: ProductVariation;
 
-    @Prop({ type: Object, default: null })
+    @Prop({ type: Object, default: null }) //model
     size: ProductSize;
 
-    @Prop({ type: Object, required: true })
-    asset: ProductAsset; //todo: thumb, file
-
-    @Prop({ type: [Object], required: true }) //mongodb attribute pattern
-    attributes: ProductAttribute[];
-
-    //refer
-    @Prop({ type: SchemaTypes.ObjectId, ref: Shop.name, required: true })
-    shop: Types.ObjectId;
-
-    @Prop({ type: SchemaTypes.ObjectId, ref: Brand.name, default: null })
-    brand: Types.ObjectId;
-
-    @Prop({ type: [SchemaTypes.ObjectId], ref: StockModel.name, required: true })
-    models: Types.ObjectId[];
-
-    @Prop({ type: [SchemaTypes.ObjectId], ref: Category.name, required: true })
-    categories: Types.ObjectId[];
-
-    @Prop({ type: [SchemaTypes.ObjectId], ref: Need.name, default: null })
-    needs: Types.ObjectId[];
-
-    //no select
-    @Prop({ index: true, select: false, default: false, required: true }) //draft or published
+    @Prop({ index: true, select: false, default: false, required: true }) //published or draft
     isPublished: boolean;
 
-    @Prop({ index: true, type: String, default: ProductStatusEnum.NORMAL, select: false, required: true })
-    status: ProductStatusEnum;
+    @Prop({ index: true, select: false, default: true, required: true }) //active or disable
+    isActive: boolean;
+
+    //refer
+    @Prop({ type: [SchemaTypes.ObjectId], ref: Category.name, default: null })
+    categories: IKey[];
+
+    @Prop({ type: [SchemaTypes.ObjectId], ref: Need.name, default: null })
+    needs: IKey[];
+
+    @Prop({ type: SchemaTypes.ObjectId, ref: Shop.name, required: true })
+    shop: IKey;
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);

@@ -1,14 +1,13 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, PipeTransform } from '@nestjs/common';
 import { isExistMessage, isObjectIdMessage, notEmptyMessage, notFoundIdMessage } from 'src/common/utils/exception.util';
 import { cleanNullishAttrs } from 'src/common/utils/index.util';
 import { toObjetId } from 'src/common/utils/mongo.util';
 import { trim } from 'src/common/utils/pipe.util';
-import { CreateShopDto } from '../dto/create-shop.dto';
 import { UpdateShopDto } from '../dto/update-shop.dto';
 import { ShopsRepository } from '../shops.repository';
 
 @Injectable()
-export class UpdateShopTransform {
+export class UpdateShopTransform implements PipeTransform {
     constructor(private readonly shopsRepository: ShopsRepository) { }
 
     async transform(value: UpdateShopDto) {

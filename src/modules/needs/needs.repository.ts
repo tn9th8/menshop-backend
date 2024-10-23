@@ -17,9 +17,10 @@ export class NeedsRepository {
     @InjectModel(Need.name)
     private readonly needModel: SoftDeleteModel<INeed>
   ) { }
+
   //CREATE//
-  createOne(payload: CreateNeedDto) {
-    const created = this.needModel.create(payload);
+  async createOne(payload: CreateNeedDto) {
+    const created = await this.needModel.create(payload);
     return created;
   }
 

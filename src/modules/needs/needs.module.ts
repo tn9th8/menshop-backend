@@ -22,7 +22,6 @@ import { QueryNeedTransform } from './transform/query-need.transform';
     NeedsRepository,
     CreateNeedTransform,
     UpdateNeedTransform,
-    QueryNeedTransform,
     NeedsFactory,
     Level1NeedsService,
     Level2NeedsService,

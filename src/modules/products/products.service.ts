@@ -1,34 +1,74 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Types } from 'mongoose';
+import { ProductSortEnum } from 'src/common/enums/query.enum';
 import { isObjectIdMessage, notFoundIdMessage } from 'src/common/utils/exception.util';
 import { cleanNullishNestedAttrs } from 'src/common/utils/index.util';
-import { buildQueryByShop, computeTotalItemsAndPages, convertToObjetId } from 'src/common/utils/mongo.util';
-import { CreateProductDto } from './dto/create-product.dto';
+import { buildQueryByShop, computeItemsAndPages, computeTotalItemsAndPages, convertToObjetId } from 'src/common/utils/mongo.util';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { ProductsFactory } from './factory/products.factory';
 import { ProductsRepository } from './products.repository';
 import { IProduct } from './schemas/product.schema';
-import { ProductSortEnum } from 'src/common/enums/query.enum';
+import { IsActiveEnum, IsPublishedEnum, SortEnum } from 'src/common/enums/index.enum';
+import { QueryProductDto } from './dto/query-product.dto';
 
 @Injectable()
 export class ProductsService {
   constructor(
-    private readonly productsRepository: ProductsRepository,
-    private readonly productsFactory: ProductsFactory,
+    private readonly productsRepository: ProductsRepository
   ) { }
 
-  //CREATE//
-  async create(createProductDto: CreateProductDto): Promise<IProduct> {
-    const { attributes, shop, categories } = createProductDto;
-    if (!shop) { throw new BadRequestException(`Invalid Product Shop: ${shop}`) };
-
-    const isValid = this.productsFactory.isValidAttrs(attributes, categories);
-    if (!isValid) { throw new BadRequestException('Invalid Product Attributes') };
-
-    const result = await this.productsRepository.create(createProductDto);
-    if (!result) { throw new BadRequestException('Create A Product Error'); }
-    return result;
+  //QUERY//
+  async findAllByQueryAndIsActive(
+    {
+      page = 1,
+      limit = 24,
+      sort = SortEnum.LATEST,
+      ...query
+    }: QueryProductDto,
+    isActive = IsActiveEnum.ACTIVE
+  ) {
+    const unselect = ['deletedAt', 'isDeleted', '__v'];
+    const { data, metadata } = await this.productsRepository.findAllByQuery(
+      page, limit, sort, unselect, { ...query, isActive: isActive ? true : false }
+    );
+    const { items, pages } = computeItemsAndPages(metadata, limit);
+    return {
+      data,
+      metadata: { page, limit, items, pages },
+    };
   }
+
+  async findAllByQueryAndIsPublished(
+    {
+      page = 1,
+      limit = 24,
+      sort = SortEnum.LATEST,
+      ...query
+    }: QueryProductDto,
+    isPublished = IsPublishedEnum.PUBLISHED
+  ) {
+    const unselect = ['deletedAt', 'isDeleted', '__v'];
+    const { data, metadata } = await this.productsRepository.findAllByQuery(
+      page, limit, sort, unselect, { ...query, isPublished: isPublished ? true : false }
+    );
+    const { items, pages } = computeItemsAndPages(metadata, limit);
+    return {
+      data,
+      metadata: { page, limit, items, pages },
+    };
+  }
+
+  //CREATE//
+  // async create(createProductDto: CreateProductDto): Promise<IProduct> {
+  //   const { attributes, shop, categories } = createProductDto;
+  //   if (!shop) { throw new BadRequestException(`Invalid Product Shop: ${shop}`) };
+
+  //   const isValid = this.productsFactory.isValidAttrs(attributes, categories);
+  //   if (!isValid) { throw new BadRequestException('Invalid Product Attributes') };
+
+  //   const result = await this.productsRepository.create(createProductDto);
+  //   if (!result) { throw new BadRequestException('Create A Product Error'); }
+  //   return result;
+  // }
   //END CREATE//
 
   //QUERY//

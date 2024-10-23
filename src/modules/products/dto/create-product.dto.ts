@@ -1,36 +1,41 @@
 import { Type } from 'class-transformer';
-import { ArrayMinSize, MinLength, ValidateNested } from 'class-validator';
-import { isArrayMessage, isStringMessage, isObjectMessage, isObjectIdMessage } from 'src/common/utils/pipe.util';
+import { IsArray, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IKey } from 'src/common/interfaces/index.interface';
+import { isArrayMessage, isObjectMessage, isStringMessage } from 'src/common/utils/pipe.util';
 import { ProductAssetDto, ProductAttributeDto } from './nested-types.dto';
-import { Types } from 'mongoose';
-import { IsObjectId } from 'src/common/decorators/is-object-id.decorator';
 
 export class CreateProductDto {
-    @MinLength(1, isStringMessage('name'))
-    name: string;
+    @IsString(isStringMessage('name'))
+    name: string; //trim, not empty, not exist
 
-    @MinLength(1, isStringMessage('displayName'))
-    displayName: string;
+    @IsOptional()
+    @IsString(isStringMessage('description'))
+    description?: string; //trim
 
-    description: string;
+    @IsString(isStringMessage('thumb'))
+    thumb: string; //trim, not empty
 
-    @ValidateNested(isObjectMessage('asset')) //validate nested
-    @Type(() => ProductAssetDto) //transform the prop by type
-    asset: ProductAssetDto;
+    @IsOptional()
+    @ValidateNested(isObjectMessage('asset'))
+    @Type(() => ProductAssetDto) //transform to validate nested
+    asset?: ProductAssetDto; //todo: transform
 
-    @ArrayMinSize(1, isArrayMessage('attributes'))
-    @ValidateNested({ each: true, ...isObjectMessage('mỗi phần tử trong array này') })
+    @IsOptional()
+    @IsArray(isArrayMessage('attributes'))
+    @ValidateNested({ each: true, ...isObjectMessage('item của attributes') })
     @Type(() => ProductAttributeDto)
-    attributes: ProductAttributeDto[];
+    attributes?: ProductAttributeDto[]; //todo: transform
 
     //ref
-    shop: Types.ObjectId;
+    @IsOptional()
+    @IsArray(isArrayMessage('categories'))
+    categories: IKey[]; //each: object
 
-    @IsObjectId({ each: true, ...isObjectIdMessage('models') })
-    @ArrayMinSize(1, isArrayMessage('models'))
-    models: Types.ObjectId[];
+    @IsOptional()
+    @IsArray(isArrayMessage('categories'))
+    needs: IKey[]; //each: object
+}
 
-    @IsObjectId({ each: true, ...isObjectIdMessage('categories') })
-    @ArrayMinSize(1, isArrayMessage('categories'))
-    categories: Types.ObjectId[];
+export interface ICreateProduct {
+    shop: IKey;
 }

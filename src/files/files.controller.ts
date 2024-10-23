@@ -7,7 +7,7 @@ import { HttpExceptionFilter } from 'src/core/filter/http-exception.filter';
 import { FilesService } from './files.service';
 
 @ApiTags('Upload Files Module')
-@Controller('adm/files')
+@Controller('admin/files')
 export class FilesController {
   constructor(private readonly filesService: FilesService) { }
 

@@ -8,7 +8,7 @@ import { AppController } from './app.controller';
 import { AppRepository } from './app.repository';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
-import { JwtGuard } from './auth/passport/jwt.guard';
+import { JwtGuard } from './auth/guard/jwt.guard';
 import { timestampsPlugin } from './common/utils/mongo.util';
 import { TransformInterceptor } from './core/interceptor/transform.interceptor';
 import { DatabasesModule } from './databases/databases.module';
@@ -20,6 +20,7 @@ import { ShopsModule } from './modules/shops/shops.module';
 import { StockModelsModule } from './modules/stock-models/stock-models.module';
 import { UsersModule } from './modules/users/users.module';
 import { NeedsModule } from './modules/needs/needs.module';
+import { KeyStoreModule } from './modules/key-store/key-store.module';
 
 @Module({
   controllers: [AppController],
@@ -84,6 +85,7 @@ import { NeedsModule } from './modules/needs/needs.module';
     NeedsModule,
     ProductsModule,
     StockModelsModule,
+    KeyStoreModule,
   ],
   exports: [AppRepository]
 })
