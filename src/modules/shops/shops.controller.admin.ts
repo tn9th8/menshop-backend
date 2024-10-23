@@ -55,18 +55,18 @@ export class ShopsControllerAdmin {
   @ApiMessage('find all active shops')
   @Get('/active')
   @UsePipes(QueryShopTransform)
-  findAllPublished(@Query() query: QueryShopDto) {
+  findAllActive(@Query() query: QueryShopDto) {
     return this.shopsService.findAllByQuery(query, IsActiveEnum.ACTIVE);
   }
 
   @ApiMessage('find all disable shops')
   @Get('/disable')
   @UsePipes(QueryShopTransform)
-  findAllDraft(@Query() query: QueryShopDto) {
+  findAllDisable(@Query() query: QueryShopDto) {
     return this.shopsService.findAllByQuery(query, IsActiveEnum.DISABLE);
   }
 
-  @ApiMessage('find one needs')
+  @ApiMessage('find one shop')
   @Get(':id([a-f0-9]{24})')
   @UsePipes(IdParamTransform)
   findOne(@Param('id') id: IKey) {
