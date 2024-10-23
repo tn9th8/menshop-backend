@@ -6,7 +6,7 @@ import { notFoundIdMessage } from 'src/common/utils/exception.util';
 import { computeItemsAndPages } from 'src/common/utils/mongo.util';
 import { CreateNeedDto } from './dto/create-need.dto';
 import { QueryNeedDto } from './dto/query-need.dto';
-import { IUpdateNeedDto, UpdateNeedDto } from './dto/update-need.dto';
+import { IUpdateNeed, UpdateNeedDto } from './dto/update-need.dto';
 import { NeedsFactory } from './factory/needs.factory';
 import { NeedsRepository } from './needs.repository';
 import { UpdateNeedTransform } from './transform/update-need.transform';
@@ -31,7 +31,7 @@ export class NeedsService {
 
   //UPDATE//
   async updateOne(payload: UpdateNeedDto) {
-    const newPayload: IUpdateNeedDto = await this.updateNeedTransform.transform(payload);
+    const newPayload: IUpdateNeed = await this.updateNeedTransform.transform(payload);
     const updated = await this.needsFactory.updateOne(newPayload);
     return updated;
   }

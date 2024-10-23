@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { NeedLevelEnum } from "src/common/enums/need.enum";
 import { CreateNeedDto } from "../dto/create-need.dto";
-import { IUpdateNeedDto } from "../dto/update-need.dto";
+import { IUpdateNeed } from "../dto/update-need.dto";
 import { DefaultNeedsService } from "./default-needs.service";
 import { Level1NeedsService } from "./level1-needs.service";
 import { Level2NeedsService } from "./level2-needs.service";
@@ -30,7 +30,7 @@ export class NeedsFactory {
         }
     }
 
-    async updateOne(payload: IUpdateNeedDto) {
+    async updateOne(payload: IUpdateNeed) {
         const { level, ...newPayload } = payload;
         switch (level) {
             case NeedLevelEnum.LV1:

@@ -5,7 +5,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { IShop, Shop } from './schemas/shop.schema';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { IKey } from 'src/common/interfaces/index.interface';
-import { QueryOptions } from 'mongoose';
+import { FilterQuery, QueryOptions } from 'mongoose';
 
 @Injectable()
 export class ShopsRepository {
@@ -27,10 +27,20 @@ export class ShopsRepository {
     query: any,
     isNew: boolean = true
   ) {
-    const dbQuery = { _id: query.shopId, user: query.userId };
+    const dbQuery: FilterQuery<any> = { _id: query.shopId, user: query.userId };
     const dbOptions: QueryOptions = { new: isNew };
     const updated = await this.shopModel.findOneAndUpdate(dbQuery, payload, dbOptions);
     return updated;
+  }
+
+  async updateLeanById(
+    shopId: IKey,
+    payload: any,
+    isNew: boolean = true
+  ) {
+    const dbOptions: QueryOptions = { new: isNew };
+    const updated = await this.shopModel.findByIdAndUpdate(shopId, payload, dbOptions);
+    return updated ? { updatedCount: 1 } : { updatedCount: 0 };
   }
 
   //EXIST// the exists method return {_id} | null

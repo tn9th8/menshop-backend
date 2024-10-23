@@ -5,7 +5,7 @@ import { trim } from 'src/common/utils/pipe.util';
 import { CreateNeedDto } from '../dto/create-need.dto';
 import { NeedsRepository } from '../needs.repository';
 import { cleanNullishAttrs } from 'src/common/utils/index.util';
-import { IUpdateNeedDto, UpdateNeedDto } from '../dto/update-need.dto';
+import { IUpdateNeed, UpdateNeedDto } from '../dto/update-need.dto';
 import { IKey } from 'src/common/interfaces/index.interface';
 import { NeedLevelEnum } from 'src/common/enums/need.enum';
 
@@ -56,7 +56,7 @@ export class UpdateNeedTransform {
             children = null;
         } //item: null
 
-        const cleaned: IUpdateNeedDto = cleanNullishAttrs({ id, name, description, children, parent, level });
+        const cleaned: IUpdateNeed = cleanNullishAttrs({ id, name, description, children, parent, level });
         return cleaned;
     }
 }

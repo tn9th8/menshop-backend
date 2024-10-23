@@ -8,6 +8,6 @@ export class UpdateNeedDto extends PartialType(OmitType(CreateNeedDto, ['level']
     id: IKey;
 }
 
-export interface IUpdateNeedDto extends UpdateNeedDto {
+export interface IUpdateNeed extends UpdateNeedDto {
     level: NeedLevelEnum;
 }

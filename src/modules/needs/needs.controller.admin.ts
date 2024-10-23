@@ -17,8 +17,8 @@ export class NeedsControllerAdmin {
   constructor(private readonly needsService: NeedsService) { }
 
   //CREATE//
-  @ApiMessage('create a draft need')
-  @Post('/draft')
+  @ApiMessage('create a need')
+  @Post('')
   @UsePipes(CreateNeedTransform)
   createOne(@Body() createNeedDto: CreateNeedDto) {
     return this.needsService.createOne(createNeedDto);
@@ -32,17 +32,17 @@ export class NeedsControllerAdmin {
   }
 
   @ApiMessage('publish a need')
-  @Patch('/published/:id')
+  @Patch('/published/:id([a-f0-9]{24})')
   @UsePipes(IdParamTransform)
   publishOne(@Param('id') id: IKey) {
     return this.needsService.updateIsPublished(id, IsPublishedEnum.PUBLISH);
   }
 
-  @ApiMessage('unpublish a need')
-  @Patch('/unpublished/:id')
+  @ApiMessage('draft (unpublished) a need')
+  @Patch('/draft/:id([a-f0-9]{24})')
   @UsePipes(IdParamTransform)
   unpublishOne(@Param('id') id: IKey) {
-    return this.needsService.updateIsPublished(id, IsPublishedEnum.UNPUBLISH);
+    return this.needsService.updateIsPublished(id, IsPublishedEnum.DRAFT);
   }
 
   //QUERY//

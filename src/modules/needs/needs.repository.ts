@@ -7,10 +7,8 @@ import { IKey, IReference } from 'src/common/interfaces/index.interface';
 import { IDbSort } from 'src/common/interfaces/mongo.interface';
 import { Result } from 'src/common/interfaces/response.interface';
 import { toDbLikeQuery, toDbSelect, toDbUnselect } from 'src/common/utils/mongo.util';
-import { ICategory } from '../categories/schemas/category.schema';
 import { CreateNeedDto } from './dto/create-need.dto';
-import { QueryNeedDto } from './dto/query-need.dto';
-import { UpdateNeedDto } from './dto/update-need.dto';
+import { IQueryNeed } from './dto/query-need.dto';
 import { INeed, Need } from './schemas/need.schema';
 
 @Injectable()
@@ -30,7 +28,7 @@ export class NeedsRepository {
     needId: IKey,
     payload: any
   ) {
-    const queryDb: FilterQuery<ICategory> = { _id: needId };
+    const queryDb: FilterQuery<any> = { _id: needId };
     const { modifiedCount } = await this.needModel.updateOne(queryDb, payload);
     return { updatedCount: modifiedCount };
   }
@@ -95,7 +93,7 @@ export class NeedsRepository {
     limit: number,
     sort: SortEnum,
     unselect: string[],
-    query: QueryNeedDto
+    query: IQueryNeed
   ): Promise<Result<INeed>> {
     const dbQuery = {
       ...query,
@@ -127,7 +125,7 @@ export class NeedsRepository {
   }
 
   async findTree(
-    query: QueryNeedDto,
+    query: IQueryNeed,
     select: string[],
     references: IReference[]
   ) {

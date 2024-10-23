@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateShopDto } from './dto/create-shop.dto';
 import { UpdateShopDto } from './dto/update-shop.dto';
 import { ShopsRepository } from './shops.repository';
@@ -6,6 +6,9 @@ import { AuthUserDto } from 'src/auth/dto/auth-user.dto';
 import { UsersRepository } from '../users/users.repository';
 import { CreateShopTransform } from './transform/create-shop.transform';
 import { UpdateShopTransform } from './transform/update-shop.transform';
+import { IsActiveEnum } from 'src/common/enums/index.enum';
+import { IKey } from 'src/common/interfaces/index.interface';
+import { notFoundIdMessage } from 'src/common/utils/exception.util';
 
 @Injectable()
 export class ShopsService {
@@ -34,6 +37,14 @@ export class ShopsService {
     return created;
   }
 
+  async updateIsActive(shopId: IKey, isActive: IsActiveEnum) {
+    const payload = { isActive: isActive ? true : false };
+    const result = await this.shopsRepo.updateLeanById(shopId, payload);
+    if (!result.updatedCount) {
+      throw new NotFoundException(notFoundIdMessage('id param', shopId));
+    }
+    return result;
+  }
   findAll() {
     return `This action returns all shops`;
   }
