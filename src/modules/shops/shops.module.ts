@@ -8,13 +8,15 @@ import { ShopsControllerClient } from './shops.controller.client';
 import { CreateShopTransform } from './transform/create-shop.transform';
 import { UsersModule } from '../users/users.module';
 import { UsersRepository } from '../users/users.repository';
+import { UpdateShopTransform } from './transform/update-shop.transform';
 
 @Module({
-  controllers: [ShopsControllerAdmin, ShopsControllerClient],
+  controllers: [
+    ShopsControllerAdmin, ShopsControllerClient
+  ],
   providers: [
-    ShopsService,
-    ShopsRepository,
-    CreateShopTransform
+    ShopsService, ShopsRepository,
+    CreateShopTransform, UpdateShopTransform
   ],
   imports: [
     MongooseModule.forFeature([{ name: Shop.name, schema: ShopSchema }]),

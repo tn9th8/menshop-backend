@@ -26,7 +26,7 @@ export class NeedsRepository {
   }
 
   //UPDATE
-  async updateById(
+  async updateLeanById(
     needId: IKey,
     payload: any
   ) {
@@ -38,9 +38,9 @@ export class NeedsRepository {
   async updateOneById(
     needId: IKey,
     payload: any,
-    isUpdated: boolean = true
+    isNew: boolean = true
   ) {
-    const dbOptions: QueryOptions = { new: isUpdated };
+    const dbOptions: QueryOptions = { new: isNew };
     const updated = await this.needModel.findByIdAndUpdate(needId, payload, dbOptions); //checked needId in factory
     return updated;
   }

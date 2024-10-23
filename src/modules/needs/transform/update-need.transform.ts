@@ -22,12 +22,10 @@ export class UpdateNeedTransform {
         if (!id) {
             throw new BadRequestException(isObjectIdMessage('id param', id));
         }
-        const foundNeed = await this.needsRepository.findLeanById(id, ['level'])
-        if (!foundNeed) {
+        const { level } = await this.needsRepository.findLeanById(id, ['level']) || { level: null };
+        if (!level) {
             throw new NotFoundException(notFoundIdMessage('id param', id));
         }
-        const { level } = foundNeed;
-
 
         //trim name, not empty, not exist
         name = trim(name);
@@ -37,16 +35,13 @@ export class UpdateNeedTransform {
         if (await this.needsRepository.isExistByQueryAndExcludeId({ name }, id)) {
             throw new BadRequestException(isExistMessage('name'));
         }
-        transformed.name = name;
 
         //description: trim
         description = trim(description)//null, ""
-        transformed.description = description;
 
         //children, parent to objectId
         parent = toObjetId(parent); //null
         parent = await this.needsRepository.isExistById(parent) ? parent : null;
-        transformed.parent = parent;
 
         if (Array.isArray(children)) {
             children = await Promise.all(children.map(async child => {
@@ -60,9 +55,8 @@ export class UpdateNeedTransform {
         else {
             children = null;
         } //item: null
-        transformed.children = children;
 
-        const cleaned: IUpdateNeedDto = cleanNullishAttrs({ ...transformed, level });
+        const cleaned: IUpdateNeedDto = cleanNullishAttrs({ id, name, description, children, parent, level });
         return cleaned;
     }
 }

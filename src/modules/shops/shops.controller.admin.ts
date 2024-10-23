@@ -29,9 +29,12 @@ export class ShopsControllerAdmin {
   }
 
   //UPDATE//
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateShopDto: UpdateShopDto) {
-    return this.shopsService.update(+id, updateShopDto);
+  @Patch()
+  update(
+    @Body() updateShopDto: UpdateShopDto,
+    @User() user: AuthUserDto
+  ) {
+    return this.shopsService.update(updateShopDto, user);
   }
 
   @Get()

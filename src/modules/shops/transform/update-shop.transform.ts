@@ -13,7 +13,6 @@ export class UpdateShopTransform {
 
     async transform(value: UpdateShopDto) {
         let { id, name, description, image } = value;
-        const transformed = value;
 
         //id: objectId
         id = toObjetId(id);
@@ -32,20 +31,13 @@ export class UpdateShopTransform {
         if (await this.shopsRepository.isExistByQueryAndExcludeId({ name }, id)) {
             throw new BadRequestException(isExistMessage('name'));
         }
-        transformed.name = name;
-
         //description: trim
         description = trim(description);
-        transformed.description = description;
 
         //name: trim, not empty
         image = trim(image);
-        if (!image) {
-            throw new BadRequestException(notEmptyMessage('name'));
-        }
-        transformed.image = image;
 
-        const cleaned: UpdateShopDto = cleanNullishAttrs(transformed);
-        return cleaned;
+        const transformed: UpdateShopDto = cleanNullishAttrs({ id, name, description, image });
+        return transformed;
     }
 }

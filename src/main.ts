@@ -54,7 +54,7 @@ async function bootstrap() {
 
   //todo
   app.useGlobalPipes(new ValidationPipe(
-    { whitelist: true }
+    // { whitelist: true }
   ));
 
   app.use(cookieParser());

@@ -38,7 +38,7 @@ export class NeedsService {
 
   async updateIsPublished(needId: IKey, isPublished: IsPublishedEnum) {
     const payload = { isPublished: isPublished ? true : false };
-    const result = await this.needsRepository.updateById(needId, payload);
+    const result = await this.needsRepository.updateLeanById(needId, payload);
     if (!result.updatedCount) {
       throw new NotFoundException(notFoundIdMessage('id param', needId));
     }

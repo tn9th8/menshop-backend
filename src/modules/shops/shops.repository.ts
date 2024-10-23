@@ -5,6 +5,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { IShop, Shop } from './schemas/shop.schema';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { IKey } from 'src/common/interfaces/index.interface';
+import { QueryOptions } from 'mongoose';
 
 @Injectable()
 export class ShopsRepository {
@@ -13,15 +14,26 @@ export class ShopsRepository {
     private readonly shopModel: SoftDeleteModel<IShop>
   ) { }
 
-  async create(
-    payload: CreateShopDto,
-    shopId: IKey,
-  ): Promise<IShop> {
-    const created = await this.shopModel.create({ ...payload, shop: shopId });
+  //CREATE//
+  async create(payload: any): Promise<IShop> {
+    const { userId, ...dbPayload } = payload;
+    const created = await this.shopModel.create({ ...dbPayload, user: userId });
     return created;
   }
 
-  //EXIST: the exists method return {_id} | null
+  //UPDATE//
+  async updateOneByQuery(
+    payload: any,
+    query: any,
+    isNew: boolean = true
+  ) {
+    const dbQuery = { _id: query.shopId, user: query.userId };
+    const dbOptions: QueryOptions = { new: isNew };
+    const updated = await this.shopModel.findOneAndUpdate(dbQuery, payload, dbOptions);
+    return updated;
+  }
+
+  //EXIST// the exists method return {_id} | null
   async isExistById(needId: IKey) {
     const isExist = await this.shopModel.exists({ _id: needId });
     return isExist ? true : false;
