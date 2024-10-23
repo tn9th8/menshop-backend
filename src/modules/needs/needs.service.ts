@@ -6,32 +6,39 @@ import { notFoundIdMessage } from 'src/common/utils/exception.util';
 import { computeItemsAndPages } from 'src/common/utils/mongo.util';
 import { CreateNeedDto } from './dto/create-need.dto';
 import { QueryNeedDto } from './dto/query-need.dto';
-import { UpdateNeedDto } from './dto/update-need.dto';
+import { IUpdateNeed, UpdateNeedDto } from './dto/update-need.dto';
 import { NeedsFactory } from './factory/needs.factory';
 import { NeedsRepository } from './needs.repository';
+import { UpdateNeedTransform } from './transform/update-need.transform';
+import { CreateNeedTransform } from './transform/create-need.transform';
+import { NeedLevelEnum } from 'src/common/enums/need.enum';
 
 @Injectable()
 export class NeedsService {
   constructor(
     private readonly needsRepository: NeedsRepository,
     private readonly needsFactory: NeedsFactory,
+    private readonly createNeedTransform: CreateNeedTransform,
+    private readonly updateNeedTransform: UpdateNeedTransform
   ) { }
 
   //CREATE//
   async createOne(payload: CreateNeedDto) {
-    const created = this.needsFactory.createOne(payload);
+    payload = await this.createNeedTransform.transform(payload);
+    const created = await this.needsFactory.createOne(payload);
     return created;
   }
 
   //UPDATE//
-  async updateOne(needId: IKey, payload: UpdateNeedDto) {
-    const updated = this.needsFactory.updateOne(needId, payload);
+  async updateOne(payload: UpdateNeedDto) {
+    const newPayload: IUpdateNeed = await this.updateNeedTransform.transform(payload);
+    const updated = await this.needsFactory.updateOne(newPayload);
     return updated;
   }
 
   async updateIsPublished(needId: IKey, isPublished: IsPublishedEnum) {
     const payload = { isPublished: isPublished ? true : false };
-    const result = await this.needsRepository.updateById(needId, payload);
+    const result = await this.needsRepository.updateLeanById(needId, payload);
     if (!result.updatedCount) {
       throw new NotFoundException(notFoundIdMessage('id param', needId));
     }
@@ -46,7 +53,7 @@ export class NeedsService {
       sort = SortEnum.LATEST,
       ...query
     }: QueryNeedDto,
-    isPublished: IsPublishedEnum = IsPublishedEnum.PUBLISHED
+    isPublished = IsPublishedEnum.PUBLISHED
   ) {
     const unselect = ['deletedAt', 'isDeleted', '__v'];
     const { data, metadata } = await this.needsRepository.findAllByQuery(
@@ -78,7 +85,6 @@ export class NeedsService {
       {
         attribute: 'children',
         select: ['_id', 'name', 'slug', 'level'],
-        unselect: ['_id']
       },
     ];
     const found = await this.needsRepository.findOneById(needId, unselect, references);

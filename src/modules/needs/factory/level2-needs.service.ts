@@ -17,21 +17,19 @@ export class Level2NeedsService {
 
     constructor(
         private readonly needsRepository: NeedsRepository,
-        private readonly createNeedTransform: CreateNeedTransform,
-        private readonly updateNeedTransform: UpdateNeedTransform,
-        private readonly utilNeedsService: UtilNeedsService,
+        private readonly utilNeedsService: UtilNeedsService
     ) { }
 
     async createOne(payload: CreateNeedDto) {
-        const { parent, ...cleanPayload } = await this.createNeedTransform.transform(payload);
+        const { parent, ...cleanPayload } = payload;
         const createdNeed = await this.needsRepository.createOne(cleanPayload);
         //push createdNeed to parent sync-ly
         this.utilNeedsService.pushToParent(createdNeed._id, parent);
         return createdNeed;
     }
 
-    async updateOne(needId: IKey, payload: UpdateNeedDto) {
-        const { parent, ...cleanPayload } = await this.updateNeedTransform.transform(needId, payload);
+    async updateOne(payload: UpdateNeedDto) {
+        const { parent, id: needId, ...cleanPayload } = payload;
         const updatedNeed = await this.needsRepository.updateOneById(needId, cleanPayload);
         //push createdNeed to parent sync-ly
         this.utilNeedsService.pushToParent(updatedNeed._id, parent);

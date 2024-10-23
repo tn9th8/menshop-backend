@@ -1,8 +1,11 @@
 export enum IsPublishedEnum {
-    PUBLISH = 1,
-    UNPUBLISH = 0,
     PUBLISHED = 1,
     DRAFT = 0,
+}
+
+export enum IsActiveEnum {
+    ACTIVE = 1,
+    DISABLE = 0
 }
 
 export enum SortEnum {

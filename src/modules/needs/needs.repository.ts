@@ -7,10 +7,8 @@ import { IKey, IReference } from 'src/common/interfaces/index.interface';
 import { IDbSort } from 'src/common/interfaces/mongo.interface';
 import { Result } from 'src/common/interfaces/response.interface';
 import { toDbLikeQuery, toDbSelect, toDbUnselect } from 'src/common/utils/mongo.util';
-import { ICategory } from '../categories/schemas/category.schema';
 import { CreateNeedDto } from './dto/create-need.dto';
-import { QueryNeedDto } from './dto/query-need.dto';
-import { UpdateNeedDto } from './dto/update-need.dto';
+import { IQueryNeed } from './dto/query-need.dto';
 import { INeed, Need } from './schemas/need.schema';
 
 @Injectable()
@@ -26,11 +24,11 @@ export class NeedsRepository {
   }
 
   //UPDATE
-  async updateById(
+  async updateLeanById(
     needId: IKey,
     payload: any
   ) {
-    const queryDb: FilterQuery<ICategory> = { _id: needId };
+    const queryDb: FilterQuery<any> = { _id: needId };
     const { modifiedCount } = await this.needModel.updateOne(queryDb, payload);
     return { updatedCount: modifiedCount };
   }
@@ -38,9 +36,9 @@ export class NeedsRepository {
   async updateOneById(
     needId: IKey,
     payload: any,
-    isUpdated: boolean = true
+    isNew: boolean = true
   ) {
-    const dbOptions: QueryOptions = { new: isUpdated };
+    const dbOptions: QueryOptions = { new: isNew };
     const updated = await this.needModel.findByIdAndUpdate(needId, payload, dbOptions); //checked needId in factory
     return updated;
   }
@@ -48,8 +46,7 @@ export class NeedsRepository {
   //EXIST
   async isExistById(needId: IKey) {
     const isExist = await this.needModel.exists({ _id: needId });
-    if (!!isExist) { return true; }
-    return false;
+    return isExist ? true : false;
   }
 
   async isExistByQuery(query: any) {
@@ -83,10 +80,7 @@ export class NeedsRepository {
       .select(toDbUnselect(unselect))
       .populate({
         path: references[0].attribute,
-        select: {
-          ...toDbSelect(references[0].select),
-          ...toDbUnselect(references[0].unselect)
-        }
+        select: toDbSelect(references[0].select)
       });
     return found || null;
   }
@@ -96,7 +90,7 @@ export class NeedsRepository {
     limit: number,
     sort: SortEnum,
     unselect: string[],
-    query: QueryNeedDto
+    query: IQueryNeed
   ): Promise<Result<INeed>> {
     const dbQuery = {
       ...query,
@@ -128,7 +122,7 @@ export class NeedsRepository {
   }
 
   async findTree(
-    query: QueryNeedDto,
+    query: IQueryNeed,
     select: string[],
     references: IReference[]
   ) {

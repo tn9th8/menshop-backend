@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { NeedsRepository } from "../needs.repository";
 import { CreateNeedDto } from "../dto/create-need.dto";
 import { CreateNeedTransform } from "../transform/create-need.transform";
-import { UpdateNeedDto } from "../dto/update-need.dto";
+import { IUpdateNeed, UpdateNeedDto } from "../dto/update-need.dto";
 import { IKey } from "src/common/interfaces/index.interface";
 import { UpdateNeedTransform } from "../transform/update-need.transform";
 
@@ -15,20 +15,16 @@ export class Level1NeedsService {
      * - No parent
      */
 
-    constructor(
-        private readonly needsRepository: NeedsRepository,
-        private readonly createNeedTransform: CreateNeedTransform,
-        private readonly updateNeedTransform: UpdateNeedTransform
-    ) { }
+    constructor(private readonly needsRepository: NeedsRepository) { }
 
     async createOne(payload: CreateNeedDto) {
-        const { parent, ...cleanPayload } = await this.createNeedTransform.transform(payload);
+        const { parent, ...cleanPayload } = payload;
         const createdNeed = await this.needsRepository.createOne(cleanPayload);
         return createdNeed;
     }
 
-    async updateOne(needId: IKey, payload: UpdateNeedDto) {
-        const { parent, ...cleanPayload } = await this.updateNeedTransform.transform(needId, payload);
+    async updateOne(payload: UpdateNeedDto) {
+        const { parent, id: needId, ...cleanPayload } = payload;
         const updated = await this.needsRepository.updateOneById(needId, cleanPayload);
         return updated;
     }
