@@ -27,11 +27,8 @@ export class NeedsControllerAdmin {
   //UPDATE//
   @ApiMessage('update a need')
   @Patch(':id')
-  updateOne(
-    @Param('id', IdParamTransform) id: IKey,
-    @Body() updateNeedDto: UpdateNeedDto
-  ) {
-    return this.needsService.updateOne(id, updateNeedDto);
+  updateOne(@Body() updateNeedDto: UpdateNeedDto) {
+    return this.needsService.updateOne(updateNeedDto);
   }
 
   @ApiMessage('publish a need')

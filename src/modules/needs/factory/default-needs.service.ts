@@ -14,8 +14,8 @@ export class DefaultNeedsService {
         return result;
     }
 
-    async updateOne(needId: IKey, payload: UpdateNeedDto) {
-        const result = await this.defaultNeedsService.updateOne(needId, payload);
+    async updateOne(payload: UpdateNeedDto) {
+        const result = await this.defaultNeedsService.updateOne(payload);
         return result;
     }
 }
