@@ -12,7 +12,7 @@ import { ApiMessage } from 'src/common/decorators/api-message.decorator';
 export class ShopsControllerAdmin {
   constructor(private readonly shopsService: ShopsService) { }
 
-  // CREATE //
+  //CREATE//
   /**
    * @desc create a shop
    * @param { Dto } createShopDto
@@ -28,6 +28,12 @@ export class ShopsControllerAdmin {
     return this.shopsService.create(createShopDto, user);
   }
 
+  //UPDATE//
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateShopDto: UpdateShopDto) {
+    return this.shopsService.update(+id, updateShopDto);
+  }
+
   @Get()
   findAll() {
     return this.shopsService.findAll();
@@ -36,11 +42,6 @@ export class ShopsControllerAdmin {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.shopsService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateShopDto: UpdateShopDto) {
-    return this.shopsService.update(+id, updateShopDto);
   }
 
   @Delete(':id')

@@ -48,8 +48,7 @@ export class NeedsRepository {
   //EXIST
   async isExistById(needId: IKey) {
     const isExist = await this.needModel.exists({ _id: needId });
-    if (!!isExist) { return true; }
-    return false;
+    return isExist ? true : false;
   }
 
   async isExistByQuery(query: any) {

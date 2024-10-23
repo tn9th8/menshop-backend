@@ -20,7 +20,7 @@ export class UpdateNeedTransform {
         //id: objectId, get level
         id = toObjetId(id);
         if (!id) {
-            throw new BadRequestException(isObjectIdMessage('id param', id))
+            throw new BadRequestException(isObjectIdMessage('id param', id));
         }
         const foundNeed = await this.needsRepository.findLeanById(id, ['level'])
         if (!foundNeed) {
@@ -29,15 +29,17 @@ export class UpdateNeedTransform {
         const { level } = foundNeed;
 
 
-        //trim name, description, not empty, not exist
-        name = trim(name) || null;
-        if (name) {
-            if (await this.needsRepository.isExistByQueryAndExcludeId({ name }, id)) {
-                throw new BadRequestException(isExistMessage('name'));
-            }
+        //trim name, not empty, not exist
+        name = trim(name);
+        if (!name) {
+            throw new BadRequestException(notEmptyMessage('name'));
+        }
+        if (await this.needsRepository.isExistByQueryAndExcludeId({ name }, id)) {
+            throw new BadRequestException(isExistMessage('name'));
         }
         transformed.name = name;
 
+        //description: trim
         description = trim(description)//null, ""
         transformed.description = description;
 

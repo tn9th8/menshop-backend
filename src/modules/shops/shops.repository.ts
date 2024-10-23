@@ -21,9 +21,22 @@ export class ShopsRepository {
     return created;
   }
 
-  //EXIST
+  //EXIST: the exists method return {_id} | null
+  async isExistById(needId: IKey) {
+    const isExist = await this.shopModel.exists({ _id: needId });
+    return isExist ? true : false;
+  }
+
   async isExistByQuery(query: any) {
-    const isExist = await this.shopModel.exists(query); //{_id} | null
+    const isExist = await this.shopModel.exists(query);
+    return isExist ? true : false;
+  }
+
+  async isExistByQueryAndExcludeId(query: any, id: IKey) {
+    const isExist = await this.shopModel.exists({
+      ...query,
+      _id: { $ne: id } //exclude the id document
+    });
     return isExist ? true : false;
   }
 
