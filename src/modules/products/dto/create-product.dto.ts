@@ -35,7 +35,3 @@ export class CreateProductDto {
     @IsArray(isArrayMessage('categories'))
     needs: IKey[]; //each: object
 }
-
-export interface ICreateProduct {
-    shop: IKey;
-}

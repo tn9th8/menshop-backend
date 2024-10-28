@@ -11,6 +11,8 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { QueryProductTransform } from './transform/query-product.transform';
 import { QueryProductDto } from './dto/query-product.dto';
 import { IsActiveEnum, IsPublishedEnum } from 'src/common/enums/index.enum';
+import { IdParamTransform } from 'src/core/pipe/id-param.transform';
+import { IKey } from 'src/common/interfaces/index.interface';
 
 @ApiTags('Products Module For Admin Side')
 @Controller('/admin/products')
@@ -18,24 +20,57 @@ export class ProductsControllerAdmin {
   constructor(private readonly productsService: ProductsService) { }
 
   //CREATE//
-  /**
-   * @desc create one
-   * @param { dto } createProductDto
-   * @param { user} user
-   * @returns { JSON }
-   */
-  // @ApiMessage('create a product')
-  // @Post()
-  // create(
-  //   @User() user: AuthUserDto,
-  //   @Body() createProductDto: CreateProductDto,
-  // ) {
-  //   return this.productsService.create({
-  //     ...createProductDto,
-  //     shop: user?.shop,
-  //   });
-  // }
-  //END CREATE//
+  @ApiMessage('create a product')
+  @Post()
+  create(
+    @Body() createProductDto: CreateProductDto,
+    @User() user: AuthUserDto
+  ) {
+    return this.productsService.createOne(createProductDto, user);
+  }
+
+  //UPDATE//
+  @ApiMessage('publish a product')
+  @Patch('/published/:id([a-f0-9]{24})')
+  publishOne(
+    @Param('id', IdParamTransform) id: IKey,
+    @User() user: AuthUserDto,
+  ) {
+    return this.productsService.updateIsPublished(id, IsPublishedEnum.PUBLISHED, user);
+  }
+
+  @ApiMessage('publish a product')
+  @Patch('/draft/:id([a-f0-9]{24})')
+  unpublishOne(
+    @Param('id', IdParamTransform) id: IKey,
+    @User() user: AuthUserDto,
+  ) {
+    return this.productsService.updateIsPublished(id, IsPublishedEnum.DRAFT, user);
+  }
+
+  @ApiMessage('active a shop')
+  @Patch('/active/:id([a-f0-9]{24})')
+  @UsePipes(IdParamTransform)
+  activeOne(@Param('id') id: IKey) {
+    return this.productsService.updateIsActive(id, IsActiveEnum.ACTIVE);
+  }
+
+  @ApiMessage('disable a shop')
+  @Patch('/disable/:id([a-f0-9]{24})')
+  @UsePipes(IdParamTransform)
+  disableOne(@Param('id') id: IKey) {
+    return this.productsService.updateIsActive(id, IsActiveEnum.DISABLE);
+  }
+
+  @ApiMessage('update a product')
+  @Patch()
+  updateOne(
+    @Body() payload: UpdateProductDto,
+    @User() user: AuthUserDto
+  ) {
+    return this.productsService.updateOne(payload, user);
+  }
+  //END UPDATE//
 
   //QUERY//
   @ApiMessage('find all active products')
@@ -44,7 +79,7 @@ export class ProductsControllerAdmin {
   findAllActive(
     @Query() query: QueryProductDto
   ) {
-    return this.productsService.findAllByQueryAndIsActive(query, IsActiveEnum.ACTIVE);
+    return this.productsService.findAllIsActiveByQuery(query, IsActiveEnum.ACTIVE);
   }
 
   @ApiMessage('find all disable products')
@@ -53,7 +88,7 @@ export class ProductsControllerAdmin {
   findAllDisable(
     @Query() query: QueryProductDto
   ) {
-    return this.productsService.findAllByQueryAndIsActive(query, IsActiveEnum.DISABLE);
+    return this.productsService.findAllIsActiveByQuery(query, IsActiveEnum.DISABLE);
   }
 
   @ApiMessage('find all draft products')
@@ -63,7 +98,7 @@ export class ProductsControllerAdmin {
     @Query() query: QueryProductDto,
     @User() user: AuthUserDto //todo: token
   ) {
-    return this.productsService.findAllByQueryAndIsPublished(query, IsPublishedEnum.DRAFT);
+    return this.productsService.findAllIsPublishedByQuery(query, IsPublishedEnum.DRAFT, user);
   }
 
   @ApiMessage('find all published products')
@@ -73,36 +108,14 @@ export class ProductsControllerAdmin {
     @Query() query: QueryProductDto,
     @User() user: AuthUserDto //todo: token
   ) {
-    return this.productsService.findAllByQueryAndIsPublished(query, IsPublishedEnum.PUBLISHED);
+    return this.productsService.findAllIsPublishedByQuery(query, IsPublishedEnum.PUBLISHED, user);
+  }
+
+  @ApiMessage('find one user')
+  @Get(':id([a-f0-9]{24})')
+  @UsePipes(IdParamTransform)
+  findOne(@Param('id') id: IKey) {
+    return this.productsService.findOneById(id);
   }
   //END QUERY//
-
-  //UPDATE//
-  // @ApiMessage('publish a product')
-  // @Patch('/published/:id')
-  // publishOne(
-  //   @User() user: AuthUserDto,
-  //   @Param('id') id: string
-  // ) {
-  //   return this.productsService.updateIsPublished(user?.shop, id, true);
-  // }
-
-  // @ApiMessage('publish a product')
-  // @Patch('/unpublished/:id')
-  // unpublishOne(
-  //   @User() user: AuthUserDto,
-  //   @Param('id') id: string
-  // ) {
-  //   return this.productsService.updateIsPublished(user?.shop, id, false);
-  // }
-
-  // @ApiMessage('update a product')
-  // @Patch()
-  // updateOne(
-  //   @User() user: AuthUserDto,
-  //   @Body() payload: UpdateProductDto
-  // ) {
-  //   return this.productsService.updateOne(user?.shop, payload);
-  // }
-  //END UPDATE//
 }

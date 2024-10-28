@@ -18,17 +18,13 @@ import { QueryNeedTransform } from './transform/query-need.transform';
 @Module({
   controllers: [NeedsControllerAdmin, NeedsControllerClient],
   providers: [
-    NeedsService,
-    NeedsRepository,
-    CreateNeedTransform,
-    UpdateNeedTransform,
+    NeedsService, NeedsRepository,
+    CreateNeedTransform, UpdateNeedTransform,
     NeedsFactory,
-    Level1NeedsService,
-    Level2NeedsService,
-    Level3NeedsService,
-    DefaultNeedsService,
+    Level1NeedsService, Level2NeedsService, Level3NeedsService, DefaultNeedsService,
     UtilNeedsService
   ],
-  imports: [MongooseModule.forFeature([{ name: Need.name, schema: NeedSchema }])]
+  imports: [MongooseModule.forFeature([{ name: Need.name, schema: NeedSchema }])],
+  exports: [NeedsService, NeedsRepository]
 })
 export class NeedsModule { }

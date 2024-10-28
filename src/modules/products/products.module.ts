@@ -8,15 +8,22 @@ import { Product, ProductSchema } from './schemas/product.schema';
 import { CategoriesModule } from '../categories/categories.module';
 import { NeedsModule } from '../needs/needs.module';
 import { ShopsModule } from '../shops/shops.module';
+import { UsersModule } from '../users/users.module';
+import { CreateProductTransform } from './transform/create-product.transform';
+import { UpdatedProductTransform } from './transform/update-product.transform';
 
 @Module({
   controllers: [ProductsControllerAdmin, ProductsControllerClient],
-  providers: [ProductsService, ProductsRepository],
+  providers: [
+    ProductsService, ProductsRepository,
+    CreateProductTransform, UpdatedProductTransform
+  ],
   imports: [
     MongooseModule.forFeature([{ name: Product.name, schema: ProductSchema }]),
     CategoriesModule,
     NeedsModule,
-    ShopsModule
+    ShopsModule,
+    UsersModule,
   ],
 })
 export class ProductsModule { }

@@ -25,5 +25,6 @@ import { UpdatedCategoryTransform } from './transform/update-category.transform'
     CreateCategoryTransform, UpdatedCategoryTransform
   ],
   imports: [MongooseModule.forFeature([{ name: Category.name, schema: CategorySchema }])],
+  exports: [CategoriesService, CategoriesRepository]
 })
 export class CategoriesModule { }

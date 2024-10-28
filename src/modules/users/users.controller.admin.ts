@@ -15,7 +15,7 @@ import { QueryUserDto } from './dto/query-user.dto';
 export class UsersControllerAdmin {
   constructor(private readonly usersService: UsersService) { }
 
-  @ApiMessage('Create a user')
+  @ApiMessage('create an user')
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
     const result = await this.usersService.createAdmin(createUserDto);
@@ -23,20 +23,20 @@ export class UsersControllerAdmin {
   }
 
   @Patch()
-  @ApiMessage('Update a user')
+  @ApiMessage('update an user')
   update(@Body() updateUserDto: UpdateUserDto) {
     const result = this.usersService.updateOne(updateUserDto);
     return result;
   }
 
-  @ApiMessage('active a shop')
+  @ApiMessage('active an user')
   @Patch('/active/:id([a-f0-9]{24})')
   @UsePipes(IdParamTransform)
   activeOne(@Param('id') id: IKey) {
     return this.usersService.updateIsActive(id, IsActiveEnum.ACTIVE);
   }
 
-  @ApiMessage('disable a shop')
+  @ApiMessage('disable an user')
   @Patch('/disable/:id([a-f0-9]{24})')
   @UsePipes(IdParamTransform)
   disableOne(@Param('id') id: IKey) {
@@ -44,21 +44,21 @@ export class UsersControllerAdmin {
   }
 
   //QUERY//
-  @ApiMessage('find all active shops')
+  @ApiMessage('find all active')
   @Get('/active')
   @UsePipes(QueryUserTransform)
   findAllActive(@Query() query: QueryUserDto) {
     return this.usersService.findAllByQuery(query, IsActiveEnum.ACTIVE);
   }
 
-  @ApiMessage('find all disable shops')
+  @ApiMessage('find all disable')
   @Get('/disable')
   @UsePipes(QueryUserTransform)
   findAllDisable(@Query() query: QueryUserDto) {
     return this.usersService.findAllByQuery(query, IsActiveEnum.DISABLE);
   }
 
-  @ApiMessage('find one shop')
+  @ApiMessage('find one user')
   @Get(':id([a-f0-9]{24})')
   @UsePipes(IdParamTransform)
   findOne(@Param('id') id: IKey) {

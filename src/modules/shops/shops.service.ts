@@ -85,4 +85,14 @@ export class ShopsService {
     return found;
   }
 
+  async findOneByUser(userId: IKey) {
+    const select = ['_id'];
+    const query = { user: userId };
+    const found = await this.shopsRepo.findOneByQuerySelect(query, select);
+    if (!found) {
+      throw new NotFoundException(notFoundIdMessage('sellerId', userId));
+    }
+    return found;
+  }
+
 }

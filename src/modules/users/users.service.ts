@@ -1,24 +1,17 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import aqp from 'api-query-params';
-import { Moment } from 'moment';
-import mongoose from 'mongoose';
-import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
-import { SignUpClientDto } from 'src/auth/dto/signup-client.dto';
-import { ICreateResult, IDeleteResult, IUpdateResult } from 'src/common/interfaces/persist-result.interface';
-import { computeItemsAndPages, convertToObjetId } from 'src/common/utils/mongo.util';
-import { hashPass } from 'src/common/utils/security.util';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { IUser, User } from './schemas/user.schema';
-import { isExistMessage, notFoundIdMessage } from 'src/common/utils/exception.util';
 import { SignUpSellerDto } from 'src/auth/dto/signup-seller.dto';
-import { UsersRepository } from './users.repository';
-import { KeyStoreService } from '../key-store/key-store.service';
-import { UpdateUserTransform } from './transform/update-user.transform';
-import { IKey, IReference } from 'src/common/interfaces/index.interface';
 import { IsActiveEnum, SortEnum } from 'src/common/enums/index.enum';
+import { IKey } from 'src/common/interfaces/index.interface';
+import { isExistMessage, notFoundIdMessage } from 'src/common/utils/exception.util';
+import { computeItemsAndPages } from 'src/common/utils/mongo.util';
+import { hashPass } from 'src/common/utils/security.util';
+import { KeyStoreService } from '../key-store/key-store.service';
+import { CreateUserDto } from './dto/create-user.dto';
 import { QueryUserDto } from './dto/query-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { IUser } from './schemas/user.schema';
+import { UpdateUserTransform } from './transform/update-user.transform';
+import { UsersRepository } from './users.repository';
 
 @Injectable()
 export class UsersService {
@@ -118,6 +111,7 @@ export class UsersService {
     }
   }
 
+  //UPDATE
   async updateOne(payload: UpdateUserDto) {
     const { id, ...newPayload } = await this.updateUserTransform.transform(payload);
     const updated = await this.usersRepo.updateOneByQuery(newPayload, { _id: id });

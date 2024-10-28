@@ -1,13 +1,13 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import mongoose, { HydratedDocument, SchemaTypes, Types } from "mongoose";
+import { HydratedDocument, SchemaTypes } from "mongoose";
 import { IBaseDocument } from "src/common/interfaces/base-document.interface";
+import { IKey } from "src/common/interfaces/index.interface";
 import { ratingStarProp, slugPlugin } from "src/common/utils/mongo.util";
 import { Category } from "src/modules/categories/schemas/category.schema";
 import { Need } from "src/modules/needs/schemas/need.schema";
 import { Shop } from "src/modules/shops/schemas/shop.schema";
-import { StockModel } from "src/modules/stock-models/schemas/stock-model.schema";
+import { User } from "src/modules/users/schemas/user.schema";
 import { ProductAsset, ProductAttribute, ProductSize, ProductVariation } from "./nested-types.schema";
-import { IKey } from "src/common/interfaces/index.interface";
 
 export type ProductDocument = HydratedDocument<Product>;
 export type IProduct = ProductDocument & IBaseDocument;
@@ -17,8 +17,8 @@ export class Product {
     @Prop({ required: true })
     name: string;
 
-    @Prop({ required: true }) //plugin
-    slug: string;
+    // @Prop({ required: true }) //plugin
+    // slug: string;
 
     @Prop({ default: null })
     description: string;
@@ -74,8 +74,11 @@ export class Product {
 
     @Prop({ type: SchemaTypes.ObjectId, ref: Shop.name, required: true })
     shop: IKey;
+
+    @Prop({ type: SchemaTypes.ObjectId, ref: User.name, required: true })
+    user: IKey;
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);
 ProductSchema.plugin(slugPlugin);
-ProductSchema.index({ displayName: 'text', description: 'text' })
+ProductSchema.index({ name: 'text', description: 'text' });

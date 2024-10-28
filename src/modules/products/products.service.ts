@@ -1,23 +1,85 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { Types } from 'mongoose';
-import { ProductSortEnum } from 'src/common/enums/query.enum';
-import { isObjectIdMessage, notFoundIdMessage } from 'src/common/utils/exception.util';
-import { cleanNullishNestedAttrs } from 'src/common/utils/index.util';
-import { buildQueryByShop, computeItemsAndPages, computeTotalItemsAndPages, convertToObjetId } from 'src/common/utils/mongo.util';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { AuthUserDto } from 'src/auth/dto/auth-user.dto';
+import { IsActiveEnum, IsPublishedEnum, SortEnum } from 'src/common/enums/index.enum';
+import { ProductSortEnum } from 'src/common/enums/product.enum';
+import { IKey, IReference } from 'src/common/interfaces/index.interface';
+import { notFoundIdMessage, notFoundMessage } from 'src/common/utils/exception.util';
+import { computeItemsAndPages } from 'src/common/utils/mongo.util';
+import { ShopsService } from '../shops/shops.service';
+import { CreateProductDto } from './dto/create-product.dto';
+import { QueryProductDto } from './dto/query-product.dto';
+import { SearchProductDto } from './dto/search-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductsRepository } from './products.repository';
 import { IProduct } from './schemas/product.schema';
-import { IsActiveEnum, IsPublishedEnum, SortEnum } from 'src/common/enums/index.enum';
-import { QueryProductDto } from './dto/query-product.dto';
+import { CreateProductTransform } from './transform/create-product.transform';
+import { UpdatedProductTransform } from './transform/update-product.transform';
 
 @Injectable()
 export class ProductsService {
   constructor(
-    private readonly productsRepository: ProductsRepository
+    private readonly productsRepository: ProductsRepository,
+    private readonly createProductTransform: CreateProductTransform,
+    private readonly updatedProductTransform: UpdatedProductTransform,
+    private readonly shopsService: ShopsService,
   ) { }
 
+  //CREATE//
+  async createOne(payload: CreateProductDto, user: AuthUserDto): Promise<IProduct> {
+    try {
+      payload = await this.createProductTransform.transform(payload);
+      const shop = await this.shopsService.findOneByUser(user.id);
+      const newPayload = { ...payload, user: user.id, shop: shop._id };
+      const created = this.productsRepository.createOne(newPayload);
+      if (!created) {
+        throw new BadRequestException('Lỗi khi tạo 1 product');
+      }
+      return created;
+    } catch (error) {
+      throw error;
+    }
+  }
+  //UPDATE//
+  async updateIsActive(productId: IKey, isActive: IsActiveEnum) {
+    const payload = {
+      isActive: isActive ? true : false,
+      isPublished: false
+    };
+    const query = { _id: productId };
+    const updated = await this.productsRepository.updateOneByQuery(payload, query);
+    if (!updated) {
+      throw new NotFoundException(notFoundIdMessage('productId', productId));
+    }
+    return updated ? { updatedCount: 1 } : { updatedCount: 0 };
+  }
+
+  async updateIsPublished(
+    productId: IKey,
+    isPublished: IsPublishedEnum,
+    user: AuthUserDto,
+    isActive = IsActiveEnum.ACTIVE
+  ) {
+    const payload = { isPublished: isPublished ? true : false };
+    const query = { _id: productId, user: user.id, isActive: true };
+    const updated = await this.productsRepository.updateOneByQuery(payload, query);
+    if (!updated) {
+      throw new NotFoundException(notFoundMessage("product"));
+    }
+    return updated ? { updatedCount: 1 } : { updatedCount: 0 };
+  }
+
+  async updateOne(payload: UpdateProductDto, user: AuthUserDto) {
+    const { id: productId, ...newPayload } = await this.updatedProductTransform.transform(payload);
+    const query = { _id: productId, user: user.id, isActive: true };
+    const updated = await this.productsRepository.updateOneByQuery(newPayload, query);
+    if (!updated) {
+      throw new NotFoundException(notFoundMessage("product"));
+    }
+    return updated;
+  }
+
   //QUERY//
-  async findAllByQueryAndIsActive(
+  async findAllIsActiveByQuery(
     {
       page = 1,
       limit = 24,
@@ -37,18 +99,21 @@ export class ProductsService {
     };
   }
 
-  async findAllByQueryAndIsPublished(
+  async findAllIsPublishedByQuery(
     {
       page = 1,
       limit = 24,
       sort = SortEnum.LATEST,
       ...query
     }: QueryProductDto,
-    isPublished = IsPublishedEnum.PUBLISHED
+    isPublished = IsPublishedEnum.PUBLISHED,
+    user: AuthUserDto,
+    isActive = true
   ) {
+    const newQuery = { ...query, isPublished: isPublished ? true : false, isActive };
     const unselect = ['deletedAt', 'isDeleted', '__v'];
     const { data, metadata } = await this.productsRepository.findAllByQuery(
-      page, limit, sort, unselect, { ...query, isPublished: isPublished ? true : false }
+      page, limit, sort, unselect, newQuery
     );
     const { items, pages } = computeItemsAndPages(metadata, limit);
     return {
@@ -57,126 +122,106 @@ export class ProductsService {
     };
   }
 
-  //CREATE//
-  // async create(createProductDto: CreateProductDto): Promise<IProduct> {
-  //   const { attributes, shop, categories } = createProductDto;
-  //   if (!shop) { throw new BadRequestException(`Invalid Product Shop: ${shop}`) };
+  async searchAll(
+    {
+      page = 1,
+      limit = 24,
+      sort = ProductSortEnum.CTIME,
+      keyword = '',
+      ...query
+    }: SearchProductDto,
+    isPublished = true,
+    isActive = true
+  ) {
+    const keywordReg = keyword ? (new RegExp(keyword)).source : ''; //!falsy
+    const newQuery = { ...query, isPublished, isActive };
+    const select = ['name', 'displayName', 'price', 'discount', 'thumb'];
 
-  //   const isValid = this.productsFactory.isValidAttrs(attributes, categories);
-  //   if (!isValid) { throw new BadRequestException('Invalid Product Attributes') };
-
-  //   const result = await this.productsRepository.create(createProductDto);
-  //   if (!result) { throw new BadRequestException('Create A Product Error'); }
-  //   return result;
-  // }
-  //END CREATE//
-
-  //QUERY//
-  async findAllByIsPublished(
-    shop: Types.ObjectId,
-    isPublished: boolean,
-    limit: number = 60, skip: number = 0
-  ): Promise<IProduct[]> {
-    //todo: metadata
-    const query = buildQueryByShop(shop, { isPublished });
-    const result = await this.productsRepository.findAllByIsPublished(query, limit, skip);
-    return result;
-  }
-
-  async searchAll({
-    keyword = '',
-    category = '',
-    page = 1, limit = 50,
-    sort = ProductSortEnum.RELEVANT.toString()
-  }) {
-    const regWord = keyword ? (new RegExp(keyword)).source : ''; //!falsy
-    const query = {
-      category: convertToObjetId(category),
-      isPublished: true
-    };
-    const select = ['name', 'displayName', 'price', 'discount', 'asset.thumb'];
-
-    const { metadata, result } = await this.productsRepository.searchAll(
-      limit, page, sort, query, regWord, select
+    const { data, metadata } = await this.productsRepository.searchAll(
+      limit, page, sort, newQuery, keywordReg, select
     );
-    const { items, pages } = computeTotalItemsAndPages(metadata, limit);
-
+    const { items, pages } = computeItemsAndPages(metadata, limit);
     return {
+      data,
       metadata: { page, limit, items, pages },
-      result
     };
   }
 
-  findAll({
-    category = '',
-    page = 1, limit = 50,
-    sort = ProductSortEnum.POPULATE.toString()
-  }) {
-    const query = {
-      category: convertToObjetId(category),
-      isPublished: true
+  async findAllValid(
+    {
+      page = 1,
+      limit = 24,
+      sort = ProductSortEnum.CTIME,
+      ...query
+    }: SearchProductDto,
+    isPublished = true,
+    isActive = true
+  ) {
+    const newQuery = { ...query, isPublished, isActive };
+    const unselect = ['deletedAt', 'isDeleted', '__v'];
+    const { data, metadata } = await this.productsRepository.findAllValid(
+      page, limit, sort, unselect, newQuery
+    );
+    const { items, pages } = computeItemsAndPages(metadata, limit);
+    return {
+      data,
+      metadata: { page, limit, items, pages },
     };
-    const select = ['name', 'displayName', 'price', 'discount', 'asset.thumb'];
-    const result = this.productsRepository.findAll(limit, page, sort, query, select);
-    return result;
   }
 
-  async findDetail(productId: string) {
-    //check is objectId
-    const objectId = convertToObjetId(productId);
-    if (!objectId) {
-      throw new BadRequestException(isObjectIdMessage('id của product', objectId));
+  async findOneById(productId: IKey) {
+    const unselect = ['deletedAt', 'isDeleted', '__v'];
+    const references: IReference[] = [
+      {
+        attribute: 'shop',
+        select: ['_id', 'name', 'isMall', 'isActive'],
+      },
+      {
+        attribute: 'user',
+        select: ['_id', 'name', 'role', 'isActive'],
+      },
+      {
+        attribute: 'categories',
+        select: ['_id', 'name', 'level', 'isPublished'],
+      },
+      {
+        attribute: 'needs',
+        select: ['_id', 'name', 'level', 'isPublished'],
+      },
+    ];
+    const found = await this.productsRepository.findOneById(productId, unselect, references);
+    if (!found) {
+      throw new NotFoundException(notFoundIdMessage('productId', productId));
     }
-    //find
-    const filter = { productId: objectId, isPublished: true };
-    const unselect = ['__v'];
-    const populate = {
-      shop: {
-        path: 'shop',
-        select: ['name'],
-        unselect: ['_id']
+    return found;
+  }
+
+  async findOneValidById(productId: IKey, isPublished = true, isActive = true) {
+    const query = { _id: productId, isPublished, isActive };
+    const unselect = ['deletedAt', 'isDeleted', '__v'];
+    const references: IReference[] = [
+      {
+        attribute: 'shop',
+        select: ['_id', 'name', 'isMall', 'isActive'],
       },
-      categories: {
-        path: 'categories',
-        select: ['name', 'displayName'],
-        unselect: ['__v']
+      {
+        attribute: 'user',
+        select: ['_id', 'name', 'role', 'isActive'],
       },
-      models: {
-        path: 'models',
-        select: ['name', 'sku'],
-        unselect: ['__v']
-      }
-    };
-    const foundDoc = await this.productsRepository.findDetail(filter, unselect, populate);
-    return foundDoc;
+      {
+        attribute: 'categories',
+        select: ['_id', 'name', 'level', 'isPublished'],
+      },
+      {
+        attribute: 'needs',
+        select: ['_id', 'name', 'level', 'isPublished'],
+      },
+    ];
+    const found = await this.productsRepository.findOneByQuery(query, unselect, references);
+    if (!found) {
+      throw new NotFoundException(notFoundIdMessage('productId', productId));
+    }
+    return found;
   }
   //END QUERY//
-
-  //UPDATE//
-  async updateIsPublished(shop: Types.ObjectId, id: string, isPublished: boolean) {
-    //check is objectId
-    const objectId = convertToObjetId(id);
-    if (!objectId) {
-      throw new BadRequestException(isObjectIdMessage('id của product', objectId));
-    }
-    //check is existId
-    const query = buildQueryByShop(shop);
-    const foundDoc = await this.productsRepository.findByIdAndQuery(objectId, query);
-    if (!foundDoc) {
-      throw new BadRequestException(notFoundIdMessage('id của product', objectId));
-    }
-    //update
-    const partialDoc = { isPublished };
-    const modifiedCount = await this.productsRepository.updateById(objectId, partialDoc);
-    return { modifiedCount };
-  }
-
-  async updateOne(shopId: Types.ObjectId, payload: UpdateProductDto) {
-    payload = cleanNullishNestedAttrs(payload);
-    const { id: productId, attributes } = payload;
-    const query = buildQueryByShop(shopId, { productId });
-    const updatedProduct = await this.productsRepository.updateByQuery(query, payload);
-    return updatedProduct;
-  }
-  //END UPDATE//
 }

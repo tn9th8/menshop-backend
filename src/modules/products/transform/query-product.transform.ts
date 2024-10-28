@@ -13,6 +13,7 @@ export class QueryProductTransform implements PipeTransform {
         limit = toNumber(limit);
         sort = toEnum(sort, SortEnum);
         //name is string => no transform
+        //keyword is string => no transform
         categories = toObjetId(categories);
         needs = toObjetId(needs);
         shop = toObjetId(shop);

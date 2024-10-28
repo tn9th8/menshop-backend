@@ -8,6 +8,11 @@ export const notFoundIdMessage = (attribute: string, id: IKey) => {
     return `${attribute} không thể tìm thấy, id: ${id}`;
 }
 
+export const notFoundMessage = (attribute: string) => {
+    return `${attribute} không thể tìm thấy`;
+}
+
+
 export const notEmptyMessage = (attribute: string) => {
     return `${attribute} không nên rỗng`;
 }
