@@ -10,7 +10,7 @@
       "@nestjs/swagger"
     ],
     "assets": [
-      "mail/templates/**/*"
+      "mails/templates/**/*"
     ],
     "watchAssets": true
   }

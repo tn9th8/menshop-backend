@@ -1,9 +1,9 @@
 import { FilterQuery, Schema, Types } from "mongoose";
 import slugify from "slugify";
-import { ProductSortEnum } from "../enums/query.enum";
 import { IKey } from "../interfaces/index.interface";
 import { MongoSort } from "../interfaces/mongo.interface";
 import { Metadata } from "../interfaces/response.interface";
+import { ProductSortEnum } from "../enums/product.enum";
 
 //>>>METHODS
 // export const queryLike = (fieldName: string, fieldValue: string) => {
@@ -28,43 +28,17 @@ export const toDbLikeQuery = (fields: string[], values: string[]) => {
     return obj;
 };
 
-export const computeSkipAndSort = (
-    limit: number = 60, page: number = 1, rawSort: string = ProductSortEnum.POPULATE
-) => {
-    const skip = limit * (page - 1);
-    const sort: MongoSort =
-        rawSort === ProductSortEnum.CTIME ?
-            { updatedAt: -1 } :
-            { updatedAt: 1 };
-    return { skip, sort };
-}
-
 export const computeItemsAndPages = (metadata: Metadata, limit: number = 24) => {
     const items = metadata.queriedCount;
     const pages = Math.ceil(items / limit);
     return { items, pages };
 }
 
-export const computeTotalItemsAndPages = (meta: any, limit: number = 60) => {
-    const items = meta.count;
-    const pages = Math.ceil(items / limit);
-    return { items, pages };
-}
-
-
 /**
  * function check is objectId
  * @param id string or ObjectId
  * @returns true or boolean
  */
-export const convertToObjetId = (id: string | Types.ObjectId): Types.ObjectId => {
-    try {
-        return new Types.ObjectId(id);
-    } catch (error) {
-        return null;
-    }
-}
-
 export const toObjetId = (id: IKey | string): IKey | null => {
     //check !falsy
     if (!id) { return null; }
@@ -87,10 +61,6 @@ export const buildQueryByShop = <T>(shopId: Types.ObjectId, query?: FilterQuery<
  * @param select : array of the selected attributes
  * @returns : object of the selected attributes
  */
-export const convertSelectAttrs = (select = []) => {
-    return Object.fromEntries(select.map(attribute => [attribute, 1]));
-};
-
 export const toDbSelect = (select = []) => {
     return Object.fromEntries(select.map(attribute => [attribute, 1]));
 };
@@ -100,10 +70,6 @@ export const toDbSelect = (select = []) => {
  * @param select : array of the unselected attributes
  * @returns : object of the unselected attributes
  */
-export const convertUnselectAttrs = (select = []) => {
-    return Object.fromEntries(select.map(attribute => [attribute, 0]));
-};
-
 export const toDbUnselect = (select = []) => {
     return Object.fromEntries(select.map(attribute => [attribute, 0]));
 };
@@ -149,7 +115,7 @@ export const timestampsPlugin = (schema: Schema) => {
  */
 export const slugPlugin = (schema: Schema) => {
     schema.pre('save', function (next) {
-        this.slug = slugify(this.displayName, { lower: true })
+        this.slug = slugify(this.name, { lower: true })
         next();
     })
 }

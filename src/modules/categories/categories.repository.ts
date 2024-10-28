@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery, QueryOptions, Types, UpdateQuery } from 'mongoose';
+import { FilterQuery, QueryOptions } from 'mongoose';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
-import { CategorySortEnum } from 'src/common/enums/query.enum';
+import { SortEnum } from 'src/common/enums/index.enum';
 import { IKey, IReference } from 'src/common/interfaces/index.interface';
-import { MongoPage, MongoSort } from 'src/common/interfaces/mongo.interface';
-import { convertSelectAttrs, convertUnselectAttrs } from 'src/common/utils/mongo.util';
+import { IDbSort } from 'src/common/interfaces/mongo.interface';
+import { Result } from 'src/common/interfaces/response.interface';
+import { toDbLikeQuery, toDbSelect, toDbUnselect } from 'src/common/utils/mongo.util';
 import { CreateCategoryDto } from './dto/create-category.dto';
+import { IQueryCategory } from './dto/query-category.dto';
 import { Category, ICategory } from './schemas/category.schema';
 
 @Injectable()
@@ -17,124 +19,120 @@ export class CategoriesRepository {
   ) { }
 
   //CREATE//
-  async create(createCategoryDto: CreateCategoryDto): Promise<ICategory> {
-    const newCate = await this.categoryModel.create(createCategoryDto);
-    return newCate;
+  async createOne(payload: CreateCategoryDto): Promise<ICategory> {
+    const created = await this.categoryModel.create(payload);
+    return created;
   }
 
   //UPDATE//
-  async findOneAndUpdate(
-    query: FilterQuery<ICategory>,
-    payload: UpdateQuery<ICategory>,
-    isNew: boolean = true
-  ): Promise<ICategory> {
-    query = { _id: query.categoryId };
-    const options: QueryOptions = { new: isNew };
-    const updatedProduct = await this.categoryModel.findOneAndUpdate(
-      query, payload, options
-    );
-    return updatedProduct;
+  async updateLeanById(
+    categoryId: IKey,
+    payload: any
+  ) {
+    const queryDb: FilterQuery<any> = { _id: categoryId };
+    const { modifiedCount } = await this.categoryModel.updateOne(queryDb, payload);
+    return { updatedCount: modifiedCount };
   }
 
-  async update(
-    query: FilterQuery<ICategory>,
-    payload: UpdateQuery<ICategory>,
+  async updateOneById(
+    categoryId: IKey,
+    payload: any,
     isNew: boolean = true
   ) {
-    query = { _id: query.categoryId };
-    const options: QueryOptions = { new: isNew };
-    const { modifiedCount } = await this.categoryModel.updateOne(query, payload);
-    return { modifiedCount };
+    const dbOptions: QueryOptions = { new: isNew };
+    const updated = await this.categoryModel.findByIdAndUpdate(categoryId, payload, dbOptions); //checked categoryId in factory
+    return updated;
   }
-
 
   //EXIST//
-  async isExistNameOrDisplayName(name: string, displayName: string): Promise<boolean> {
-    let isExist = await this.categoryModel.exists({ name });
-    if (!!isExist) { return true; }
-    isExist = await this.categoryModel.exists({ displayName });
-    if (!!isExist) { return true; }
-    return false;
+  async isExistById(categoryId: IKey) {
+    const isExist = await this.categoryModel.exists({ _id: categoryId });
+    return isExist ? true : false;
   }
 
-  async isExistId(id: Types.ObjectId) {
-    const isExist = await this.categoryModel.exists({ _id: id });
-    if (!!isExist) { return true; }
-    return false;
+  async isExistByQuery(query: any) {
+    const isExist = await this.categoryModel.exists(query); //null
+    return isExist ? true : false;
+  }
+
+  async isExistByQueryAndExcludeId(query: any, id: IKey) {
+    const isExist = await this.categoryModel.exists({
+      ...query,
+      _id: { $ne: id } //exclude the id document
+    }); //{_id} | null
+    return isExist ? true : false;
   }
 
   //QUERY
-  async findAll(
-    page: number, limit: number,
-    sort: CategorySortEnum,
-    unselect: string[],
-    query: FilterQuery<ICategory>
-  ): Promise<MongoPage<ICategory>> {
-    const dbSort: MongoSort = sort === CategorySortEnum.ASC_DISPLAY_NAME
-      ? { displayName: 1 }
-      : { displayName: -1 };
-    const skip = limit * (page - 1);
-    const [{ metadata, data }] = await this.categoryModel.aggregate([
-      { $match: query },
-      { $project: convertUnselectAttrs(unselect) },
-      {
-        $facet: {
-          metadata: [
-            { $count: "count" },
-          ],
-          data: [
-            { $sort: dbSort },
-            { $skip: skip },
-            { $limit: limit }
-          ]
-        }
-      }
-    ]);
-    return {
-      metadata: { count: metadata[0]?.count ?? 0 },
-      data
-    };
+  async findLeanById(
+    categoryId: IKey,
+    select: string[]
+  ): Promise<ICategory | null> {
+    return await this.categoryModel.findById(categoryId)
+      .select(toDbSelect(select));
   }
 
-  async findOne(
-    filter: FilterQuery<ICategory>,
+  async findOneById(
+    categoryId: IKey,
     unselect: string[],
     references: IReference[]
   ) {
-    filter = { _id: filter.categoryId }
-    const found = await this.categoryModel.find(filter)
-      .select(convertUnselectAttrs(unselect))
+    const found = await this.categoryModel.findById(categoryId)
+      .select(toDbUnselect(unselect))
       .populate({
         path: references[0].attribute,
-        select: {
-          ...convertSelectAttrs(references[0].select),
-          ...convertUnselectAttrs(references[0].unselect)
-        }
-      })
-    // .populate({
-    //   path: references[1].attribute,
-    //   select: {
-    //     ...convertSelectAttrs(references[1].select),
-    //     ...convertUnselectAttrs(references[1].unselect)
-    //   }
-    // })
-    // .populate({
-    //   path: references[2].attribute,
-    //   select: {
-    //     ...convertSelectAttrs(references[2].select),
-    //     ...convertUnselectAttrs(references[2].unselect)
-    //   }
-    // })
-    // .populate({
-    //   path: references[3].attribute,
-    //   select: {
-    //     ...convertSelectAttrs(references[3].select),
-    //     ...convertUnselectAttrs(references[3].unselect)
-    //   }
-    // });
-    if (!found) {
-      return null;
+        select: toDbSelect(references[0].select)
+      });
+    return found || null;
+  }
+
+  async findAllByQuery(
+    page: number,
+    limit: number,
+    sort: SortEnum,
+    unselect: string[],
+    query: IQueryCategory
+  ): Promise<Result<ICategory>> {
+    const dbQuery = {
+      ...query,
+      ...toDbLikeQuery(['name'], [query.name])
     }
-    return found;
+    const dbUnselect = toDbUnselect(unselect);
+    const dbSort: IDbSort =
+      sort == SortEnum.LATEST ? { updatedAt: -1 }
+        : sort == SortEnum.OLDEST ? { updatedAt: 1 }
+          : sort == SortEnum.NAME_AZ ? { name: 1 }
+            : sort == SortEnum.NAME_ZA ? { name: -1 }
+              : { updatedAt: -1 } //default SortEnum.LATEST
+    const skip = limit * (page - 1);
+
+    const [queriedCount, data] = await Promise.all([
+      this.categoryModel.countDocuments(dbQuery),
+      this.categoryModel.find(dbQuery)
+        .select(dbUnselect)
+        .sort(dbSort)
+        .skip(skip)
+        .limit(limit)
+        .exec()
+    ]);
+
+    return {
+      metadata: { queriedCount },
+      data: (data as any)
+    }
+  }
+
+  async findTree(
+    query: IQueryCategory,
+    select: string[],
+    references: IReference[]
+  ) {
+    const tree = await this.categoryModel.find(query)
+      .select(toDbSelect(select))
+      .populate({
+        path: references[0].attribute,
+        select: toDbSelect(references[0].select),
+      });
+    return tree;
   }
 }

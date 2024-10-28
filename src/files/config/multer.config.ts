@@ -43,8 +43,8 @@ export class MulterConfigService implements MulterOptionsFactory {
                 // cấu hình nơi lưu
                 destination: (req, file, callback) => {
                     const folder = req?.headers?.folder_type ?? "default";
-                    this.ensureExists(`public/images/${folder}`);
-                    callback(null, join(this.getRootPath(), `public/images/${folder}`)) // return
+                    this.ensureExists(`public/${folder}`); //(`public/images/${folder}`)
+                    callback(null, join(this.getRootPath(), `public/${folder}`)) // return
                 },
                 // cấu hình đổi tên file
                 filename: (req, file, callback) => {

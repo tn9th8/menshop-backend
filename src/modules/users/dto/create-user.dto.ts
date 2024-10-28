@@ -1,33 +1,28 @@
 import { IsEmail, IsEnum, IsNotEmpty, IsNumber, IsPhoneNumber, IsString } from "class-validator";
 import { GenderEnum } from "src/common/enums/gender.enum";
+import { isEnumMessage, isStringMessage } from "src/common/utils/pipe.util";
 
 export class CreateUserDto {
-    @IsNotEmpty({ message: "Name không thể empty, null hay undefined" })
-    @IsString({ message: "Name phải là string" })
+    @IsString(isStringMessage('name'))
     name: string;
 
-    @IsPhoneNumber('VN', { message: "Phone phải là số điện thoại Việt Nam" })
+    @IsPhoneNumber('VN', { message: "Phone nên là số điện thoại Việt Nam" })
     phone: string;
 
-    @IsEmail({}, { message: "Email phải theo định dạng []@[].[]" })
+    @IsEmail({}, { message: "Email nên theo định dạng []@[].[]" })
     email: string;
 
     // todo: check a strong password
-    @IsNotEmpty({ message: "Password không thể empty, null hay undefined" })
-    @IsString({ message: "Password phải là string" })
+    @IsString(isStringMessage('password'))
     password: string;
 
     // todo: check >8 < 150
     @IsNumber()
     age: number;
 
-    @IsEnum(GenderEnum, { message: "Gender phải là male, female hoặc other" })
+    @IsEnum(GenderEnum, isEnumMessage('gender', GenderEnum))
     gender: GenderEnum;
 
-    // todo: city, district
-    @IsString({ message: "Address phải là string" })
-    address: string;
-
-    @IsString({ message: "Avatar phải là string" })
+    @IsString(isStringMessage('avatar'))
     avatar: string;
 }

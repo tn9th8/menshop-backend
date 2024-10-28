@@ -118,6 +118,15 @@ export class ShopsRepository {
     return found || null;
   }
 
+  async findOneByQuerySelect(
+    query: FilterQuery<any>,
+    select: string[]
+  ): Promise<IShop | null> {
+    const found = await this.shopModel.findOne(query)
+      .select(toDbSelect(select));
+    return found || null;
+  }
+
   //COMPUTE
   async count() {
     const result = await this.shopModel.count();

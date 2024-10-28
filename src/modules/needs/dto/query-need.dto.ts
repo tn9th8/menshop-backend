@@ -12,7 +12,7 @@ export class QueryNeedDto {
     name?: string;
     level?: NeedLevelEnum;
     //ref
-    child?: IKey;
+    children?: IKey;
 }
 
 export class IQueryNeed extends QueryNeedDto {

@@ -1,25 +1,34 @@
-import { MinLength } from "class-validator";
-import { isStringMessage } from "src/common/utils/pipe.util";
+import { IsArray, IsOptional, IsString } from "class-validator";
+import { isArrayMessage, isStringMessage } from "src/common/utils/pipe.util";
 
 export class ProductAssetDto {
-    @MinLength(1, isStringMessage('thumb'))
-    thumb: string;
+    // @IsOptional()
+    // @IsString(isStringMessage('video'))
+    // productVideo: string; //trim
 
-    video: string;
+    @IsOptional()
+    @IsArray(isArrayMessage('productImages'))
+    productImages: string[]; //each: trim, remove falsy
 
-    images: string[];
+    @IsOptional()
+    @IsArray(isArrayMessage('variationImages'))
+    variationImages: string[]; //each: trim, remove falsy
 
-    variationImages: string[];
-
-    sizeChartImage: string;
+    @IsOptional()
+    @IsString(isStringMessage('sizeImage'))
+    sizeImage: string; //trim
 }
 
 export class ProductAttributeDto {
-    @MinLength(1, isStringMessage('name'))
-    name: string;
+    @IsOptional()
+    @IsString(isStringMessage('name'))
+    name: string; //trim
 
-    @MinLength(1, isStringMessage('value'))
-    value: string;
+    @IsOptional()
+    @IsString(isStringMessage('value'))
+    value: string; //trim
 
-    link: string;
+    @IsOptional()
+    @IsString(isStringMessage('link'))
+    link: string; //trim
 }

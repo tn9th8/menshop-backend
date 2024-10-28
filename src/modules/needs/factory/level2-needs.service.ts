@@ -1,11 +1,8 @@
 import { Injectable } from "@nestjs/common";
-import { NeedsRepository } from "../needs.repository";
 import { CreateNeedDto } from "../dto/create-need.dto";
-import { CreateNeedTransform } from "../transform/create-need.transform";
-import { IKey } from "src/common/interfaces/index.interface";
-import { UtilNeedsService } from "./util-needs.service";
 import { UpdateNeedDto } from "../dto/update-need.dto";
-import { UpdateNeedTransform } from "../transform/update-need.transform";
+import { NeedsRepository } from "../needs.repository";
+import { UtilNeedsService } from "./util-needs.service";
 
 @Injectable()
 export class Level2NeedsService {

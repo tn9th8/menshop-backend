@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { IsPublishedEnum } from 'src/common/enums/index.enum';
-import { SortEnum } from 'src/common/enums/index.enum';
+import { IsPublishedEnum, SortEnum } from 'src/common/enums/index.enum';
 import { IKey, IReference } from 'src/common/interfaces/index.interface';
 import { notFoundIdMessage } from 'src/common/utils/exception.util';
 import { computeItemsAndPages } from 'src/common/utils/mongo.util';
@@ -9,9 +8,8 @@ import { QueryNeedDto } from './dto/query-need.dto';
 import { IUpdateNeed, UpdateNeedDto } from './dto/update-need.dto';
 import { NeedsFactory } from './factory/needs.factory';
 import { NeedsRepository } from './needs.repository';
-import { UpdateNeedTransform } from './transform/update-need.transform';
 import { CreateNeedTransform } from './transform/create-need.transform';
-import { NeedLevelEnum } from 'src/common/enums/need.enum';
+import { UpdateNeedTransform } from './transform/update-need.transform';
 
 @Injectable()
 export class NeedsService {
@@ -36,7 +34,7 @@ export class NeedsService {
     return updated;
   }
 
-  async updateIsPublished(needId: IKey, isPublished: IsPublishedEnum) {
+  async updateIsPublished(needId: IKey, isPublished = IsPublishedEnum.PUBLISHED) {
     const payload = { isPublished: isPublished ? true : false };
     const result = await this.needsRepository.updateLeanById(needId, payload);
     if (!result.updatedCount) {
@@ -66,19 +64,6 @@ export class NeedsService {
     };
   }
 
-  async findTree(isPublished: IsPublishedEnum = IsPublishedEnum.PUBLISHED) {
-    const query = { isPublished: isPublished ? true : false };
-    const select = ['_id', 'name', 'slug', 'level'];
-    const references: IReference[] = [
-      {
-        attribute: 'children',
-        select: ['_id', 'name', 'slug', 'level']
-      },
-    ];
-    const tree = await this.needsRepository.findTree(query, select, references);
-    return tree;
-  }
-
   async findOneById(needId: IKey) {
     const unselect = ['__v'];
     const references: IReference[] = [
@@ -92,6 +77,19 @@ export class NeedsService {
       throw new NotFoundException(notFoundIdMessage('id param', needId));
     }
     return found;
+  }
+
+  async findTree(isPublished: IsPublishedEnum = IsPublishedEnum.PUBLISHED) {
+    const query = { isPublished: isPublished ? true : false };
+    const select = ['_id', 'name', 'slug', 'level'];
+    const references: IReference[] = [
+      {
+        attribute: 'children',
+        select: ['_id', 'name', 'slug', 'level']
+      },
+    ];
+    const tree = await this.needsRepository.findTree(query, select, references);
+    return tree;
   }
 
 }

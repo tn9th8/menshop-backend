@@ -2,7 +2,7 @@ import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Shop } from 'src/modules/shops/schemas/shop.schema';
 import { ShopsRepository } from 'src/modules/shops/shops.repository';
-import { User } from 'src/modules/users/schemas/user.scheme';
+import { User } from 'src/modules/users/schemas/user.schema';
 import { UsersRepository } from 'src/modules/users/users.repository';
 import { SHOP_SAMPLES } from './sample/shop.samples';
 import { USER_SAMPLES } from './sample/user.samples';

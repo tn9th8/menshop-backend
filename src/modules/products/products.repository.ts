@@ -1,9 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery, QueryOptions, Types, UpdateQuery, Expression } from 'mongoose';
+import { FilterQuery, QueryOptions, UpdateQuery } from 'mongoose';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
-import { computeSkipAndSort, convertSelectAttrs, convertUnselectAttrs } from 'src/common/utils/mongo.util';
+import { SortEnum } from 'src/common/enums/index.enum';
+import { ProductSortEnum } from 'src/common/enums/product.enum';
+import { IKey, IReference } from 'src/common/interfaces/index.interface';
+import { IDbSort } from 'src/common/interfaces/mongo.interface';
+import { Result } from 'src/common/interfaces/response.interface';
+import { toDbLikeQuery, toDbSelect, toDbUnselect } from 'src/common/utils/mongo.util';
 import { CreateProductDto } from './dto/create-product.dto';
+import { IQueryProduct } from './dto/query-product.dto';
 import { IProduct, Product } from './schemas/product.schema';
 
 @Injectable()
@@ -12,69 +18,157 @@ export class ProductsRepository {
     @InjectModel(Product.name)
     private readonly productModel: SoftDeleteModel<IProduct>
   ) { }
+
+  //EXIST// the exists method return {_id} | null
+  async isExistById(needId: IKey) {
+    const isExist = await this.productModel.exists({ _id: needId });
+    return isExist ? true : false;
+  }
+
+  async isExistByQuery(query: any) {
+    const isExist = await this.productModel.exists(query);
+    return isExist ? true : false;
+  }
+
+  async isExistByQueryAndExcludeId(query: any, id: IKey) {
+    const isExist = await this.productModel.exists({
+      ...query,
+      _id: { $ne: id } //exclude the id document
+    });
+    return isExist ? true : false;
+  }
+
   //CREATE//
-  async create(createProductDto: CreateProductDto) {
-    const result = await this.productModel.create(createProductDto);
+  async createOne(payload: CreateProductDto) {
+    const result = await this.productModel.create(payload);
     return result;
   }
   //END CREATE//
 
+  //UPDATE//
+  async updateOneByQuery(
+    payload: UpdateQuery<any>,
+    query: FilterQuery<any>,
+    isNew: boolean = true
+  ): Promise<IProduct | null> {
+    const options: QueryOptions = { new: isNew };
+    const updatedProduct = await this.productModel.findOneAndUpdate(query, payload, options) || null;
+    return updatedProduct;
+  }
+  //END UPDATE//
+
   //QUERY//
-  async findAllByIsPublished(query: FilterQuery<IProduct>, limit: number, skip: number): Promise<IProduct[]> {
-    const result = await this.productModel.find(query)
-      .populate('shop', 'name -_id') //email
-      .sort({ updatedAt: -1 })
-      .skip(skip)
-      .limit(limit)
-      .lean()
-      .exec();
-    return result;
+  async findAllByQuery(
+    page: number,
+    limit: number,
+    sort: SortEnum,
+    unselect: string[],
+    query: IQueryProduct
+  ): Promise<Result<IProduct>> {
+    const dbQuery = {
+      ...query,
+      ...toDbLikeQuery(['name'], [query.name])
+    }
+    const dbUnselect = toDbUnselect(unselect);
+    const dbSort: IDbSort =
+      sort == SortEnum.LATEST ? { updatedAt: -1 }
+        : sort == SortEnum.OLDEST ? { updatedAt: 1 }
+          : sort == SortEnum.NAME_AZ ? { name: 1 }
+            : sort == SortEnum.NAME_ZA ? { name: -1 }
+              : { updatedAt: -1 } //default SortEnum.LATEST
+    const skip = limit * (page - 1);
+
+    const [queriedCount, data] = await Promise.all([
+      this.productModel.countDocuments(dbQuery),
+      this.productModel.find(dbQuery)
+        .select(dbUnselect)
+        .sort(dbSort)
+        .skip(skip)
+        .limit(limit)
+        .exec()
+    ]);
+
+    return {
+      metadata: { queriedCount },
+      data: (data as any)
+    }
   }
 
-  /**
-   * find one by id and query
-   * @param _id ObjectId
-   * @param query FilterQuery<IProduct>
-   * @returns a found document or nullish
-   */
-  async findByIdAndQuery(_id: Types.ObjectId, query: object) {
-    const found = await this.productModel.find({ _id, ...query });
-    return found;
+  async findAllValid(
+    page: number,
+    limit: number,
+    sort: ProductSortEnum,
+    unselect: string[],
+    query: IQueryProduct
+  ): Promise<Result<IProduct>> {
+    const dbQuery = {
+      ...query,
+      ...toDbLikeQuery(['name'], [query.name])
+    }
+    const dbUnselect = toDbUnselect(unselect);
+    //sort
+    const dbSort: IDbSort =
+      sort == ProductSortEnum.CTIME ? { updatedAt: -1 }
+        : sort == ProductSortEnum.RELEVANT ? { updatedAt: -1 }
+          : sort == ProductSortEnum.SALES ? { updatedAt: -1 }
+            : sort == ProductSortEnum.POPULATE ? { updatedAt: -1 }
+              : { updatedAt: -1 };
+    const skip = limit * (page - 1);
+
+    const [queriedCount, data] = await Promise.all([
+      this.productModel.countDocuments(dbQuery),
+      this.productModel.find(dbQuery)
+        .select(dbUnselect)
+        .sort(dbSort)
+        .skip(skip)
+        .limit(limit)
+        .exec()
+    ]);
+
+    return {
+      metadata: { queriedCount },
+      data: (data as any)
+    }
   }
 
   async searchAll(
-    limit: number, page: number,
-    rawSort: string,
-    rawQuery: FilterQuery<IProduct>, keyword: string,
+    limit: number,
+    page: number,
+    sort: ProductSortEnum,
+    query: FilterQuery<any>,
+    keyword: string,
     selectArr: string[]
-  ) {
-    //search, score, sort
+  ): Promise<Result<IProduct>> {
+    //search, score
     let fullTextSearch = {};
     let score: {};
-    let sort: Record<string, 1 | -1 | Expression.Meta>;
-    if (!!keyword) {
-      //truthy
+    if (keyword) {
       fullTextSearch = { $text: { $search: keyword } };
       score = { $meta: 'textScore' };
-      sort = rawSort === 'relevant' ? { score: { $meta: 'textScore' } } : { updatedAt: -1 };
     } else {
-      //falsy
       fullTextSearch = {};
       score = null;
-      sort = { updatedAt: -1 };
     }
-
+    //sort
+    const dbSort: IDbSort =
+      sort == ProductSortEnum.CTIME ? { updatedAt: -1 }
+        : sort == ProductSortEnum.RELEVANT ? { updatedAt: -1 }
+          : sort == ProductSortEnum.SALES ? { updatedAt: -1 }
+            : sort == ProductSortEnum.POPULATE ? { updatedAt: -1 }
+              : { updatedAt: -1 };
     //skip, query, select
     const skip = limit * (page - 1);
-    const { category, ...query } = rawQuery;
-    const inCategories = category ? { categories: { $elemMatch: { $eq: category } } } : {}; //!falsy: ?: || if() - falsy: if(!!)
-    const select = convertSelectAttrs(selectArr);
+    const { categories, needs, ...newQuery } = query;
+    const inCategories = categories ? { categories: { $elemMatch: { $eq: categories } } } : {}; //!falsy: ?: || if() - falsy: if(!!)
+    const inNeeds = needs ? { categories: { $elemMatch: { $eq: needs } } } : {};
+    const select = toDbSelect(selectArr);
 
-    const [{ metadata, result }] = await this.productModel.aggregate([
+    const [{ data, metadata }] = await this.productModel.aggregate([
       {
         $match: {
-          ...query,
+          ...newQuery,
           ...inCategories,
+          ...inNeeds,
           ...fullTextSearch
         }
       },
@@ -87,124 +181,82 @@ export class ProductsRepository {
       {
         $facet: {
           metadata: [
-            { $count: "count" },
-          ],
-          result: [
-            { $sort: sort },
-            { $skip: skip },
-            { $limit: limit }
-          ]
-        }
-      }
-    ]);
-    return {
-      metadata: { count: metadata[0]?.count ?? 0 }, //!nullish: ?. ??
-      result
-    }
-  }
-
-  async findAll(
-    limit: number, page: number,
-    rawSort: string,
-    rawQuery: FilterQuery<IProduct>,
-    selectArr: string[]
-  ) {
-    //skip, sort
-    const { skip, sort } = computeSkipAndSort(limit, page, rawSort);
-    //query, select
-    const { category, ...query } = rawQuery;
-    const inCategories = category ? { categories: { $elemMatch: { $eq: category } } } : {}; //!falsy
-    const select = convertSelectAttrs(selectArr);
-    const [result] = await this.productModel.aggregate([
-      {
-        $match: { //step 1: query
-          ...query,
-          ...inCategories
-        }
-      },
-      { $project: select },  //step 2: select attributes
-      {
-        $facet: {
-          meta: [
-            { $count: "count" }, //step 3: count total all items
+            { $count: "queriedCount" },
           ],
           data: [
-            { $sort: sort }, //step 4: sort => skip offset => get items for page
+            { $sort: dbSort },
             { $skip: skip },
             { $limit: limit }
           ]
         }
       }
     ]);
-    const items = result.meta[0].count;
-    const pages = Math.ceil(items / limit);
     return {
-      metadata: { page, limit, items, pages },
-      result: result.data
-    };
-  }
-
-  async findDetail(filter: FilterQuery<IProduct>, unselect: string[], populate: any) {
-    const { shop, models, categories } = populate;
-    filter = { ...filter, _id: filter.productId }
-    const found = await this.productModel.find(filter)
-      .select(convertUnselectAttrs(unselect))
-      .populate({
-        ...shop,
-        select: {
-          ...convertSelectAttrs(shop.select),
-          ...convertUnselectAttrs(shop.unselect)
-        }
-      })
-      .populate({
-        ...categories,
-        select: {
-          ...convertSelectAttrs(categories.select),
-          ...convertUnselectAttrs(categories.unselect)
-        }
-      })
-      .populate({
-        ...models,
-        select: {
-          ...convertSelectAttrs(models.select),
-          ...convertUnselectAttrs(models.unselect)
-        }
-      });
-    if (!found) {
-      return null;
+      metadata: { queriedCount: metadata[0]?.queriedCount ?? 0 },
+      data: (data as any)
     }
-    return found;
-  }
-  // END QUERY//
-
-  //UPDATE//
-  async updateById(productId: Types.ObjectId, payload: UpdateQuery<IProduct>, isNew: boolean = true): Promise<IProduct> {
-    const options: QueryOptions = { new: isNew };
-    const product = await this.productModel.findByIdAndUpdate(productId, payload, options);
-    return product;
   }
 
-  /**
-   *
-   * @param query : { productId, shopId } => { _id, shop}
-   * @param payload : UpdateQuery<IProduct>
-   * @param isNew : default true, method will return the result after updated
-   * @returns : Promise<IProduct> if found, null if not found
-   */
-  async updateByQuery(
-    rawQuery: FilterQuery<IProduct>,
-    payload: UpdateQuery<IProduct>,
-    isNew: boolean = true
-  ): Promise<IProduct> {
-    const options: QueryOptions = { new: isNew }; //return result after updated
-    let { productId, shopId, ...query } = rawQuery;
-    query = {
-      ...query,
-      _id: query.productId,
-      shop: query.shopId
-    };
-    const updatedProduct = await this.productModel.findOneAndUpdate(query, payload, options);
-    return updatedProduct;
+  async findAllByIsPublished(query: FilterQuery<IProduct>, limit: number, skip: number): Promise<IProduct[]> {
+    const result = await this.productModel.find(query)
+      .populate('shop', 'name -_id') //email
+      .sort({ updatedAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean()
+      .exec();
+    return result;
   }
-  //END UPDATE//
+
+  async findOneById(
+    productId: IKey,
+    unselect: string[],
+    references: IReference[]
+  ) {
+    const found = await this.productModel.findById(productId)
+      .select(toDbUnselect(unselect))
+      .populate({
+        path: references[0].attribute,
+        select: toDbSelect(references[0].select)
+      })
+      .populate({
+        path: references[1].attribute,
+        select: toDbSelect(references[1].select)
+      })
+      .populate({
+        path: references[2].attribute,
+        select: toDbSelect(references[2].select)
+      })
+      .populate({
+        path: references[3].attribute,
+        select: toDbSelect(references[3].select)
+      });
+    return found || null;
+  }
+
+  async findOneByQuery(
+    query: FilterQuery<any>,
+    unselect: string[],
+    references: IReference[]
+  ) {
+    const found = await this.productModel.findOne(query)
+      .select(toDbUnselect(unselect))
+      .populate({
+        path: references[0].attribute,
+        select: toDbSelect(references[0].select)
+      })
+      .populate({
+        path: references[1].attribute,
+        select: toDbSelect(references[1].select)
+      })
+      .populate({
+        path: references[2].attribute,
+        select: toDbSelect(references[2].select)
+      })
+      .populate({
+        path: references[3].attribute,
+        select: toDbSelect(references[3].select)
+      });
+    return found || null;
+  }
 }

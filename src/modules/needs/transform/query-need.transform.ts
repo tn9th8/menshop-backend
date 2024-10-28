@@ -8,16 +8,16 @@ import { cleanNullishAttrs, toBoolean, toEnum, toNumber } from 'src/common/utils
 @Injectable()
 export class QueryNeedTransform implements PipeTransform {
     async transform(value: QueryNeedDto) {
-        let { page, limit, sort, name, level, child } = value;
+        let { page, limit, sort, name, level, children } = value;
 
         page = toNumber(page);
         limit = toNumber(limit);
         sort = toEnum(sort, SortEnum);
         //name is string => no transform
         level = toEnum(level, NeedLevelEnum);
-        child = toObjetId(child);
+        children = toObjetId(children);
 
-        const cleaned: QueryNeedDto = cleanNullishAttrs({ page, limit, sort, name, level, child });
+        const cleaned: QueryNeedDto = cleanNullishAttrs({ page, limit, sort, name, level, children });
         return cleaned;
     }
 }
