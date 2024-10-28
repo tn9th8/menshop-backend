@@ -11,11 +11,11 @@ export class User {
   @Prop({ required: true })
   name: string;
 
-  @Prop()
-  phone: string;
-
   @Prop({ required: true })
   email: string;
+
+  @Prop()
+  phone: string;
 
   @Prop({ required: true })
   password: string;
@@ -30,10 +30,10 @@ export class User {
   gender: GenderEnum;
 
   @Prop()
-  address: string;
-
-  @Prop()
   avatar: string;
+
+  @Prop({ index: true, select: false, default: true, required: true })
+  isActive: boolean;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

@@ -3,4 +3,4 @@ import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Users Module for Members')
 @Controller('mem/users')
-export class MembersController { }
+export class UsersControllerClient { }

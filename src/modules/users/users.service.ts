@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import aqp from 'api-query-params';
 import { Moment } from 'moment';
@@ -6,21 +6,26 @@ import mongoose from 'mongoose';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { SignUpClientDto } from 'src/auth/dto/signup-client.dto';
 import { ICreateResult, IDeleteResult, IUpdateResult } from 'src/common/interfaces/persist-result.interface';
-import { convertToObjetId } from 'src/common/utils/mongo.util';
+import { computeItemsAndPages, convertToObjetId } from 'src/common/utils/mongo.util';
 import { hashPass } from 'src/common/utils/security.util';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { IUser, User } from './schemas/user.scheme';
-import { isExistMessage } from 'src/common/utils/exception.util';
+import { IUser, User } from './schemas/user.schema';
+import { isExistMessage, notFoundIdMessage } from 'src/common/utils/exception.util';
 import { SignUpSellerDto } from 'src/auth/dto/signup-seller.dto';
 import { UsersRepository } from './users.repository';
+import { KeyStoreService } from '../key-store/key-store.service';
+import { UpdateUserTransform } from './transform/update-user.transform';
+import { IKey, IReference } from 'src/common/interfaces/index.interface';
+import { IsActiveEnum, SortEnum } from 'src/common/enums/index.enum';
+import { QueryUserDto } from './dto/query-user.dto';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectModel(User.name)
-    private readonly userModel: SoftDeleteModel<IUser>,
-    private readonly usersRepo: UsersRepository
+    private readonly usersRepo: UsersRepository,
+    private readonly keyStoreService: KeyStoreService,
+    private readonly updateUserTransform: UpdateUserTransform
   ) { }
   //CREATE//
   async createSeller(payload: SignUpSellerDto) {
@@ -68,7 +73,7 @@ export class UsersService {
         role
       } as any); //{ password: unselect, ... }
       if (!created) {
-        throw new BadRequestException("Có lỗi khi tạo một seller");
+        throw new BadRequestException("Có lỗi khi tạo một client");
       }
       const { password: hide, ...newUser } = created;
       return newUser;
@@ -77,99 +82,92 @@ export class UsersService {
     }
   }
 
-  //OLD//
-  async create(createUserDto: CreateUserDto | SignUpClientDto): Promise<ICreateResult> {
-    // is exist mail
-    const { email, password } = createUserDto;
-    const isExist = await this.userModel.findOne({ email });
-    if (isExist) {
-      throw new ConflictException(isExistMessage('email'));
+  async createAdmin(payload: CreateUserDto) {
+    //transform
+    try {
+      // is exist mail
+      const { email, password } = payload;
+      const isExist = await this.usersRepo.isExistByQuery({ email });
+      if (isExist) {
+        throw new ConflictException(isExistMessage('email'));
+      }
+      // hash password
+      const hash = await hashPass(password);
+      //role
+      const role = "ADMIN";
+      //create a user
+      let created = await this.usersRepo.createOne({
+        ...payload,
+        password: hash,
+        role
+      } as any); //{ password: unselect, ... }
+      if (!created) {
+        throw new BadRequestException("Có lỗi khi tạo một admin");
+      }
+      //create key store
+      const createdKeyStore = await this.keyStoreService.createOne({ userId: created._id, verifyToken: null });
+      if (!createdKeyStore) {
+        throw new BadRequestException("Có lỗi khi cập nhật một keyStore");
+      }
+      //return
+      const { password: hide, ...newUser } = created;
+      return newUser;
+    } catch (error) {
+      console.log(error);
+      throw new BadRequestException("Có lỗi khi tạo một admin");
     }
+  }
 
-    // hash password
-    const hash = await hashPass(password);
+  async updateOne(payload: UpdateUserDto) {
+    const { id, ...newPayload } = await this.updateUserTransform.transform(payload);
+    const updated = await this.usersRepo.updateOneByQuery(newPayload, { _id: id });
+    if (!updated) {
+      throw new NotFoundException(notFoundIdMessage('user id', id));
+    }
+    return updated ? { updatedCount: 1 } : { updatedCount: 0 };
+  }
 
-    // create
-    const user = await this.userModel.create({
-      ...createUserDto,
-      password: hash,
-    });
+  async updateIsActive(userId: IKey, isActive: IsActiveEnum) {
+    const payload = { isActive: isActive ? true : false };
+    const updated = await this.usersRepo.updateOneByQuery(payload, { _id: userId });
+    if (!updated) {
+      throw new NotFoundException(notFoundIdMessage('user id', userId));
+    }
+    return updated ? { updatedCount: 1 } : { updatedCount: 0 };
+  }
+
+  //QUERY//
+  async findAllByQuery(
+    {
+      page = 1,
+      limit = 24,
+      sort = SortEnum.LATEST,
+      ...query
+    }: QueryUserDto,
+    isActive = IsActiveEnum.ACTIVE
+  ) {
+    const unselect = ['deletedAt', 'isDeleted', '__v'];
+    const { data, metadata } = await this.usersRepo.findAllByQuery(
+      page, limit, sort, unselect, { ...query, isActive: isActive ? true : false }
+    );
+    const { items, pages } = computeItemsAndPages(metadata, limit);
     return {
-      id: user._id,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt
+      data,
+      metadata: { page, limit, items, pages },
     };
   }
 
-  async findAll(queryString: string) {
-    // page = current; limit = size; offset = skip
-    const { filter, sort, projection, population } = aqp(queryString);
-    const { page, size, ...condition } = filter // delete filter.page
-    // limit, offset
-    let offset = (+page - 1) * (+size);
-    let limit = +size || 10;
-    // use Promise.all to perform 2 queries parallel
-    const [totalItems, result] = await Promise.all([
-      this.userModel.countDocuments(condition),
-      this.userModel.find(condition)
-        .skip(offset)
-        .limit(limit)
-        .sort(sort as any) // @ts-ignore: Unreachable code error
-        .populate(population)
-        .exec()
-    ]);
-    const totalPages = Math.ceil(totalItems / limit);
-
-    return {
-      meta: {
-        page,
-        size: limit,
-        pages: totalPages,
-        items: totalItems,
-      },
-      result //kết quả query
-    }
-
-  }
-
-  async findById(_id: string): Promise<IUser | undefined> {
-    convertToObjetId(_id);
-    const user = await this.userModel.findById(_id).select('-password');
-    return user;
-  }
-
   async findByEmail(email: string): Promise<IUser | undefined> {
-    const user = await this.userModel.findOne({ email });
+    const user = await this.usersRepo.findOneByQuery({ email });
     return user;
   }
 
-  async update(updateUserDto: UpdateUserDto): Promise<IUpdateResult> {
-    const { id, email, password, phone, ...updateFields } = updateUserDto;
-    convertToObjetId(id);
-    const result = await this.userModel.updateOne({ _id: id }, { ...updateFields },);
-    return result;
-  }
-
-  async updateRefreshToken(_id: mongoose.Types.ObjectId, refreshToken: string, refreshExpires: Moment): Promise<IUpdateResult> {
-    return await this.userModel.updateOne({ _id }, { refreshToken, refreshExpires });
-  }
-
-  async findByRefreshToken(refreshToken: string): Promise<IUser> {
-    return await this.userModel.findOne({ refreshToken });
-  }
-
-  async updateVerifyToken(_id: mongoose.Types.ObjectId, verifyToken: string, verifyExpires: Moment): Promise<IUpdateResult> {
-    return await this.userModel.updateOne({ _id }, { verifyToken, verifyExpires });
-  }
-
-  async findByVerifyToken(verifyToken: string): Promise<IUser> {
-    return await this.userModel.findOne({ verifyToken });
-  }
-
-  async remove(_id: string): Promise<IDeleteResult> {
-    convertToObjetId(_id);
-    const result = await this.userModel.softDelete({ _id })
-    return result;
-
+  async findOneById(userId: IKey) {
+    const unselect = ['deletedAt', 'isDeleted', '__v', 'password'];
+    const found = await this.usersRepo.findOneById(userId, unselect);
+    if (!found) {
+      throw new NotFoundException(notFoundIdMessage('user id', userId));
+    }
+    return found;
   }
 }

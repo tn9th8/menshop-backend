@@ -24,7 +24,7 @@ export class ShopsService {
   //CREATE//
   async create(payload: CreateShopDto, user: AuthUserDto) {
     payload = await this.createShopTransform.transform(payload);
-    const { _id: userId } = await this.usersRepo.findLeanByQuery({ email: user.email }, ['_id']);
+    const { _id: userId } = await this.usersRepo.findOneByQuery({ email: user.email });
     if (await this.shopsRepo.isExistByQuery({ user: userId })) {
       throw new BadRequestException(isExistMessage('seller'));
     }
@@ -36,7 +36,7 @@ export class ShopsService {
   //UPDATE//
   async update(payload: UpdateShopDto, user: AuthUserDto) {
     const { id: shopId, ...newPayload } = await this.updateShopTransform.transform(payload);
-    const { _id: userId } = await this.usersRepo.findLeanByQuery({ email: user.email }, ['_id'])
+    const { _id: userId } = await this.usersRepo.findOneByQuery({ email: user.email })
     const query = { shopId, userId }
     const created = this.shopsRepo.updateOneByQuery(newPayload, query);
     return created;

@@ -1,9 +1,8 @@
 
-import { IsNotEmpty } from 'class-validator';
+import { OmitType, PartialType } from '@nestjs/swagger';
+import { IKey } from 'src/common/interfaces/index.interface';
 import { CreateUserDto } from './create-user.dto';
-import { PartialType } from '@nestjs/swagger';
 
-export class UpdateUserDto extends PartialType(CreateUserDto) {
-    @IsNotEmpty({ message: "id không thể empty, null hay undefined" })
-    id: string;
+export class UpdateUserDto extends OmitType(PartialType(CreateUserDto), ['email', 'password'] as const) {
+    id: IKey;
 }
