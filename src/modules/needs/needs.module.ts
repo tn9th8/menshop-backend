@@ -11,7 +11,7 @@ import { Level1NeedsService } from './factory/level1-needs.service';
 import { Level2NeedsService } from './factory/level2-needs.service';
 import { Level3NeedsService } from './factory/level3-needs.service';
 import { DefaultNeedsService } from './factory/default-needs.service';
-import { UtilNeedsService } from './factory/util-needs.service';
+import { UtilNeedsService } from './factory/needs.factory.helper';
 import { UpdateNeedTransform } from './transform/update-need.transform';
 import { QueryNeedTransform } from './transform/query-need.transform';
 

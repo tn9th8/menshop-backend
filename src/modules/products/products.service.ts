@@ -14,6 +14,8 @@ import { ProductsRepository } from './products.repository';
 import { IProduct } from './schemas/product.schema';
 import { CreateProductTransform } from './transform/create-product.transform';
 import { UpdatedProductTransform } from './transform/update-product.transform';
+import { ShopsRepository } from '../shops/shops.repository';
+import { InventoriesService } from '../inventories/inventories.service';
 
 @Injectable()
 export class ProductsService {
@@ -22,18 +24,29 @@ export class ProductsService {
     private readonly createProductTransform: CreateProductTransform,
     private readonly updatedProductTransform: UpdatedProductTransform,
     private readonly shopsService: ShopsService,
+    private readonly inventoriesService: InventoriesService
   ) { }
 
   //CREATE//
   async createOne(payload: CreateProductDto, user: AuthUserDto): Promise<IProduct> {
     try {
-      payload = await this.createProductTransform.transform(payload);
+      //create a product
+      let { stock, ...productPayload } = await this.createProductTransform.transform(payload);
       const shop = await this.shopsService.findOneByUser(user.id);
-      const newPayload = { ...payload, user: user.id, shop: shop._id };
-      const created = this.productsRepository.createOne(newPayload);
+      const created = await this.productsRepository.createOne({
+        ...productPayload, user: user.id, shop: shop._id
+      });
       if (!created) {
         throw new BadRequestException('Lỗi khi tạo 1 product');
       }
+      //created an inventory
+      const inventoryPayload = {
+        productId: created._id,
+        shopId: shop._id,
+        userId: user.id,
+        stock: payload.stock
+      }
+      const createdInventory = await this.inventoriesService.createModel(inventoryPayload);
       return created;
     } catch (error) {
       throw error;

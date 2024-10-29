@@ -15,68 +15,68 @@ export type IProduct = ProductDocument & IBaseDocument;
 @Schema({ timestamps: true })
 export class Product {
     @Prop({ required: true })
-    name: string;
+    name?: string;
 
-    // @Prop({ required: true }) //plugin
-    // slug: string;
+    @Prop() //plugin
+    slug?: string;
 
     @Prop({ default: null })
-    description: string;
+    description?: string;
 
     @Prop({ required: true })
-    thumb: string;
+    thumb?: string;
 
     @Prop({ type: Object, default: null })
-    asset: ProductAsset;
+    asset?: ProductAsset;
 
     @Prop({ type: [Object], default: null }) //mongodb attribute pattern
-    attributes: ProductAttribute[];
+    attributes?: ProductAttribute[];
 
     @Prop({ default: 1000, required: true }) //model
-    price: number;
+    price?: number;
 
-    @Prop({ default: null })
-    maxPrice: number;
+    // @Prop({ default: null })
+    // maxPrice: number;
 
-    @Prop({ default: null })
-    discountPrice: number;
+    // @Prop({ default: null })
+    // discountPrice: number;
 
-    @Prop({ default: null })
-    maxDiscountPrice: number;
+    // @Prop({ default: null })
+    // maxDiscountPrice: number;
 
-    @Prop({ default: null }) //%
-    discount: number;
+    // @Prop({ default: null }) //%
+    // discount: number;
 
-    @Prop({ default: null })
-    maxDiscount: number;
+    // @Prop({ default: null })
+    // maxDiscount: number;
 
     @Prop(ratingStarProp) //default 5.0, required: true
-    ratingStar: number;
+    ratingStar?: number;
 
     @Prop({ type: Object, default: null }) //model
-    variation: ProductVariation;
+    variation?: ProductVariation;
 
     @Prop({ type: Object, default: null }) //model
-    size: ProductSize;
+    size?: ProductSize;
 
     @Prop({ index: true, select: false, default: false, required: true }) //published or draft
-    isPublished: boolean;
+    isPublished?: boolean;
 
     @Prop({ index: true, select: false, default: true, required: true }) //active or disable
-    isActive: boolean;
+    isActive?: boolean;
 
     //refer
     @Prop({ type: [SchemaTypes.ObjectId], ref: Category.name, default: null })
-    categories: IKey[];
+    categories?: IKey[];
 
     @Prop({ type: [SchemaTypes.ObjectId], ref: Need.name, default: null })
-    needs: IKey[];
+    needs?: IKey[];
 
     @Prop({ type: SchemaTypes.ObjectId, ref: Shop.name, required: true })
-    shop: IKey;
+    shop?: IKey;
 
     @Prop({ type: SchemaTypes.ObjectId, ref: User.name, required: true })
-    user: IKey;
+    user?: IKey;
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);

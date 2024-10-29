@@ -12,7 +12,7 @@ export class UtilNeedsService {
         const foundParent = await this.needsRepository.findLeanById(parentId, select);
         //check: no include => push
         //but new => always no include => no check
-        foundParent.children.push(needId)
+        foundParent.children.push(needId) //todo: bug parent null
         const updatedParent = await this.needsRepository.updateLeanById(parentId, foundParent);
         return updatedParent;
     }

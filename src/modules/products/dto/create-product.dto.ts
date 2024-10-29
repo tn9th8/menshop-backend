@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer';
-import { IsArray, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsArray, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { IKey } from 'src/common/interfaces/index.interface';
-import { isArrayMessage, isObjectMessage, isStringMessage } from 'src/common/utils/pipe.util';
+import { isArrayMessage, isIntegerOptions, isNumberMessage, isObjectMessage, isStringMessage } from 'src/common/utils/pipe.util';
 import { ProductAssetDto, ProductAttributeDto } from './nested-types.dto';
 
 export class CreateProductDto {
@@ -14,6 +14,9 @@ export class CreateProductDto {
 
     @IsString(isStringMessage('thumb'))
     thumb: string; //trim, not empty
+
+    @IsNumber(isIntegerOptions(), isNumberMessage('stock'))
+    stock: number;
 
     @IsOptional()
     @ValidateNested(isObjectMessage('asset'))

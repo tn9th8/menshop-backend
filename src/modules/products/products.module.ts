@@ -11,9 +11,12 @@ import { ShopsModule } from '../shops/shops.module';
 import { UsersModule } from '../users/users.module';
 import { CreateProductTransform } from './transform/create-product.transform';
 import { UpdatedProductTransform } from './transform/update-product.transform';
+import { InventoriesModule } from '../inventories/inventories.module';
 
 @Module({
-  controllers: [ProductsControllerAdmin, ProductsControllerClient],
+  controllers: [
+    ProductsControllerAdmin, ProductsControllerClient
+  ],
   providers: [
     ProductsService, ProductsRepository,
     CreateProductTransform, UpdatedProductTransform
@@ -24,6 +27,7 @@ import { UpdatedProductTransform } from './transform/update-product.transform';
     NeedsModule,
     ShopsModule,
     UsersModule,
+    InventoriesModule
   ],
 })
 export class ProductsModule { }

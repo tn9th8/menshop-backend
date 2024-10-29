@@ -39,7 +39,7 @@ export class ProductsRepository {
   }
 
   //CREATE//
-  async createOne(payload: CreateProductDto) {
+  async createOne(payload: Product) {
     const result = await this.productModel.create(payload);
     return result;
   }
