@@ -96,4 +96,14 @@ export class ShopsService {
     return found;
   }
 
+  //update version of findOneByUser
+  async findShopIdBySeller(sellerId: IKey): Promise<IKey> {
+    const select = ['_id'];
+    const query = { user: sellerId };
+    const found = await this.shopsRepo.findOneByQuerySelect(query, select);
+    if (!found)
+      throw new NotFoundException(notFoundIdMessage('shop by sellerId', sellerId));
+    return found._id;
+  }
+
 }

@@ -1,32 +1,24 @@
 import { FilterQuery, Schema, Types } from "mongoose";
 import slugify from "slugify";
-import { IKey } from "../interfaces/index.interface";
-import { MongoSort } from "../interfaces/mongo.interface";
+import { isSelectEnum, SortEnum } from "../enums/index.enum";
+import { IDbSort, IKey } from "../interfaces/index.interface";
 import { Metadata } from "../interfaces/response.interface";
-import { ProductSortEnum } from "../enums/product.enum";
 
 //>>>METHODS
-// export const queryLike = (fieldName: string, fieldValue: string) => {
-//     if (!fieldValue) {
-//         return {};
-//     }
-//     const obj: object = {};
-//     obj[fieldName] = { $regex: new RegExp(fieldValue, 'i') };
-//     return obj;
-// }
+export const toDbSort = (sort: SortEnum) => {
+    const dbSort: IDbSort =
+        sort == SortEnum.LATEST ? { updatedAt: -1 }
+            : sort == SortEnum.OLDEST ? { updatedAt: 1 }
+                : sort == SortEnum.NAME_AZ ? { name: 1 }
+                    : sort == SortEnum.NAME_ZA ? { name: -1 }
+                        : { updatedAt: -1 } //default SortEnum.LATEST
+    return dbSort;
+}
 
-export const toDbLikeQuery = (fields: string[], values: string[]) => {
-    const obj: any = {};
-
-    fields.forEach((field, index) => {
-        const value = values[index];
-        if (value) {
-            obj[field] = { $regex: new RegExp(value, 'i') };
-        }
-    });
-
-    return obj;
-};
+export const toDbSkip = (page: number, limit: number) => {
+    const dbSkip = limit * (page - 1); //skip, offset là 1
+    return dbSkip;
+}
 
 export const computeItemsAndPages = (metadata: Metadata, limit: number = 24) => {
     const items = metadata.queriedCount;
@@ -40,13 +32,24 @@ export const computeItemsAndPages = (metadata: Metadata, limit: number = 24) => 
  * @returns true or boolean
  */
 export const toObjetId = (id: IKey | string): IKey | null => {
-    //check !falsy
-    if (!id) { return null; }
+    /**
+     * new Types.ObjectId(null/undefined): create id => bad => check !falsy
+     * new Types.ObjectId('xx46@@'): throw bug => bad => catch
+     */
+    if (!id) { return null; } //check !falsy
     try {
-        return new Types.ObjectId(id); //new a object when id is undefined => bad
+        return new Types.ObjectId(id);
     } catch (error) {
+        console.log('>>> toObjetId: ' + error)
         return null;
     }
+}
+
+export const toObjetIds = (ids: IKey[] | string[], isCleanEachNull = true): IKey[] => {
+    ids = ids.map((id: IKey | string) => toObjetId(id));
+    ids = isCleanEachNull ? ids.filter(Boolean) : ids; //[]
+    return ids;
+
 }
 
 export const buildQueryByShop = <T>(shopId: Types.ObjectId, query?: FilterQuery<T>): FilterQuery<T> => {
@@ -56,6 +59,50 @@ export const buildQueryByShop = <T>(shopId: Types.ObjectId, query?: FilterQuery<
     return query;
 }
 
+export const buildQueryModelIdSellerId = <T>(modelId: IKey, sellerId: IKey): FilterQuery<T> => {
+    const newQuery = {
+        _id: modelId,
+        seller: sellerId
+    };
+    return newQuery;
+}
+
+export const buildQueryExcludeId = (query: any, excludedId: IKey,) => {
+    const newQuery = {
+        ...query,
+        _id: { $ne: excludedId } //ne: not equal => exclude a id document
+    };
+    return newQuery;
+}
+
+export const buildQueryLike = (fields: string[], values: string[]) => {
+    const obj: any = {};
+    fields.forEach((field, index) => {
+        const value = values[index];
+        if (value) {
+            obj[field] = { $regex: new RegExp(value, 'i') };
+        }
+    });
+    return obj;
+};
+
+export const toDbLikeQuery = (fields: string[], values: string[]) => {
+    const obj: any = {};
+    fields.forEach((field, index) => {
+        const value = values[index];
+        if (value) {
+            obj[field] = { $regex: new RegExp(value, 'i') };
+        }
+    });
+    return obj;
+};
+
+export const toDbSelectOrUnselect = (isSelect: isSelectEnum, select: string[]) => {
+    const dbSelectOrUn =
+        isSelect === isSelectEnum.SELECT ? toDbSelect(select)
+            : isSelect === isSelectEnum.UNSELECT ? toDbUnselect(select) : null;
+    return dbSelectOrUn;
+};
 /**
  * convert ['name', 'thumb'] => {name: 1, thumb: 1}
  * @param select : array of the selected attributes
@@ -64,7 +111,6 @@ export const buildQueryByShop = <T>(shopId: Types.ObjectId, query?: FilterQuery<
 export const toDbSelect = (select = []) => {
     return Object.fromEntries(select.map(attribute => [attribute, 1]));
 };
-
 /**
  * convert ['name', 'thumb'] => {name: 0, thumb: 0}
  * @param select : array of the unselected attributes

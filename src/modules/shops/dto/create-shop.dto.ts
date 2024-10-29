@@ -1,5 +1,5 @@
 import { IsOptional, IsString } from "class-validator";
-import { isStringMessage } from "src/common/utils/pipe.util";
+import { isStringMessage } from "src/common/utils/validator.util";
 
 export class CreateShopDto {
     @IsString(isStringMessage('name'))

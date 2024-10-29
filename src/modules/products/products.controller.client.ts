@@ -33,7 +33,7 @@ export class ProductsControllerClient {
   findAll(
     @Query() query: SearchProductDto
   ) {
-    return this.productsService.findAllValid(query);
+    return this.productsService.findAllForSales(query);
   }
 
   @ApiMessage('Find a product')

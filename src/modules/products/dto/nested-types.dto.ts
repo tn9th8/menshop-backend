@@ -1,5 +1,5 @@
 import { IsArray, IsOptional, IsString } from "class-validator";
-import { isArrayMessage, isStringMessage } from "src/common/utils/pipe.util";
+import { isArrayMessage, isStringMessage } from "src/common/utils/validator.util";
 
 export class ProductAssetDto {
     // @IsOptional()

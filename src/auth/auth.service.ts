@@ -3,7 +3,6 @@ import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
 import ms from 'ms';
 import { Jwt } from 'src/common/enums/jwt.enum';
-import { IUpdateResult } from 'src/common/interfaces/persist-result.interface';
 import { isMatchPass } from 'src/common/utils/security.util';
 import { MailsService } from 'src/mails/mails.service';
 import { KeyStoreService } from 'src/modules/key-store/key-store.service';
@@ -125,7 +124,7 @@ export class AuthService {
   }
 
   async signOut(user: AuthUserDto, response: Response)
-    : Promise<IUpdateResult> {
+    : Promise<any> {
     response.clearCookie('refreshToken');
     //no need clear refresh token
     return;

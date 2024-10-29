@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument, SchemaTypes } from "mongoose";
 import { User } from "src/common/decorators/user.decorator";
-import { IBaseDocument } from "src/common/interfaces/base-document.interface";
+import { IBaseDocument } from "src/common/interfaces/index.interface";
 import { IKey } from "src/common/interfaces/index.interface";
 
 export type KeyStoreDocument = HydratedDocument<KeyStore>;

@@ -3,7 +3,7 @@ import { InventoriesService } from './inventories.service';
 import { CreateInventoryDto } from './dto/create-inventory.dto';
 import { UpdateInventoryDto } from './dto/update-inventory.dto';
 
-@Controller('inventories')
+@Controller('admin/inventories')
 export class InventoriesControllerAdmin {
   constructor(private readonly inventoriesService: InventoriesService) { }
 

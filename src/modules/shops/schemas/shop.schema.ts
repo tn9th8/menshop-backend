@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument, SchemaTypes } from "mongoose";
-import { IBaseDocument } from "src/common/interfaces/base-document.interface";
+import { IBaseDocument } from "src/common/interfaces/index.interface";
 import { IKey } from "src/common/interfaces/index.interface";
 import { User } from "src/modules/users/schemas/user.schema";
 

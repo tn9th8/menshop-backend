@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument, SchemaTypes } from "mongoose";
-import { IBaseDocument } from "src/common/interfaces/base-document.interface";
+import { IBaseDocument } from "src/common/interfaces/index.interface";
 import { IKey } from "src/common/interfaces/index.interface";
 import { ratingStarProp, slugPlugin } from "src/common/utils/mongo.util";
 import { Category } from "src/modules/categories/schemas/category.schema";

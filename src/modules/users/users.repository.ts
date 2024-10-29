@@ -7,7 +7,7 @@ import { SignUpSellerDto } from 'src/auth/dto/signup-seller.dto';
 import { IKey, IReference } from 'src/common/interfaces/index.interface';
 import { SortEnum } from 'src/common/enums/index.enum';
 import { Result } from 'src/common/interfaces/response.interface';
-import { IDbSort } from 'src/common/interfaces/mongo.interface';
+import { IDbSort } from 'src/common/interfaces/index.interface';
 
 @Injectable()
 export class UsersRepository {

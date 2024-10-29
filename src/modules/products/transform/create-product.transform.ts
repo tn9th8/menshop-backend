@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, PipeTransform } from '@nestjs/common';
 import { cleanNullishAttrs } from 'src/common/utils/index.util';
 import { CreateProductDto } from '../dto/create-product.dto';
 import { ProductsRepository } from '../products.repository';
-import { trim } from 'src/common/utils/pipe.util';
+import { trim } from 'src/common/utils/validator.util';
 import { isExistMessage, notEmptyMessage } from 'src/common/utils/exception.util';
 import { toObjetId } from 'src/common/utils/mongo.util';
 import { CategoriesRepository } from 'src/modules/categories/categories.repository';

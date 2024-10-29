@@ -1,6 +1,35 @@
 import { joinEnumValues } from "./index.util";
 
+//OPTIONS//
+export const isNumberOptions = () => {
+    return { allowNaN: false, allowInfinity: false, maxDecimalPlaces: 4 };
+}
+
+export const isIntegerOptions = () => {
+    return { allowNaN: false, allowInfinity: false, maxDecimalPlaces: 0 };
+}
+
+//TRANSFORM//
+export const trim = (value: string): string | "" | null => {
+    //check !falsy, because null.trim() => bug
+    if (!value) { return null }
+    const clean = value.trim();
+    return clean;
+}
+
 //MESSAGE//
+export const isDateMessage = (attribute: string) => {
+    return { message: `${attribute} nên là một date YYYY-MM-DD` };
+}
+
+export const isNumberMessage = (attribute: string) => {
+    return { message: `${attribute} nên là một number (tối đa 4 chữ số thập phân)` };
+}
+
+export const isIntegerMessage = (attribute: string) => {
+    return { message: `${attribute} nên là một integer` };
+}
+
 export const isStringMessage = (attribute: string) => {
     return { message: `${attribute} nên là một string` };
 }
@@ -38,25 +67,3 @@ export const isBoolMessage = (attribute: string) => {
     return { message: `${attribute} nên là true hoặc false` };
 }
 //END MESSAGE//
-
-//TRANSFORM//
-export const trim = (value: string): string | "" | null => {
-    //check !falsy, because null.trim() => bug
-    if (!value) { return null }
-    const clean = value.trim();
-    return clean;
-}
-
-// [undef, undef]
-export const trimArray = (values: string[]) => {
-    if (!values) {
-        return null;
-    }
-    const cleanArray = values.map((value) => {
-        const clean = trim(value);
-        if (clean) { return clean; }
-    });
-    if (cleanArray.length) { return cleanArray; }
-
-}
-//END TRANSFORM//

@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument } from "mongoose";
-import { IBaseDocument } from "src/common/interfaces/base-document.interface";
+import { IBaseDocument } from "src/common/interfaces/index.interface";
 import { slugPlugin } from "src/common/utils/mongo.util";
 
 export type VariationDocument = HydratedDocument<Variation>;

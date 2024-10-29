@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, NotFoundException, PipeTransform } fro
 import { isExistMessage, isObjectIdMessage, notEmptyMessage, notFoundIdMessage } from 'src/common/utils/exception.util';
 import { cleanNullishAttrs } from 'src/common/utils/index.util';
 import { toObjetId } from 'src/common/utils/mongo.util';
-import { trim } from 'src/common/utils/pipe.util';
+import { trim } from 'src/common/utils/validator.util';
 import { ProductsRepository } from '../products.repository';
 import { UpdateProductDto } from '../dto/update-product.dto';
 import { CategoriesRepository } from 'src/modules/categories/categories.repository';

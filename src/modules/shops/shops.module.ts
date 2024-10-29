@@ -22,6 +22,8 @@ import { UpdateShopTransform } from './transform/update-shop.transform';
     MongooseModule.forFeature([{ name: Shop.name, schema: ShopSchema }]),
     UsersModule
   ],
-  exports: [ShopsService, ShopsRepository]
+  exports: [
+    ShopsService, ShopsRepository
+  ]
 })
 export class ShopsModule { }

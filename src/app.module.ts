@@ -15,12 +15,13 @@ import { DatabasesModule } from './databases/databases.module';
 import { FilesModule } from './files/files.module';
 import { MailsModule } from './mails/mails.module';
 import { CategoriesModule } from './modules/categories/categories.module';
+import { DiscountsModule } from './modules/discounts/discounts.module';
+import { InventoriesModule } from './modules/inventories/inventories.module';
+import { KeyStoreModule } from './modules/key-store/key-store.module';
+import { NeedsModule } from './modules/needs/needs.module';
 import { ProductsModule } from './modules/products/products.module';
 import { ShopsModule } from './modules/shops/shops.module';
-import { StockModelsModule } from './modules/stock-models/stock-models.module';
 import { UsersModule } from './modules/users/users.module';
-import { NeedsModule } from './modules/needs/needs.module';
-import { KeyStoreModule } from './modules/key-store/key-store.module';
 
 @Module({
   controllers: [AppController],
@@ -79,13 +80,14 @@ import { KeyStoreModule } from './modules/key-store/key-store.module';
     MailsModule,
     FilesModule,
     // Business Module
-    ShopsModule,
     UsersModule,
+    KeyStoreModule,
+    ShopsModule,
     CategoriesModule,
     NeedsModule,
     ProductsModule,
-    StockModelsModule,
-    KeyStoreModule,
+    InventoriesModule,
+    DiscountsModule,
   ],
   exports: [AppRepository]
 })

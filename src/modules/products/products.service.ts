@@ -16,6 +16,8 @@ import { CreateProductTransform } from './transform/create-product.transform';
 import { UpdatedProductTransform } from './transform/update-product.transform';
 import { ShopsRepository } from '../shops/shops.repository';
 import { InventoriesService } from '../inventories/inventories.service';
+import { Result } from 'src/common/interfaces/response.interface';
+import { FilterQuery } from 'mongoose';
 
 @Injectable()
 export class ProductsService {
@@ -41,9 +43,9 @@ export class ProductsService {
       }
       //created an inventory
       const inventoryPayload = {
-        productId: created._id,
-        shopId: shop._id,
-        userId: user.id,
+        product: created._id,
+        shop: shop._id,
+        user: user.id,
         stock: payload.stock
       }
       const createdInventory = await this.inventoriesService.createModel(inventoryPayload);
@@ -160,25 +162,18 @@ export class ProductsService {
     };
   }
 
-  async findAllValid(
-    {
-      page = 1,
-      limit = 24,
-      sort = ProductSortEnum.CTIME,
-      ...query
-    }: SearchProductDto,
-    isPublished = true,
-    isActive = true
-  ) {
+  async findAllForSales(
+    { page = 1, limit = 24, sort = ProductSortEnum.CTIME, ...query }: FilterQuery<IProduct>, //client query
+    isPublished = true, isActive = true //add query
+  ): Promise<Result<IProduct>> {
     const newQuery = { ...query, isPublished, isActive };
-    const unselect = ['deletedAt', 'isDeleted', '__v'];
-    const { data, metadata } = await this.productsRepository.findAllValid(
-      page, limit, sort, unselect, newQuery
+    const select = ['_id', 'name', 'thumb', 'price', 'ratingStar'];
+    const { data, metadata } = await this.productsRepository.findAllByProductSort(
+      page, limit, sort, select, newQuery
     );
     const { items, pages } = computeItemsAndPages(metadata, limit);
     return {
-      data,
-      metadata: { page, limit, items, pages },
+      data, metadata: { page, limit, items, pages },
     };
   }
 

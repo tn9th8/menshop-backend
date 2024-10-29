@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, PipeTransform } from '@nestjs/common';
 import { isExistMessage, notEmptyMessage } from 'src/common/utils/exception.util';
 import { cleanNullishAttrs } from 'src/common/utils/index.util';
-import { trim } from 'src/common/utils/pipe.util';
+import { trim } from 'src/common/utils/validator.util';
 import { CreateShopDto } from '../dto/create-shop.dto';
 import { ShopsRepository } from '../shops.repository';
 

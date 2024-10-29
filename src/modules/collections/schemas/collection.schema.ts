@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument, SchemaTypes, Types } from "mongoose";
 import { StatusEnum } from "src/common/enums/status.enum";
-import { IBaseDocument } from "src/common/interfaces/base-document.interface";
+import { IBaseDocument } from "src/common/interfaces/index.interface";
 import { Product } from "src/modules/products/schemas/product.schema";
 
 export type CollectionDocument = HydratedDocument<Collection>;

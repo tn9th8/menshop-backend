@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument, SchemaTypes } from "mongoose";
-import { IBaseDocument } from "src/common/interfaces/base-document.interface";
+import { IBaseDocument } from "src/common/interfaces/index.interface";
 import { IKey } from "src/common/interfaces/index.interface";
 import { Product } from "src/modules/products/schemas/product.schema";
 import { Shop } from "src/modules/shops/schemas/shop.schema";
@@ -13,13 +13,13 @@ export type IInventory = InventoryDocument & IBaseDocument;
 @Schema({ timestamps: true })
 export class Inventory {
     @Prop({ type: SchemaTypes.ObjectId, ref: Product.name, required: true })
-    productId: IKey;
+    product: IKey;
 
     @Prop({ type: SchemaTypes.ObjectId, ref: Shop.name, required: true })
-    shopId: IKey;
+    shop: IKey;
 
     @Prop({ type: SchemaTypes.ObjectId, ref: User.name, required: true })
-    userId: IKey;
+    user: IKey;
 
     @Prop({ default: 'unknown' })
     location?: string;
