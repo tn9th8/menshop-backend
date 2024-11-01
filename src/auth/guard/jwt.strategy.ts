@@ -4,6 +4,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy as JsonWebToken } from 'passport-jwt';
 import { Jwt } from 'src/common/enums/jwt.enum';
 import { AuthUserDto } from '../dto/auth-user.dto';
+import { toObjetId } from 'src/common/utils/mongo.util';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(JsonWebToken) {
@@ -16,7 +17,7 @@ export class JwtStrategy extends PassportStrategy(JsonWebToken) {
     }
 
     async validate(payload: any): Promise<AuthUserDto | null> {
-        const user: AuthUserDto = payload.user;
+        const user: AuthUserDto = { ...payload.user, id: toObjetId(payload.user.id) };
         if (!user) {
             throw new ForbiddenException("Token không hợp lệ.");
         }

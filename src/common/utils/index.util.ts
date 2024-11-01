@@ -75,14 +75,25 @@ export const isDatePairOrException = ([startDate, endDate]: Date[], names: strin
         return [null, null];
     startDate = toDate(startDate);
     endDate = toDate(endDate);
+    if (!(startDate < endDate))
+        throw new BadRequestException(`${names} không hợp lệ`);
     const today = new Date(new Date().setHours(0, 0, 0, 0));
     if (
-        !(startDate < endDate) ||
         !(startDate >= today) ||
         !(endDate >= today)
     )
         throw new BadRequestException(`${names} không hợp lệ`);
     return [startDate, endDate];
+}
+
+export const isGreaterThanToday = (dates: Date[]) => {
+    let isGreater = true;
+    const today = new Date(new Date().setHours(0, 0, 0, 0));
+    dates.map(item => {
+        if (!(item >= today))
+            isGreater = false;
+    })
+    return isGreater;
 }
 
 export const toDate = (value: any): Date | null => {

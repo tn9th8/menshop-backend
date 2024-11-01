@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery } from 'mongoose';
+import { FilterQuery, UpdateQuery } from 'mongoose';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { isSelectEnum, SortEnum } from 'src/common/enums/index.enum';
 import { IKey, IReference } from 'src/common/interfaces/index.interface';
 import { Result } from 'src/common/interfaces/response.interface';
 import { toDbSelect, toDbSelectOrUnselect, toDbSkip, toDbSort } from 'src/common/utils/mongo.util';
-import { Discount, DiscountDoc, DiscountPartial } from './schemas/discount.schema';
+import { Discount, DiscountDoc, DiscountDocPartial, DiscountPartial } from './schemas/discount.schema';
 
 @Injectable()
 export class DiscountsRepository {
@@ -28,7 +28,7 @@ export class DiscountsRepository {
   }
   //UPDATE//
   async updateDiscountByQuery(
-    payload: DiscountPartial, query: any, options: any = { new: true }
+    payload: UpdateQuery<DiscountDocPartial>, query: any, options: any = { new: true }
   ): Promise<DiscountDoc | null> {
     const updated = (await this.discountModel.findOneAndUpdate(query, payload, options).lean());
     return updated || null;
@@ -80,8 +80,8 @@ export class DiscountsRepository {
    * @returns
    */
   async findDiscountByQuerySelect(
-    query: any, select: string[]
-  ): Promise<Discount | null> {
+    query: any, select: string[] = [] //ko truyen select => select all
+  ): Promise<DiscountDoc | null> {
     const found = await this.discountModel.findOne(query)
       .select(toDbSelect(select))
       .lean();

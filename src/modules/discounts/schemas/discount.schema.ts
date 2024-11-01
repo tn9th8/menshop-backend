@@ -11,6 +11,7 @@ import { User } from "src/modules/users/schemas/user.schema";
 export type DiscountDocument = HydratedDocument<Discount>;
 export type DiscountDoc = DiscountDocument & IBaseDocument;
 export type DiscountPartial = Partial<Discount>;
+export type DiscountDocPartial = Partial<DiscountDoc>;
 export type DiscountQuery = Pick<Discount, 'name' | 'code' | 'shop'> & IPageQuery;
 
 @Schema({ timestamps: true })
@@ -18,7 +19,7 @@ export class Discount {
     @Prop({ required: true })
     name: string;
 
-    @Prop({ required: true })
+    @Prop({ index: true, required: true })
     code: string;
 
     @Prop({ default: 'unknown' })
@@ -63,7 +64,7 @@ export class Discount {
     @Prop({ type: [SchemaTypes.ObjectId], ref: User.name, default: [] })
     appliedClients?: IKey[]; //user applied (còn users is holding => create a collection)
 
-    @Prop({ index: true, select: false, default: true })
+    @Prop({ index: true, default: true })
     isValid?: boolean; //valid, expired
 }
 

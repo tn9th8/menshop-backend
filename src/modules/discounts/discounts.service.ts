@@ -6,7 +6,7 @@ import { DiscountsRepository } from './discounts.repository';
 import { createErrorMessage, isExistMessage, notFoundIdMessage, notFoundMessage } from 'src/common/utils/exception.util';
 import { ShopsService } from '../shops/shops.service';
 import { IKey, IReference } from 'src/common/interfaces/index.interface';
-import { DiscountApplyTo } from 'src/common/enums/discount.enum';
+import { DiscountApplyTo, DiscountType } from 'src/common/enums/discount.enum';
 import { ProductsService } from '../products/products.service';
 import { ProductSortEnum } from 'src/common/enums/product.enum';
 import { ForUserEnum, isSelectEnum, IsValidEnum, SortEnum } from 'src/common/enums/index.enum';
@@ -14,6 +14,8 @@ import { Discount, DiscountDoc } from './schemas/discount.schema';
 import { Result } from 'src/common/interfaces/response.interface';
 import { buildQueryExcludeId, buildQueryModelIdSellerId, computeItemsAndPages, toDbLikeQuery } from 'src/common/utils/mongo.util';
 import { IProduct } from '../products/schemas/product.schema';
+import { ApplyDiscountDto } from './dto/apply-discount.dto';
+import { isGreaterThanToday } from 'src/common/utils/index.util';
 
 @Injectable()
 export class DiscountsService {
@@ -22,7 +24,6 @@ export class DiscountsService {
     private readonly shopsService: ShopsService,
     private readonly productsService: ProductsService,
   ) { }
-
   //CREATE//
   async createDiscountForShop(body: CreateDiscountDto, user: AuthUserDto) {
     const { id: sellerId } = user;
@@ -77,9 +78,85 @@ export class DiscountsService {
       throw new NotFoundException(notFoundIdMessage('discountId', discountId));
     return updatedDiscount;
   }
+  //
+  async applyDiscount(body: ApplyDiscountDto, user: AuthUserDto) {
+    const { code, shop: shopId, products } = body;
+    const { id: clientId } = user;
+    //find discount by code
+    const foundDiscount = await this.discountsRepo.findDiscountByQuerySelect({ code, shop: shopId });
+    if (!foundDiscount)
+      throw new NotFoundException(notFoundMessage('discount'));
+    //check
+    const { isValid, endDate, applyMax, applyMaxPerClient, appliedClients, minPurchaseValue,
+      applyTo, specificProducts, type, value, _id
+    } = foundDiscount;
+    if (!isValid)
+      throw new BadRequestException('Discount hết hạn');
+    if (!isGreaterThanToday([endDate]))
+      throw new BadRequestException('Discount hết hạn');
+    if (!(applyMax > 0))
+      throw new BadRequestException('Discount đã hết số lượng');
+    if (!(applyMaxPerClient > appliedClients.filter(item => item.toString() === clientId.toString()).length))
+      throw new BadRequestException('Bạn đã dùng hết lượng Discount của mình');
+    if (applyTo === DiscountApplyTo.SPECIFIC) {
+      const productIds = products.map(product => product.id)
+      if (!(productIds.some(productId => specificProducts.includes(productId))))
+        throw new BadRequestException('Discount không áp dụng trên những sản phẩm này')
+    }
+    //compute total order
+    const totalPurchase = products.reduce((sum, product) => {
+      return sum + product.quantity * product.price;
+    }, 0);
+    if (!(minPurchaseValue <= totalPurchase))
+      throw new BadRequestException(`Đơn hàng cần tối thiểu ${minPurchaseValue} để áp dụng Discount`);
+    //compute discount amount //todo: tạo trigger cập nhật valid
+    const amount = type === DiscountType.FIXED_AMOUNT ? value : totalPurchase * value / 100;
+    const updatedDiscount = await this.discountsRepo.updateDiscountByQuery({
+      isValid: applyMax - 1 > 0 ? true : false,
+      $inc: { applyMax: -1, appliedCount: 1 },
+      $push: { appliedClients: clientId }
+    }, { _id, code, applyMax: { $gt: 0 } });
+    if (!updatedDiscount)
+      throw new NotFoundException(notFoundMessage('discount'));
+    return {
+      totalPurchase,
+      discount: amount,
+      totalPrice: totalPurchase - amount
+    };
+  }
+  //
+  async cancelDiscount(code: string, user: AuthUserDto) {
+    //find discount
+    const foundDiscount = await this.discountsRepo.findDiscountByQuerySelect({ code });
+    if (!foundDiscount)
+      throw new NotFoundException(notFoundMessage('discount'));
+    //pull client
+    const { id: clientId } = user;
+    let { appliedClients, _id } = foundDiscount;
+    let pulledCount = 0;
+    appliedClients = appliedClients.map((item) => {
+      if (item.toString() === clientId.toString() && pulledCount === 0) {
+        pulledCount = 1;
+        return null;
+      }
+      return item;
+    });
+    if (!pulledCount)
+      throw new NotFoundException('Client chưa áp discount này');
+    appliedClients = appliedClients.filter(Boolean);
+    //update discount
+    const updatedDiscount = await this.discountsRepo.updateDiscountByQuery({
+      isValid: true,
+      appliedClients,
+      $inc: { applyMax: 1, appliedCount: -1 }
+    }, { _id, code, appliedCount: { $gt: 0 } });
+    if (!updatedDiscount)
+      throw new NotFoundException(notFoundMessage('discount'));
+    return updatedDiscount;
+  }
   //QUERY  ALL//
   /**
-   * 
+   *
    * @param query any
    * @param isValid IsValidEnum
    * @param forUser ForUserEnum: ADMIN | SELLER + auth user | CLIENT + query shop
