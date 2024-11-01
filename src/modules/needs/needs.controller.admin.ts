@@ -3,7 +3,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { ApiMessage } from 'src/common/decorators/api-message.decorator';
 import { IsPublishedEnum } from 'src/common/enums/index.enum';
 import { IKey } from 'src/common/interfaces/index.interface';
-import { IdParamTransform } from 'src/core/pipe/id-param.transform';
+import { IdParamTransform } from 'src/middleware/pipe/id-param.transform';
 import { CreateNeedDto } from './dto/create-need.dto';
 import { QueryNeedDto } from './dto/query-need.dto';
 import { UpdateNeedDto } from './dto/update-need.dto';

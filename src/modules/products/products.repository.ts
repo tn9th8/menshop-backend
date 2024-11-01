@@ -6,7 +6,7 @@ import { SortEnum } from 'src/common/enums/index.enum';
 import { ProductSortEnum } from 'src/common/enums/product.enum';
 import { IDbSort, IKey, IReference } from 'src/common/interfaces/index.interface';
 import { Result } from 'src/common/interfaces/response.interface';
-import { toDbLikeQuery, toDbSelect, toDbSort, toDbUnselect } from 'src/common/utils/mongo.util';
+import { buildQueryLike, toDbSelect, toDbSort, toDbUnselect } from 'src/common/utils/mongo.util';
 import { IQueryProduct } from './dto/query-product.dto';
 import { ProductsHelper } from './helper/products.helper';
 import { IProduct, Product } from './schemas/product.schema';
@@ -67,7 +67,7 @@ export class ProductsRepository {
   ): Promise<Result<IProduct>> {
     const dbQuery = {
       ...query,
-      ...toDbLikeQuery(['name'], [query.name])
+      ...buildQueryLike(['name'], [query.name])
     }
     const dbUnselect = toDbUnselect(unselect);
     const dbSort = toDbSort(sort);
@@ -94,7 +94,7 @@ export class ProductsRepository {
   ): Promise<Result<IProduct>> {
     const dbQuery = {
       ...query,
-      ...toDbLikeQuery(['name'], [query.name])
+      ...buildQueryLike(['name'], [query.name])
     }
     const [queriedCount, data] = await Promise.all([
       this.productModel.countDocuments(dbQuery),

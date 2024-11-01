@@ -1,6 +1,6 @@
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import ms from "ms";
-import { Jwt } from "src/common/enums/jwt.enum";
+import { Jwt } from "src/common/enums/index.enum";
 
 /**
  * @desc config jwt module for auth module

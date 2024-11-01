@@ -1,10 +1,10 @@
 import { Body, Controller, Get, Param, Patch, Post, Query } from '@nestjs/common';
-import { AuthUserDto } from 'src/auth/dto/auth-user.dto';
+import { AuthUserDto } from 'src/shared/auth/dto/auth-user.dto';
 import { ApiMessage } from 'src/common/decorators/api-message.decorator';
 import { User } from 'src/common/decorators/user.decorator';
 import { ForUserEnum, IsValidEnum } from 'src/common/enums/index.enum';
 import { IKey } from 'src/common/interfaces/index.interface';
-import { IdParamTransform } from 'src/core/pipe/id-param.transform';
+import { IdParamTransform } from 'src/middleware/pipe/id-param.transform';
 import { DiscountsService } from './discounts.service';
 import { CreateDiscountDto } from './dto/create-discount.dto';
 import { UpdateDiscountDto } from './dto/update-discount.dto';
@@ -12,7 +12,9 @@ import { DiscountQuery } from './schemas/discount.schema';
 import { CreateDiscountTransform } from './transform/create-discount.transform';
 import { DiscountQueryTransform } from './transform/discount-query.transform';
 import { UpdateDiscountTransform } from './transform/update-discount.transform';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Permission Module For Client Side')
 @Controller('seller/discounts')
 export class DiscountsControllerSeller {
   constructor(private readonly discountsService: DiscountsService) { }
@@ -58,6 +60,6 @@ export class DiscountsControllerSeller {
     @Param('id', IdParamTransform) id: IKey,
     @User() user: AuthUserDto
   ) {
-    return this.discountsService.findDiscountById(id, ForUserEnum.SELLER, user);
+    return this.discountsService.findDiscount(id, ForUserEnum.SELLER, user);
   }
 }

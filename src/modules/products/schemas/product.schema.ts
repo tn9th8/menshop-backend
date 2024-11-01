@@ -59,10 +59,10 @@ export class Product {
     @Prop({ type: Object, default: null }) //model
     size?: ProductSize;
 
-    @Prop({ index: true, select: false, default: false, required: true }) //published or draft
+    @Prop({ index: true, default: false, required: true }) //published or draft
     isPublished?: boolean;
 
-    @Prop({ index: true, select: false, default: true, required: true }) //active or disable
+    @Prop({ index: true, default: true, required: true }) //active or disable
     isActive?: boolean;
 
     //refer

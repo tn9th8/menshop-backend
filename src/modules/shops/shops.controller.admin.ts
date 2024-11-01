@@ -1,11 +1,11 @@
 import { Body, Controller, Get, Param, Patch, Post, Query, UsePipes } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { AuthUserDto } from 'src/auth/dto/auth-user.dto';
+import { AuthUserDto } from 'src/shared/auth/dto/auth-user.dto';
 import { ApiMessage } from 'src/common/decorators/api-message.decorator';
 import { User } from 'src/common/decorators/user.decorator';
 import { IsActiveEnum } from 'src/common/enums/index.enum';
 import { IKey } from 'src/common/interfaces/index.interface';
-import { IdParamTransform } from 'src/core/pipe/id-param.transform';
+import { IdParamTransform } from 'src/middleware/pipe/id-param.transform';
 import { CreateShopDto } from './dto/create-shop.dto';
 import { QueryShopDto } from './dto/query-shop.dto';
 import { UpdateShopDto } from './dto/update-shop.dto';

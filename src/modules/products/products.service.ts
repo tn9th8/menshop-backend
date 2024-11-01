@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { AuthUserDto } from 'src/auth/dto/auth-user.dto';
+import { AuthUserDto } from 'src/shared/auth/dto/auth-user.dto';
 import { IsActiveEnum, IsPublishedEnum, SortEnum } from 'src/common/enums/index.enum';
 import { ProductSortEnum } from 'src/common/enums/product.enum';
 import { IKey, IReference } from 'src/common/interfaces/index.interface';

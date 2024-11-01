@@ -1,10 +1,10 @@
 import { Body, Controller, Get, Param, Patch, Query } from '@nestjs/common';
-import { AuthUserDto } from 'src/auth/dto/auth-user.dto';
+import { AuthUserDto } from 'src/shared/auth/dto/auth-user.dto';
 import { ApiMessage } from 'src/common/decorators/api-message.decorator';
 import { User } from 'src/common/decorators/user.decorator';
 import { ForUserEnum, IsValidEnum } from 'src/common/enums/index.enum';
 import { IKey } from 'src/common/interfaces/index.interface';
-import { IdParamTransform } from 'src/core/pipe/id-param.transform';
+import { IdParamTransform } from 'src/middleware/pipe/id-param.transform';
 import { DiscountsService } from './discounts.service';
 import { DiscountQuery } from './schemas/discount.schema';
 import { DiscountQueryTransform } from './transform/discount-query.transform';
@@ -55,6 +55,6 @@ export class DiscountsControllerClient {
     @Param('id', IdParamTransform) id: IKey,
     @User() user: AuthUserDto
   ) {
-    return this.discountsService.findDiscountById(id, ForUserEnum.CLIENT);
+    return this.discountsService.findDiscount(id, ForUserEnum.CLIENT);
   }
 }

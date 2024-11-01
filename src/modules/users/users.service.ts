@@ -1,24 +1,26 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
-import { SignUpSellerDto } from 'src/auth/dto/signup-seller.dto';
+import { SignUpSellerDto } from 'src/shared/auth/dto/signup-seller.dto';
 import { IsActiveEnum, SortEnum } from 'src/common/enums/index.enum';
 import { IKey } from 'src/common/interfaces/index.interface';
 import { isExistMessage, notFoundIdMessage } from 'src/common/utils/exception.util';
 import { computeItemsAndPages } from 'src/common/utils/mongo.util';
 import { hashPass } from 'src/common/utils/security.util';
-import { KeyStoreService } from '../key-store/key-store.service';
+import { UserKeysService } from '../user-keys/user-keys.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { QueryUserDto } from './dto/query-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { IUser } from './schemas/user.schema';
 import { UpdateUserTransform } from './transform/update-user.transform';
 import { UsersRepository } from './users.repository';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UsersService {
   constructor(
     private readonly usersRepo: UsersRepository,
-    private readonly keyStoreService: KeyStoreService,
-    private readonly updateUserTransform: UpdateUserTransform
+    private readonly userKeysService: UserKeysService,
+    private readonly updateUserTransform: UpdateUserTransform,
+    private readonly configService: ConfigService
   ) { }
   //CREATE//
   async createSeller(payload: SignUpSellerDto) {
@@ -98,9 +100,9 @@ export class UsersService {
         throw new BadRequestException("Có lỗi khi tạo một admin");
       }
       //create key store
-      const createdKeyStore = await this.keyStoreService.createOne({ userId: created._id, verifyToken: null });
-      if (!createdKeyStore) {
-        throw new BadRequestException("Có lỗi khi cập nhật một keyStore");
+      const createdUserKey = await this.userKeysService.createOne({ userId: created._id, verifyToken: null });
+      if (!createdUserKey) {
+        throw new BadRequestException("Có lỗi khi cập nhật một userKey");
       }
       //return
       const { password: hide, ...newUser } = created;

@@ -6,7 +6,7 @@ import { SortEnum } from 'src/common/enums/index.enum';
 import { IKey, IReference } from 'src/common/interfaces/index.interface';
 import { IDbSort } from 'src/common/interfaces/index.interface';
 import { Result } from 'src/common/interfaces/response.interface';
-import { toDbLikeQuery, toDbSelect, toDbUnselect } from 'src/common/utils/mongo.util';
+import { buildQueryLike, toDbSelect, toDbUnselect } from 'src/common/utils/mongo.util';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { IQueryCategory } from './dto/query-category.dto';
 import { Category, ICategory } from './schemas/category.schema';
@@ -95,7 +95,7 @@ export class CategoriesRepository {
   ): Promise<Result<ICategory>> {
     const dbQuery = {
       ...query,
-      ...toDbLikeQuery(['name'], [query.name])
+      ...buildQueryLike(['name'], [query.name])
     }
     const dbUnselect = toDbUnselect(unselect);
     const dbSort: IDbSort =

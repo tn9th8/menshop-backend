@@ -21,12 +21,14 @@ export class Shop {
     @Prop({ default: false, required: true })
     isMall: boolean;
 
-    @Prop({ index: true, select: false, default: true, required: true })
-    isActive: boolean;
+    @Prop({ type: SchemaTypes.ObjectId, ref: User.name })
+    user: IKey; //todo remove
 
-    //ref
     @Prop({ type: SchemaTypes.ObjectId, ref: User.name, required: true })
-    user: IKey;
+    seller: IKey;
+
+    @Prop({ index: true, default: true, required: true })
+    isActive: boolean;
 }
 
 export const ShopSchema = SchemaFactory.createForClass(Shop);

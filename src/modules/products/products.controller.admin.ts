@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Patch, Post, Query, UsePipes } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { AuthUserDto } from 'src/auth/dto/auth-user.dto';
+import { AuthUserDto } from 'src/shared/auth/dto/auth-user.dto';
 import { ApiMessage } from 'src/common/decorators/api-message.decorator';
 import { User } from 'src/common/decorators/user.decorator';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -11,7 +11,7 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { QueryProductTransform } from './transform/query-product.transform';
 import { QueryProductDto } from './dto/query-product.dto';
 import { IsActiveEnum, IsPublishedEnum } from 'src/common/enums/index.enum';
-import { IdParamTransform } from 'src/core/pipe/id-param.transform';
+import { IdParamTransform } from 'src/middleware/pipe/id-param.transform';
 import { IKey } from 'src/common/interfaces/index.interface';
 
 @ApiTags('Products Module For Admin Side')

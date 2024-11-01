@@ -9,7 +9,7 @@ import { FilterQuery, QueryOptions } from 'mongoose';
 import { SortEnum } from 'src/common/enums/index.enum';
 import { IQueryShop } from './dto/query-shop.dto';
 import { Result } from 'src/common/interfaces/response.interface';
-import { toDbLikeQuery, toDbSelect, toDbUnselect } from 'src/common/utils/mongo.util';
+import { buildQueryLike, toDbSelect, toDbUnselect } from 'src/common/utils/mongo.util';
 import { IDbSort } from 'src/common/interfaces/index.interface';
 
 @Injectable()
@@ -77,7 +77,7 @@ export class ShopsRepository {
   ): Promise<Result<IShop>> {
     const dbQuery = {
       ...query,
-      ...toDbLikeQuery(['name'], [query.name])
+      ...buildQueryLike(['name'], [query.name])
     }
     const dbUnselect = toDbUnselect(unselect);
     const dbSort: IDbSort =

@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { IUser, User } from './schemas/user.schema';
-import { toDbLikeQuery, toDbSelect, toDbUnselect } from 'src/common/utils/mongo.util';
-import { SignUpSellerDto } from 'src/auth/dto/signup-seller.dto';
+import { buildQueryLike, toDbSelect, toDbUnselect } from 'src/common/utils/mongo.util';
+import { SignUpSellerDto } from 'src/shared/auth/dto/signup-seller.dto';
 import { IKey, IReference } from 'src/common/interfaces/index.interface';
 import { SortEnum } from 'src/common/enums/index.enum';
 import { Result } from 'src/common/interfaces/response.interface';
@@ -76,7 +76,7 @@ export class UsersRepository {
   ): Promise<Result<IUser>> {
     const dbQuery = {
       ...query,
-      ...toDbLikeQuery(['name'], [query.name])
+      ...buildQueryLike(['name'], [query.name])
     }
     const dbUnselect = toDbUnselect(unselect);
     const dbSort: IDbSort =

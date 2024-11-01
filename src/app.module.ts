@@ -7,19 +7,21 @@ import { softDeletePlugin } from 'soft-delete-plugin-mongoose';
 import { AppController } from './app.controller';
 import { AppRepository } from './app.repository';
 import { AppService } from './app.service';
-import { AuthModule } from './auth/auth.module';
-import { JwtGuard } from './auth/guard/jwt.guard';
+import { AuthModule } from './shared/auth/auth.module';
+import { JwtGuard } from './shared/auth/guard/jwt.guard';
 import { timestampsPlugin } from './common/utils/mongo.util';
-import { TransformInterceptor } from './core/interceptor/transform.interceptor';
-import { DatabasesModule } from './databases/databases.module';
-import { FilesModule } from './files/files.module';
-import { MailsModule } from './mails/mails.module';
+import { TransformInterceptor } from './middleware/interceptor/transform.interceptor';
+import { DatabasesModule } from './shared/databases/databases.module';
+import { FilesModule } from './shared/files/files.module';
+import { MailsModule } from './shared/mails/mails.module';
 import { CategoriesModule } from './modules/categories/categories.module';
 import { DiscountsModule } from './modules/discounts/discounts.module';
 import { InventoriesModule } from './modules/inventories/inventories.module';
-import { KeyStoreModule } from './modules/key-store/key-store.module';
+import { UserKeysModule } from './modules/user-keys/user-keys.module';
 import { NeedsModule } from './modules/needs/needs.module';
+import { PermissionsModule } from './modules/permissions/permissions.module';
 import { ProductsModule } from './modules/products/products.module';
+import { RolesModule } from './modules/roles/roles.module';
 import { ShopsModule } from './modules/shops/shops.module';
 import { UsersModule } from './modules/users/users.module';
 
@@ -81,11 +83,13 @@ import { UsersModule } from './modules/users/users.module';
     FilesModule,
     // Business Module
     UsersModule,
-    KeyStoreModule,
+    UserKeysModule,
+    RolesModule,
+    PermissionsModule,
     ShopsModule,
+    ProductsModule,
     CategoriesModule,
     NeedsModule,
-    ProductsModule,
     InventoriesModule,
     DiscountsModule,
   ],

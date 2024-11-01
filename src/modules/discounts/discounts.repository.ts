@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, UpdateQuery } from 'mongoose';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
-import { isSelectEnum, SortEnum } from 'src/common/enums/index.enum';
+import { IsSelectEnum, SortEnum } from 'src/common/enums/index.enum';
 import { IKey, IReference } from 'src/common/interfaces/index.interface';
 import { Result } from 'src/common/interfaces/response.interface';
-import { toDbSelect, toDbSelectOrUnselect, toDbSkip, toDbSort } from 'src/common/utils/mongo.util';
+import { toDbPopulates, toDbSelect, toDbSelectOrUnselect, toDbSkip, toDbSort } from 'src/common/utils/mongo.util';
 import { Discount, DiscountDoc, DiscountDocPartial, DiscountPartial } from './schemas/discount.schema';
 
 @Injectable()
@@ -22,15 +22,15 @@ export class DiscountsRepository {
       const { _doc: created } = await this.discountModel.create(payload) as any;
       return created;
     } catch (error) {
-      console.log('>>> Error: DiscountsRepository: createDiscount: ' + error);
+      console.log('>>> Exception: DiscountsRepository: createDiscount: ' + error);
       return null;
     }
   }
   //UPDATE//
   async updateDiscountByQuery(
-    payload: UpdateQuery<DiscountDocPartial>, query: any, options: any = { new: true }
+    payload: UpdateQuery<DiscountDocPartial>, query: any
   ): Promise<DiscountDoc | null> {
-    const updated = (await this.discountModel.findOneAndUpdate(query, payload, options).lean());
+    const updated = (await this.discountModel.findOneAndUpdate(query, payload, { new: true }).lean());
     return updated || null;
   }
   //EXIST
@@ -55,21 +55,19 @@ export class DiscountsRepository {
   }
   //QUERY ONE//
   /**
-   * Tìm kiếm 1 doc đầy đủ với query, select/unselect, references
+   * Tìm kiếm 1 doc đầy đủ với query, select/unselect, refers
    * @param query
    * @param isSelect
    * @param select
-   * @param references
+   * @param refers
    * @returns
    */
-  async findDiscountByQuery(
-    query: any, isSelect: isSelectEnum, select: string[], references: IReference[]
+  async findDiscountByQueryRefer(
+    query: any, select: string[], isSelect: IsSelectEnum, refers: IReference[] = [] //no refer
   ): Promise<Discount | null> {
     const found = await this.discountModel.findOne(query)
-      .select(toDbSelectOrUnselect(isSelect, select))
-      .populate({ path: references[0].attribute, select: toDbSelect(references[0].select) })
-      .populate({ path: references[1].attribute, select: toDbSelect(references[1].select) })
-      .populate({ path: references[2].attribute, select: toDbSelect(references[2].select) })
+      .select(toDbSelectOrUnselect(select, isSelect))
+      .populate(toDbPopulates(refers))
       .lean();
     return found || null;
   }
@@ -79,7 +77,7 @@ export class DiscountsRepository {
    * @param select
    * @returns
    */
-  async findDiscountByQuerySelect(
+  async findDiscountByQueryRaw(
     query: any, select: string[] = [] //ko truyen select => select all
   ): Promise<DiscountDoc | null> {
     const found = await this.discountModel.findOne(query)

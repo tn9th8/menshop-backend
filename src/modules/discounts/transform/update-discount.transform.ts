@@ -1,6 +1,6 @@
 import { Injectable, PipeTransform } from "@nestjs/common";
 import { DiscountType } from "src/common/enums/discount.enum";
-import { cleanNullishAttrs, cleanNullishNestedAttrs, isDatePairOrException, isGreaterOrException, isNotEmptyOrException, toEnum, trims } from "src/common/utils/index.util";
+import { cleanNullishAttrs, isDatePairOrException, isGreaterOrException, isNotEmptyOrException, toEnum, trims } from "src/common/utils/index.util";
 import { toObjetId, toObjetIds } from "src/common/utils/mongo.util";
 import { UpdateDiscountDto } from "../dto/update-discount.dto";
 
@@ -14,16 +14,19 @@ export class UpdateDiscountTransform implements PipeTransform {
         } = value;
         id = toObjetId(id);
         [name, code, description] = trims([name, code, description]);
-        isNotEmptyOrException( //string is not ""
+        //string is not ""
+        isNotEmptyOrException(
             [name, code], ['name', 'code']);
+        //number is greater than 0
         [discountValue, minPurchaseValue, applyMax, applyMaxPerClient] = isGreaterOrException(
-            [discountValue, minPurchaseValue, applyMax, applyMaxPerClient], //number is greater than 0
+            [discountValue, minPurchaseValue, applyMax, applyMaxPerClient],
             ['value', 'minPurchaseValue', 'applyMax', 'applyMaxPerClient']);
         type = toEnum(type, DiscountType);
         [startDate, endDate] = isDatePairOrException(
             [startDate, endDate], 'startDate hoặc endDate');
         specificProducts = toObjetIds(specificProducts);
-        const partials = cleanNullishAttrs({ //to clean partials attrs is nullish
+        //to clean partials attrs is nullish
+        const partials = cleanNullishAttrs({
             name, code, description, type, value: discountValue, startDate, endDate, minPurchaseValue,
             applyMax, applyMaxPerClient, applyTo, specificProducts
         });

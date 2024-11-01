@@ -1,7 +1,8 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument } from "mongoose";
+import { HydratedDocument, SchemaTypes } from "mongoose";
 import { GenderEnum } from "src/common/enums/gender.enum";
-import { IBaseDocument } from "src/common/interfaces/index.interface";
+import { IBaseDocument, IKey } from "src/common/interfaces/index.interface";
+import { Role } from "src/modules/roles/schemas/role.schema";
 
 export type UserDocument = HydratedDocument<User>;
 export type IUser = UserDocument & IBaseDocument;
@@ -20,8 +21,8 @@ export class User {
   @Prop({ required: true })
   password: string;
 
-  @Prop({ required: true })
-  role: string;
+  @Prop({ type: [SchemaTypes.ObjectId], ref: Role.name, required: true })
+  roles: IKey[];
 
   @Prop()
   age: number;
@@ -32,7 +33,7 @@ export class User {
   @Prop()
   avatar: string;
 
-  @Prop({ index: true, select: false, default: true, required: true })
+  @Prop({ index: true, default: true, required: true })
   isActive: boolean;
 }
 

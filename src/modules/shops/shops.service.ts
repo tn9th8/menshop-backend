@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { CreateShopDto } from './dto/create-shop.dto';
 import { UpdateShopDto } from './dto/update-shop.dto';
 import { ShopsRepository } from './shops.repository';
-import { AuthUserDto } from 'src/auth/dto/auth-user.dto';
+import { AuthUserDto } from 'src/shared/auth/dto/auth-user.dto';
 import { UsersRepository } from '../users/users.repository';
 import { CreateShopTransform } from './transform/create-shop.transform';
 import { UpdateShopTransform } from './transform/update-shop.transform';

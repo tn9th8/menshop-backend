@@ -4,7 +4,7 @@ import { ApiMessage } from 'src/common/decorators/api-message.decorator';
 import { ProductsService } from './products.service';
 import { SkipJwt } from 'src/common/decorators/skip-jwt.decorator';
 import { IKey } from 'src/common/interfaces/index.interface';
-import { IdParamTransform } from 'src/core/pipe/id-param.transform';
+import { IdParamTransform } from 'src/middleware/pipe/id-param.transform';
 import { QueryProductTransform } from './transform/query-product.transform';
 import { QueryProductDto } from './dto/query-product.dto';
 import { SearchProductDto } from './dto/search-product.dto';

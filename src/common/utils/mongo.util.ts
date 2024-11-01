@@ -1,25 +1,10 @@
-import { FilterQuery, Schema, Types } from "mongoose";
+import { FilterQuery, PopulateOptions, Schema, Types } from "mongoose";
 import slugify from "slugify";
-import { isSelectEnum, SortEnum } from "../enums/index.enum";
-import { IDbSort, IKey } from "../interfaces/index.interface";
+import { IsSelectEnum, SortEnum } from "../enums/index.enum";
+import { IDbSort, IKey, IReference } from "../interfaces/index.interface";
 import { Metadata } from "../interfaces/response.interface";
 
 //>>>METHODS
-export const toDbSort = (sort: SortEnum) => {
-    const dbSort: IDbSort =
-        sort == SortEnum.LATEST ? { updatedAt: -1 }
-            : sort == SortEnum.OLDEST ? { updatedAt: 1 }
-                : sort == SortEnum.NAME_AZ ? { name: 1 }
-                    : sort == SortEnum.NAME_ZA ? { name: -1 }
-                        : { updatedAt: -1 } //default SortEnum.LATEST
-    return dbSort;
-}
-
-export const toDbSkip = (page: number, limit: number) => {
-    const dbSkip = limit * (page - 1); //skip, offset là 1
-    return dbSkip;
-}
-
 export const computeItemsAndPages = (metadata: Metadata, limit: number = 24) => {
     const items = metadata.queriedCount;
     const pages = Math.ceil(items / limit);
@@ -86,21 +71,33 @@ export const buildQueryLike = (fields: string[], values: string[]) => {
     return obj;
 };
 
-export const toDbLikeQuery = (fields: string[], values: string[]) => {
-    const obj: any = {};
-    fields.forEach((field, index) => {
-        const value = values[index];
-        if (value) {
-            obj[field] = { $regex: new RegExp(value, 'i') };
-        }
-    });
-    return obj;
-};
+export const toDbSort = (sort: SortEnum) => {
+    const dbSort: IDbSort =
+        sort == SortEnum.LATEST ? { updatedAt: -1 }
+            : sort == SortEnum.OLDEST ? { updatedAt: 1 }
+                : sort == SortEnum.NAME_AZ ? { name: 1 }
+                    : sort == SortEnum.NAME_ZA ? { name: -1 }
+                        : { updatedAt: -1 } //default SortEnum.LATEST
+    return dbSort;
+}
 
-export const toDbSelectOrUnselect = (isSelect: isSelectEnum, select: string[]) => {
+export const toDbSkip = (page: number, limit: number) => {
+    const dbSkip = limit * (page - 1); //skip, offset là 1
+    return dbSkip;
+}
+
+export const toDbPopulates = (refers: IReference[]) => {
+    const populates: PopulateOptions[] = refers.map((item) => {
+        const populate = { path: item.attribute, select: toDbSelect(item.select) };
+        return populate;
+    });
+    return populates;
+}
+
+export const toDbSelectOrUnselect = (select: string[], isSelect: IsSelectEnum,) => {
     const dbSelectOrUn =
-        isSelect === isSelectEnum.SELECT ? toDbSelect(select)
-            : isSelect === isSelectEnum.UNSELECT ? toDbUnselect(select) : null;
+        isSelect === IsSelectEnum.SELECT ? toDbSelect(select)
+            : isSelect === IsSelectEnum.UNSELECT ? toDbUnselect(select) : null;
     return dbSelectOrUn;
 };
 /**

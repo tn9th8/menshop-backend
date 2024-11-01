@@ -4,7 +4,7 @@ import { ApiMessage } from 'src/common/decorators/api-message.decorator';
 import { SkipJwt } from 'src/common/decorators/skip-jwt.decorator';
 import { IsActiveEnum } from 'src/common/enums/index.enum';
 import { IKey } from 'src/common/interfaces/index.interface';
-import { IdParamTransform } from 'src/core/pipe/id-param.transform';
+import { IdParamTransform } from 'src/middleware/pipe/id-param.transform';
 import { QueryShopDto } from './dto/query-shop.dto';
 import { ShopsService } from './shops.service';
 import { QueryShopTransform } from './transform/query-shop.transform';

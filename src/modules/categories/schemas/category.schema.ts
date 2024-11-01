@@ -28,7 +28,7 @@ export class Category {
     @Prop({ type: [String], default: null })
     specifications: string[];
 
-    @Prop({ index: true, select: false, default: false, required: true }) //draft or published
+    @Prop({ index: true, default: false, required: true }) //draft or published
     isPublished: boolean;
 
     //ref

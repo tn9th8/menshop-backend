@@ -5,7 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UsersControllerClient } from './users.controller.client';
 import { UsersControllerAdmin } from './users.controller.admin';
 import { UsersRepository } from './users.repository';
-import { KeyStoreModule } from '../key-store/key-store.module';
+import { UserKeysModule } from '../user-keys/user-keys.module';
 import { UpdateUserTransform } from './transform/update-user.transform';
 
 @Module({
@@ -13,7 +13,7 @@ import { UpdateUserTransform } from './transform/update-user.transform';
   providers: [UsersService, UsersRepository, UpdateUserTransform],
   imports: [
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
-    KeyStoreModule
+    UserKeysModule
   ],
   exports: [UsersService, UsersRepository],
 })
