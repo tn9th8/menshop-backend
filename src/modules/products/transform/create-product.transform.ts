@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, PipeTransform } from '@nestjs/common';
 import { cleanNullishAttrs } from 'src/common/utils/index.util';
 import { CreateProductDto } from '../dto/create-product.dto';
 import { ProductsRepository } from '../products.repository';
-import { trim } from 'src/common/utils/pipe.util';
+import { trim } from 'src/common/utils/validator.util';
 import { isExistMessage, notEmptyMessage } from 'src/common/utils/exception.util';
 import { toObjetId } from 'src/common/utils/mongo.util';
 import { CategoriesRepository } from 'src/modules/categories/categories.repository';
@@ -17,7 +17,7 @@ export class CreateProductTransform implements PipeTransform {
     ) { }
 
     async transform(value: CreateProductDto) {
-        let { name, description, thumb, asset, attributes, categories, needs } = value;
+        let { name, description, thumb, stock, asset, attributes, categories, needs } = value;
 
         //name: trim, not empty, not exist
         name = trim(name);
@@ -27,11 +27,13 @@ export class CreateProductTransform implements PipeTransform {
         if (await this.productRepo.isExistByQuery({ name })) {
             throw new BadRequestException(isExistMessage('name'));
         }
-
         //description: trim
         description = trim(description);
-
-        //categories, needs to objectId
+        //thumb: ""
+        thumb = thumb || 'unknown';
+        //stock: >=0, default 0
+        stock = stock >= 0 ? stock : 0;
+        //categories to objectId
         if (!Array.isArray(categories)) {
             categories = null;
         }
@@ -47,7 +49,7 @@ export class CreateProductTransform implements PipeTransform {
                 categories = null;
             }
         }
-
+        //needs to objectId
         if (!Array.isArray(needs)) {
             needs = null;
         }
@@ -63,10 +65,9 @@ export class CreateProductTransform implements PipeTransform {
                 needs = null;
             }
         }
-
         //todo: transform
         const cleaned: CreateProductDto = cleanNullishAttrs(
-            { name, description, thumb, asset, attributes, categories, needs });
+            { name, description, thumb, stock, asset, attributes, categories, needs });
         return cleaned;
     }
 }

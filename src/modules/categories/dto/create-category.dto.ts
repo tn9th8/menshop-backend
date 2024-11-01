@@ -1,7 +1,7 @@
 import { IsArray, IsEnum, IsOptional, IsString } from "class-validator";
 import { CategoryLevelEnum } from "src/common/enums/category.enum";
 import { IKey } from "src/common/interfaces/index.interface";
-import { isArrayMessage, isEnumMessage, isStringMessage } from "src/common/utils/pipe.util";
+import { isArrayMessage, isEnumMessage, isStringMessage } from "src/common/utils/validator.util";
 
 export class CreateCategoryDto {
     @IsString(isStringMessage('name'))

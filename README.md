@@ -67,11 +67,14 @@ $ git checkout master
 # dev1 for user, auth
 $ git checkout dev1
 
-# dev2 for product, category, need, model
+# dev2 for product, category, need, sku
 $ git checkout dev2
 
 # dev3 for shop, collection, brand
 $ git checkout dev3
+
+# dev3 for inventory, price, discount
+$ git checkout dev4
 ```
 
 ## Resources

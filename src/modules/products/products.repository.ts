@@ -4,19 +4,19 @@ import { FilterQuery, QueryOptions, UpdateQuery } from 'mongoose';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { SortEnum } from 'src/common/enums/index.enum';
 import { ProductSortEnum } from 'src/common/enums/product.enum';
-import { IKey, IReference } from 'src/common/interfaces/index.interface';
-import { IDbSort } from 'src/common/interfaces/mongo.interface';
+import { IDbSort, IKey, IReference } from 'src/common/interfaces/index.interface';
 import { Result } from 'src/common/interfaces/response.interface';
-import { toDbLikeQuery, toDbSelect, toDbUnselect } from 'src/common/utils/mongo.util';
-import { CreateProductDto } from './dto/create-product.dto';
+import { toDbLikeQuery, toDbSelect, toDbSort, toDbUnselect } from 'src/common/utils/mongo.util';
 import { IQueryProduct } from './dto/query-product.dto';
+import { ProductsHelper } from './helper/products.helper';
 import { IProduct, Product } from './schemas/product.schema';
 
 @Injectable()
 export class ProductsRepository {
   constructor(
     @InjectModel(Product.name)
-    private readonly productModel: SoftDeleteModel<IProduct>
+    private readonly productModel: SoftDeleteModel<IProduct>,
+    private readonly productsHelper: ProductsHelper
   ) { }
 
   //EXIST// the exists method return {_id} | null
@@ -39,7 +39,7 @@ export class ProductsRepository {
   }
 
   //CREATE//
-  async createOne(payload: CreateProductDto) {
+  async createOne(payload: Product) {
     const result = await this.productModel.create(payload);
     return result;
   }
@@ -70,12 +70,7 @@ export class ProductsRepository {
       ...toDbLikeQuery(['name'], [query.name])
     }
     const dbUnselect = toDbUnselect(unselect);
-    const dbSort: IDbSort =
-      sort == SortEnum.LATEST ? { updatedAt: -1 }
-        : sort == SortEnum.OLDEST ? { updatedAt: 1 }
-          : sort == SortEnum.NAME_AZ ? { name: 1 }
-            : sort == SortEnum.NAME_ZA ? { name: -1 }
-              : { updatedAt: -1 } //default SortEnum.LATEST
+    const dbSort = toDbSort(sort);
     const skip = limit * (page - 1);
 
     const [queriedCount, data] = await Promise.all([
@@ -94,40 +89,24 @@ export class ProductsRepository {
     }
   }
 
-  async findAllValid(
-    page: number,
-    limit: number,
-    sort: ProductSortEnum,
-    unselect: string[],
-    query: IQueryProduct
+  async findAllByProductSort(
+    page: number, limit: number, sort: ProductSortEnum, select: string[], query: IQueryProduct
   ): Promise<Result<IProduct>> {
     const dbQuery = {
       ...query,
       ...toDbLikeQuery(['name'], [query.name])
     }
-    const dbUnselect = toDbUnselect(unselect);
-    //sort
-    const dbSort: IDbSort =
-      sort == ProductSortEnum.CTIME ? { updatedAt: -1 }
-        : sort == ProductSortEnum.RELEVANT ? { updatedAt: -1 }
-          : sort == ProductSortEnum.SALES ? { updatedAt: -1 }
-            : sort == ProductSortEnum.POPULATE ? { updatedAt: -1 }
-              : { updatedAt: -1 };
-    const skip = limit * (page - 1);
-
     const [queriedCount, data] = await Promise.all([
       this.productModel.countDocuments(dbQuery),
       this.productModel.find(dbQuery)
-        .select(dbUnselect)
-        .sort(dbSort)
-        .skip(skip)
+        .select(toDbSelect(select))
+        .sort(this.productsHelper.toDbSort(sort))
+        .skip(limit * (page - 1))
         .limit(limit)
-        .exec()
+        .lean()
     ]);
-
     return {
-      metadata: { queriedCount },
-      data: (data as any)
+      data, metadata: { queriedCount }
     }
   }
 
@@ -207,7 +186,7 @@ export class ProductsRepository {
       .exec();
     return result;
   }
-
+  //QUERY ONE//
   async findOneById(
     productId: IKey,
     unselect: string[],

@@ -1,6 +1,6 @@
 import { IsEmail, IsEnum, IsNotEmpty, IsNumber, IsPhoneNumber, IsString } from "class-validator";
 import { GenderEnum } from "src/common/enums/gender.enum";
-import { isEnumMessage, isStringMessage } from "src/common/utils/pipe.util";
+import { isEnumMessage, isStringMessage } from "src/common/utils/validator.util";
 
 export class CreateUserDto {
     @IsString(isStringMessage('name'))

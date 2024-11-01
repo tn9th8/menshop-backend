@@ -10,7 +10,7 @@ import { SortEnum } from 'src/common/enums/index.enum';
 import { IQueryShop } from './dto/query-shop.dto';
 import { Result } from 'src/common/interfaces/response.interface';
 import { toDbLikeQuery, toDbSelect, toDbUnselect } from 'src/common/utils/mongo.util';
-import { IDbSort } from 'src/common/interfaces/mongo.interface';
+import { IDbSort } from 'src/common/interfaces/index.interface';
 
 @Injectable()
 export class ShopsRepository {
@@ -119,11 +119,12 @@ export class ShopsRepository {
   }
 
   async findOneByQuerySelect(
-    query: FilterQuery<any>,
+    query: any,
     select: string[]
   ): Promise<IShop | null> {
     const found = await this.shopModel.findOne(query)
-      .select(toDbSelect(select));
+      .select(toDbSelect(select))
+      .lean();
     return found || null;
   }
 

@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument, SchemaTypes, Types } from "mongoose";
-import { IBaseDocument } from "src/common/interfaces/base-document.interface";
+import { IBaseDocument } from "src/common/interfaces/index.interface";
 import { Shop } from "src/modules/shops/schemas/shop.schema";
 import { ModelSpecification, ModelSpecificationSchema } from "./nested.schemas";
 

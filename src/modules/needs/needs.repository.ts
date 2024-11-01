@@ -4,7 +4,7 @@ import { FilterQuery, QueryOptions } from 'mongoose';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { SortEnum } from 'src/common/enums/index.enum';
 import { IKey, IReference } from 'src/common/interfaces/index.interface';
-import { IDbSort } from 'src/common/interfaces/mongo.interface';
+import { IDbSort } from 'src/common/interfaces/index.interface';
 import { Result } from 'src/common/interfaces/response.interface';
 import { toDbLikeQuery, toDbSelect, toDbUnselect } from 'src/common/utils/mongo.util';
 import { CreateNeedDto } from './dto/create-need.dto';

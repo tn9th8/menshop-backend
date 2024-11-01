@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { CreateNeedDto } from "../dto/create-need.dto";
 import { UpdateNeedDto } from "../dto/update-need.dto";
 import { NeedsRepository } from "../needs.repository";
-import { UtilNeedsService } from "./util-needs.service";
+import { UtilNeedsService } from "./needs.factory.helper";
 
 
 @Injectable()

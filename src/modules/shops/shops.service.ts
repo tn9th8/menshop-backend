@@ -11,6 +11,7 @@ import { IKey, IReference } from 'src/common/interfaces/index.interface';
 import { isExistMessage, notFoundIdMessage } from 'src/common/utils/exception.util';
 import { QueryShopDto } from './dto/query-shop.dto';
 import { computeItemsAndPages } from 'src/common/utils/mongo.util';
+import { IShop } from './schemas/shop.schema';
 
 @Injectable()
 export class ShopsService {
@@ -85,7 +86,7 @@ export class ShopsService {
     return found;
   }
 
-  async findOneByUser(userId: IKey) {
+  async findOneByUser(userId: IKey): Promise<IShop> {
     const select = ['_id'];
     const query = { user: userId };
     const found = await this.shopsRepo.findOneByQuerySelect(query, select);
@@ -93,6 +94,16 @@ export class ShopsService {
       throw new NotFoundException(notFoundIdMessage('sellerId', userId));
     }
     return found;
+  }
+
+  //update version of findOneByUser
+  async findShopIdBySeller(sellerId: IKey): Promise<IKey> {
+    const select = ['_id'];
+    const query = { user: sellerId };
+    const found = await this.shopsRepo.findOneByQuerySelect(query, select);
+    if (!found)
+      throw new NotFoundException(notFoundIdMessage('shop by sellerId', sellerId));
+    return found._id;
   }
 
 }
