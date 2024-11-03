@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, QueryOptions, UpdateQuery } from 'mongoose';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
-import { SortEnum } from 'src/common/enums/index.enum';
+import { IsSelectEnum, SortEnum } from 'src/common/enums/index.enum';
 import { ProductSortEnum } from 'src/common/enums/product.enum';
 import { IDbSort, IKey, IReference } from 'src/common/interfaces/index.interface';
 import { Result } from 'src/common/interfaces/response.interface';
-import { buildQueryLike, toDbSelect, toDbSort, toDbUnselect } from 'src/common/utils/mongo.util';
+import { buildQueryLike, toDbPopulates, toDbSelect, toDbSelectOrUnselect, toDbSort, toDbUnselect } from 'src/common/utils/mongo.util';
 import { IQueryProduct } from './dto/query-product.dto';
 import { ProductsHelper } from './helper/products.helper';
 import { IProduct, Product } from './schemas/product.schema';
@@ -111,12 +111,7 @@ export class ProductsRepository {
   }
 
   async searchAll(
-    limit: number,
-    page: number,
-    sort: ProductSortEnum,
-    query: FilterQuery<any>,
-    keyword: string,
-    selectArr: string[]
+    limit: number, page: number, sort: ProductSortEnum, query: FilterQuery<any>, keyword: string, selectArr: string[]
   ): Promise<Result<IProduct>> {
     //search, score
     let fullTextSearch = {};
@@ -187,55 +182,32 @@ export class ProductsRepository {
     return result;
   }
   //QUERY ONE//
-  async findOneById(
-    productId: IKey,
-    unselect: string[],
-    references: IReference[]
-  ) {
-    const found = await this.productModel.findById(productId)
-      .select(toDbUnselect(unselect))
-      .populate({
-        path: references[0].attribute,
-        select: toDbSelect(references[0].select)
-      })
-      .populate({
-        path: references[1].attribute,
-        select: toDbSelect(references[1].select)
-      })
-      .populate({
-        path: references[2].attribute,
-        select: toDbSelect(references[2].select)
-      })
-      .populate({
-        path: references[3].attribute,
-        select: toDbSelect(references[3].select)
-      });
+  /**
+   * Tìm kiếm 1 doc đầy đủ với query, select/unselect, refers
+   * @param query
+   * @param isSelect
+   * @param select
+   * @param refers
+   * @returns
+   */
+  async findProductByQueryRefer(
+    query: any, select: string[], isSelect: IsSelectEnum, refers: IReference[] = []
+  ): Promise<Product | null> {
+    const found = await this.productModel.findOne(query)
+      .select(toDbSelectOrUnselect(select, isSelect))
+      .populate(toDbPopulates(refers))
+      .lean();
     return found || null;
   }
 
   async findOneByQuery(
     query: FilterQuery<any>,
     unselect: string[],
-    references: IReference[]
+    refers: IReference[]
   ) {
     const found = await this.productModel.findOne(query)
       .select(toDbUnselect(unselect))
-      .populate({
-        path: references[0].attribute,
-        select: toDbSelect(references[0].select)
-      })
-      .populate({
-        path: references[1].attribute,
-        select: toDbSelect(references[1].select)
-      })
-      .populate({
-        path: references[2].attribute,
-        select: toDbSelect(references[2].select)
-      })
-      .populate({
-        path: references[3].attribute,
-        select: toDbSelect(references[3].select)
-      });
+      .populate(toDbPopulates(refers));
     return found || null;
   }
 }

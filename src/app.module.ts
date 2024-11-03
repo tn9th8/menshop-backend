@@ -8,7 +8,7 @@ import { AppController } from './app.controller';
 import { AppRepository } from './app.repository';
 import { AppService } from './app.service';
 import { AuthModule } from './shared/auth/auth.module';
-import { JwtGuard } from './shared/auth/guard/jwt.guard';
+import { AccessJwtRbacGuard } from './shared/auth/guard/access-jwt-rbac.guard';
 import { timestampsPlugin } from './common/utils/mongo.util';
 import { TransformInterceptor } from './middleware/interceptor/transform.interceptor';
 import { DatabasesModule } from './shared/databases/databases.module';
@@ -30,14 +30,14 @@ import { UsersModule } from './modules/users/users.module';
   providers: [
     AppService,
     AppRepository,
-    // bind to all endpoints
+    // bind to all routes
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard
     },
     {
       provide: APP_GUARD,
-      useClass: JwtGuard,
+      useClass: AccessJwtRbacGuard,
     },
     {
       provide: APP_INTERCEPTOR,

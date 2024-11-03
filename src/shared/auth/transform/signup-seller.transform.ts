@@ -8,7 +8,7 @@ export class SignUpSellerTransform implements PipeTransform {
     async transform(value: SignUpSellerDto) {
         let { name, email, phone, password } = value;
         //todo: transform
-        const transformed: SignUpSellerDto = cleanNullishAttrs({ name, email, phone, password });
+        const transformed: SignUpSellerDto = { name, email, phone, password };
         return transformed;
     }
 }

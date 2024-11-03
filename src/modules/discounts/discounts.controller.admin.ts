@@ -1,7 +1,7 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiMessage } from 'src/common/decorators/api-message.decorator';
-import { ForUserEnum, IsValidEnum } from 'src/common/enums/index.enum';
+import { GroupUserEnum, IsValidEnum } from 'src/common/enums/index.enum';
 import { IKey } from 'src/common/interfaces/index.interface';
 import { IdParamTransform } from 'src/middleware/pipe/id-param.transform';
 import { DiscountsService } from './discounts.service';
@@ -18,19 +18,19 @@ export class DiscountsControllerAdmin {
   findAllValid(
     @Query(DiscountQueryTransform) query: DiscountQuery
   ) {
-    return this.discountsService.findDiscountsIsValid(query, IsValidEnum.VALID, ForUserEnum.ADMIN);
+    return this.discountsService.findDiscountsIsValid(query, IsValidEnum.VALID, GroupUserEnum.ADMIN);
   }
   @ApiMessage('find all expired discounts')
   @Get('/expired')
   findAllExpired(
     @Query(DiscountQueryTransform) query: DiscountQuery
   ) {
-    return this.discountsService.findDiscountsIsValid(query, IsValidEnum.EXPIRED, ForUserEnum.ADMIN);
+    return this.discountsService.findDiscountsIsValid(query, IsValidEnum.EXPIRED, GroupUserEnum.ADMIN);
   }
   //QUERY ONE//
   @ApiMessage('find a discounts')
   @Get('/:id')
   findOne(@Param('id', IdParamTransform) id: IKey) {
-    return this.discountsService.findDiscount(id, ForUserEnum.ADMIN);
+    return this.discountsService.findDiscount(id, GroupUserEnum.ADMIN);
   }
 }

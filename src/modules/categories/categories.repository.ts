@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, QueryOptions } from 'mongoose';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
-import { SortEnum } from 'src/common/enums/index.enum';
+import { IsSelectEnum, SortEnum } from 'src/common/enums/index.enum';
 import { IKey, IReference } from 'src/common/interfaces/index.interface';
 import { IDbSort } from 'src/common/interfaces/index.interface';
 import { Result } from 'src/common/interfaces/response.interface';
-import { buildQueryLike, toDbSelect, toDbUnselect } from 'src/common/utils/mongo.util';
+import { buildQueryLike, toDbPopulates, toDbSelect, toDbSelectOrUnselect, toDbUnselect } from 'src/common/utils/mongo.util';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { IQueryCategory } from './dto/query-category.dto';
 import { Category, ICategory } from './schemas/category.schema';
@@ -72,17 +72,21 @@ export class CategoriesRepository {
       .select(toDbSelect(select));
   }
 
-  async findOneById(
-    categoryId: IKey,
-    unselect: string[],
-    references: IReference[]
-  ) {
-    const found = await this.categoryModel.findById(categoryId)
-      .select(toDbUnselect(unselect))
-      .populate({
-        path: references[0].attribute,
-        select: toDbSelect(references[0].select)
-      });
+  /**
+ * Tìm kiếm 1 doc đầy đủ với query, select/unselect, refers
+ * @param query
+ * @param isSelect
+ * @param select
+ * @param refers
+ * @returns
+ */
+  async findCateByQueryRefer(
+    query: any, select: string[], isSelect: IsSelectEnum, refers: IReference[] = []
+  ): Promise<Category | null> {
+    const found = await this.categoryModel.findOne(query)
+      .select(toDbSelectOrUnselect(select, isSelect))
+      .populate(toDbPopulates(refers))
+      .lean();
     return found || null;
   }
 

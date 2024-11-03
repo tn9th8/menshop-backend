@@ -4,14 +4,14 @@ import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { IKey } from 'src/common/interfaces/index.interface';
 import { Metadata } from 'src/common/interfaces/response.interface';
 import { UpdateUserKeyDto } from './dto/update-user-keys.dto';
-import { IUserKey, UserKey } from './schemas/user-keys.schema';
+import { UserKeyDoc, UserKey, UserKeyPartial } from './schemas/user-keys.schema';
 import { toDbSelect } from 'src/common/utils/mongo.util';
 
 @Injectable()
 export class UserKeysRepository {
   constructor(
     @InjectModel(UserKey.name)
-    private readonly userKeyModel: SoftDeleteModel<IUserKey>
+    private readonly userKeyModel: SoftDeleteModel<UserKeyDoc>
   ) { }
 
   //CREATE//
@@ -24,13 +24,9 @@ export class UserKeysRepository {
   //UPDATE//
   async updateByIdGetMeta(
     userId: IKey,
-    payload: any,
-    isNew: boolean = true
+    payload: any
   ): Promise<Metadata> {
-    const dbOptions = { new: isNew };
-    const dbQuery = { user: userId };
-    const dbPayload = { $push: { refreshToken: payload.refreshToken } };
-    const updated = await this.userKeyModel.findOneAndUpdate(dbQuery, dbPayload, dbOptions);
+    const updated = await this.userKeyModel.findOneAndUpdate({ user: userId }, payload, { new: true });
     return updated ? { updatedCount: 1 } : { updatedCount: 0 };
   }
 
@@ -49,7 +45,7 @@ export class UserKeysRepository {
   async findLeanByQuery(
     userId: IKey,
     select: string[]
-  ): Promise<IUserKey | null> {
+  ): Promise<UserKeyDoc | null> {
     return await this.userKeyModel.findOne({ user: userId })
       .select(toDbSelect(select));
   }

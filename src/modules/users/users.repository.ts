@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
-import { IUser, User } from './schemas/user.schema';
-import { buildQueryLike, toDbSelect, toDbUnselect } from 'src/common/utils/mongo.util';
+import { UserDoc, User } from './schemas/user.schema';
+import { buildQueryLike, toDbSelect, toDbSkip, toDbSort, toDbUnselect } from 'src/common/utils/mongo.util';
 import { SignUpSellerDto } from 'src/shared/auth/dto/signup-seller.dto';
 import { IKey, IReference } from 'src/common/interfaces/index.interface';
 import { SortEnum } from 'src/common/enums/index.enum';
@@ -13,7 +13,7 @@ import { IDbSort } from 'src/common/interfaces/index.interface';
 export class UsersRepository {
   constructor(
     @InjectModel(User.name)
-    private readonly userModel: SoftDeleteModel<IUser>
+    private readonly userModel: SoftDeleteModel<UserDoc>
   ) { }
 
   async count() {
@@ -22,7 +22,7 @@ export class UsersRepository {
   }
 
   //CREATE//
-  async createOne(payload: User): Promise<IUser> {
+  async createOne(payload: User): Promise<UserDoc> {
     const created = await this.userModel.create(payload);
     return (created as any)._doc || null;
   }
@@ -68,35 +68,18 @@ export class UsersRepository {
   }
 
   async findAllByQuery(
-    page: number,
-    limit: number,
-    sort: SortEnum,
-    unselect: string[],
-    query: any
-  ): Promise<Result<IUser>> {
-    const dbQuery = {
-      ...query,
-      ...buildQueryLike(['name'], [query.name])
-    }
-    const dbUnselect = toDbUnselect(unselect);
-    const dbSort: IDbSort =
-      sort == SortEnum.LATEST ? { updatedAt: -1 }
-        : sort == SortEnum.OLDEST ? { updatedAt: 1 }
-          : sort == SortEnum.NAME_AZ ? { name: 1 }
-            : sort == SortEnum.NAME_ZA ? { name: -1 }
-              : { updatedAt: -1 } //default SortEnum.LATEST
-    const skip = limit * (page - 1);
-
+    page: number, limit: number, sort: SortEnum, unselect: string[], query: any
+  ): Promise<Result<UserDoc>> {
+    const dbQuery = { ...query, ...buildQueryLike(['name'], [query.name]) };
     const [queriedCount, data] = await Promise.all([
       this.userModel.countDocuments(dbQuery),
       this.userModel.find(dbQuery)
-        .select(dbUnselect)
-        .sort(dbSort)
-        .skip(skip)
+        .select(toDbUnselect(unselect))
+        .sort(toDbSort(sort))
+        .skip(toDbSkip(page, limit))
         .limit(limit)
         .lean()
     ]);
-
     return {
       metadata: { queriedCount },
       data: (data as any)

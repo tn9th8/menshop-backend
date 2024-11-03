@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Param, Patch, Query } from '@nestjs/common';
-import { AuthUserDto } from 'src/shared/auth/dto/auth-user.dto';
+import { IAuthUser } from 'src/common/interfaces/auth-user.interface';
 import { ApiMessage } from 'src/common/decorators/api-message.decorator';
 import { User } from 'src/common/decorators/user.decorator';
-import { ForUserEnum, IsValidEnum } from 'src/common/enums/index.enum';
+import { GroupUserEnum, IsValidEnum } from 'src/common/enums/index.enum';
 import { IKey } from 'src/common/interfaces/index.interface';
 import { IdParamTransform } from 'src/middleware/pipe/id-param.transform';
 import { DiscountsService } from './discounts.service';
@@ -21,7 +21,7 @@ export class DiscountsControllerClient {
   @Patch('/apply')
   applyDiscount(
     @Body(ApplyDiscountTransform) body: ApplyDiscountDto,
-    @User() user: AuthUserDto
+    @User() user: IAuthUser
   ) {
     return this.discountsService.applyDiscount(body, user);
   }
@@ -29,7 +29,7 @@ export class DiscountsControllerClient {
   @Patch('/cancel/:code')
   cancelDiscount(
     @Param('code') code: string,
-    @User() user: AuthUserDto
+    @User() user: IAuthUser
   ) {
     return this.discountsService.cancelDiscount(code, user);
   }
@@ -39,7 +39,7 @@ export class DiscountsControllerClient {
   findAllByShop(
     @Query(DiscountQueryTransform) query: DiscountQuery
   ) {
-    return this.discountsService.findDiscountsIsValid(query, IsValidEnum.VALID, ForUserEnum.CLIENT);
+    return this.discountsService.findDiscountsIsValid(query, IsValidEnum.VALID, GroupUserEnum.CLIENT);
   }
   @ApiMessage('find products by discount code')
   @Get('/products')
@@ -53,8 +53,8 @@ export class DiscountsControllerClient {
   @Get('/:id')
   findOne(
     @Param('id', IdParamTransform) id: IKey,
-    @User() user: AuthUserDto
+    @User() user: IAuthUser
   ) {
-    return this.discountsService.findDiscount(id, ForUserEnum.CLIENT);
+    return this.discountsService.findDiscount(id, GroupUserEnum.CLIENT);
   }
 }

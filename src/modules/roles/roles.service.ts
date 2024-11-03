@@ -60,10 +60,18 @@ export class RolesService {
     return { data, metadata: { page, limit, items, pages } };
   }
   //QUERY ONE//
-  async findRole(roleId: IKey): Promise<Role> {
+  async findRole(roleId: IKey): Promise<RoleDoc> {
     const unselect = ['createdAt', 'updatedAt', 'isDeleted', 'deletedAt', '__v'];
     const references: IReference[] = [{ attribute: 'permissions', select: ['_id', 'apiPath', 'apiMethod'] }];
     const found = await this.rolesRepo.findRoleByQueryRefer({ _id: roleId }, unselect, IsSelectEnum.UNSELECT, references);
+    if (!found) throw new NotFoundException(notFoundMessage('role'));
+    return found;
+  }
+
+  async findRoleForAuth(roleId: IKey): Promise<RoleDoc> {
+    const select = ['_id', 'group', 'permissions'];
+    const references: IReference[] = [{ attribute: 'permissions', select: ['_id', 'apiPath', 'apiMethod'] }];
+    const found = await this.rolesRepo.findRoleByQueryRefer({ _id: roleId }, select, IsSelectEnum.SELECT, references);
     if (!found) throw new NotFoundException(notFoundMessage('role'));
     return found;
   }

@@ -13,7 +13,7 @@ export enum IsValidEnum {
     EXPIRED = 0
 }
 
-export enum ForUserEnum {
+export enum GroupUserEnum {
     ADMIN = 0,
     SELLER = 1,
     CLIENT = 2
@@ -31,7 +31,7 @@ export enum SortEnum {
     OLDEST = 'oldest'
 }
 
-export enum Jwt {
+export enum JwtEnum {
     ACCESS_TOKEN_SECRET = 'JWT_ACCESS_SECRET',
     ACCESS_TOKEN_EXPIRES = 'JWT_ACCESS_EXPIRES',
     REFRESH_TOKEN_SECRET = 'JWT_REFRESH_SECRET',

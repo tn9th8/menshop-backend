@@ -7,10 +7,12 @@ import { User } from 'src/common/decorators/user.decorator';
 
 import { ApiMessage } from 'src/common/decorators/api-message.decorator';
 import { AuthService } from './auth.service';
-import { AuthUserDto } from './dto/auth-user.dto';
-import { SignInDto } from './dto/sign-in.dto';
+import { IAuthUser } from '../../common/interfaces/auth-user.interface';
+import { SignInDto } from './dto/signin.dto';
 import { SignUpClientDto } from './dto/signup-client.dto';
 import { PasswordGuard } from './guard/password.guard';
+import { RefreshToken } from 'src/common/utils/security.util';
+import { RefreshJwtGuard } from './guard/refresh-jwt.guard';
 
 @ApiTags('Auth Module for Members')
 @Controller('client/auth')
@@ -38,7 +40,7 @@ export class AuthControllerClient {
     @ApiMessage('sign in')
     @ApiBody({ type: SignInDto })
     signIn(
-        @User() user: AuthUserDto,
+        @User() user: IAuthUser,
         @Res({ passthrough: true }) response: Response,
     ) {
         return this.authService.signIn(user, response);
@@ -47,25 +49,27 @@ export class AuthControllerClient {
     @Get('signout')
     @ApiMessage('Sign out')
     signOut(
-        @User() user: AuthUserDto,
+        @User() user: IAuthUser,
         @Res({ passthrough: true }) response: Response,
     ) {
         return this.authService.signOut(user, response);
     }
 
     @SkipJwt()
+    @UseGuards(RefreshJwtGuard)
+    @ApiMessage('refresh an account')
     @Get('refresh')
-    @ApiMessage('Refresh account')
     refreshAccount(
-        @Cookies('refreshToken') refreshToken: string,
+        @User() user: IAuthUser,
+        @Cookies(RefreshToken) refreshToken: string,
         @Res({ passthrough: true }) response: Response,
     ) {
-        return this.authService.refreshAccount(refreshToken, response);
+        return this.authService.refreshAccount(user, refreshToken, response);
     }
 
     @Get('account')
     @ApiMessage('Fetch account')
-    getAccount(@User() user: AuthUserDto) {
+    getAccount(@User() user: IAuthUser) {
         return user;
     }
 }

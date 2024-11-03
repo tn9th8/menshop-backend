@@ -62,4 +62,12 @@ export class PermissionsRepository {
       .lean();
     return found || null;
   }
+  //FOR INIT DATA SAMPLE
+  async count() {
+    const result = await this.permissionModel.count();
+    return result;
+  }
+  async insertMany(docs: {}[]) {
+    await this.permissionModel.insertMany(docs);
+  }
 }

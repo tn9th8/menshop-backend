@@ -56,7 +56,7 @@ export class RolesRepository {
   //QUERY ONE//
   async findRoleByQueryRefer(
     query: any, select: string[], isSelect: IsSelectEnum, refers: IReference[] = []
-  ): Promise<Role | null> {
+  ): Promise<RoleDoc | null> {
     const found = await this.roleModel.findOne(query) //note: can get deleted
       .select(toDbSelectOrUnselect(select, isSelect))
       .populate(toDbPopulates(refers))

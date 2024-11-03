@@ -9,5 +9,6 @@ import { PermissionsRepository } from './permissions.repository';
   controllers: [PermissionsControllerAdmin],
   providers: [PermissionsService, PermissionsRepository],
   imports: [MongooseModule.forFeature([{ name: Permission.name, schema: PermissionSchema }])],
+  exports: [PermissionsRepository]
 })
 export class PermissionsModule { }

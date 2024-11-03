@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Metadata } from 'src/common/interfaces/response.interface';
 import { UpdateUserKeyDto } from './dto/update-user-keys.dto';
 import { UserKeysRepository } from './user-keys.repository';
-import { IUserKey } from './schemas/user-keys.schema';
+import { UserKeyDoc } from './schemas/user-keys.schema';
 import { IKey } from 'src/common/interfaces/index.interface';
 import { notFoundIdMessage } from 'src/common/utils/exception.util';
 
@@ -11,7 +11,7 @@ export class UserKeysService {
   constructor(private readonly userKeysRepo: UserKeysRepository) { }
 
   //CREATE//
-  async createOne({ userId = null, verifyToken = null }): Promise<IUserKey> {
+  async createOne({ userId = null, verifyToken = null }): Promise<UserKeyDoc> {
     //todo: transform
     try {
       const payload = { userId, verifyToken };
@@ -24,9 +24,7 @@ export class UserKeysService {
 
   //UPDATE//
   async updateRefreshToken({ userId = null, refreshToken = null }): Promise<Metadata> {
-    //todo: transform
-    const payload = { refreshToken }
-    const meta = await this.userKeysRepo.updateByIdGetMeta(userId, payload);
+    const meta = await this.userKeysRepo.updateByIdGetMeta(userId, { refreshToken });
     return meta;
   }
 

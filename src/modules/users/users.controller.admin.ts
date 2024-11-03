@@ -10,34 +10,34 @@ import { IKey } from 'src/common/interfaces/index.interface';
 import { QueryUserTransform } from './transform/query-user.transform';
 import { QueryUserDto } from './dto/query-user.dto';
 
-@ApiTags('Users Module for Admins')
+@ApiTags('Users Module for Admin Side')
 @Controller('admin/users')
 export class UsersControllerAdmin {
   constructor(private readonly usersService: UsersService) { }
 
   @ApiMessage('create an user')
   @Post()
-  async create(@Body() createUserDto: CreateUserDto) {
-    const result = await this.usersService.createAdmin(createUserDto);
+  async createOne(@Body() createUserDto: CreateUserDto) {
+    const result = await this.usersService.createUser(createUserDto);
     return result;
   }
 
-  @Patch()
   @ApiMessage('update an user')
-  update(@Body() updateUserDto: UpdateUserDto) {
+  @Patch()
+  updateOne(@Body() updateUserDto: UpdateUserDto) {
     const result = this.usersService.updateOne(updateUserDto);
     return result;
   }
 
   @ApiMessage('active an user')
-  @Patch('/active/:id([a-f0-9]{24})')
+  @Patch('/active/:id')
   @UsePipes(IdParamTransform)
   activeOne(@Param('id') id: IKey) {
     return this.usersService.updateIsActive(id, IsActiveEnum.ACTIVE);
   }
 
   @ApiMessage('disable an user')
-  @Patch('/disable/:id([a-f0-9]{24})')
+  @Patch('/disable/:id')
   @UsePipes(IdParamTransform)
   disableOne(@Param('id') id: IKey) {
     return this.usersService.updateIsActive(id, IsActiveEnum.DISABLE);
@@ -59,7 +59,7 @@ export class UsersControllerAdmin {
   }
 
   @ApiMessage('find one user')
-  @Get(':id([a-f0-9]{24})')
+  @Get(':id')
   @UsePipes(IdParamTransform)
   findOne(@Param('id') id: IKey) {
     return this.usersService.findOneById(id);

@@ -30,7 +30,7 @@ export class DiscountsRepository {
   async updateDiscountByQuery(
     payload: UpdateQuery<DiscountDocPartial>, query: any
   ): Promise<DiscountDoc | null> {
-    const updated = (await this.discountModel.findOneAndUpdate(query, payload, { new: true }).lean());
+    const updated = await this.discountModel.findOneAndUpdate(query, payload, { new: true }).lean();
     return updated || null;
   }
   //EXIST

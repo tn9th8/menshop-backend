@@ -1,25 +1,23 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
-import { SignUpSellerDto } from 'src/shared/auth/dto/signup-seller.dto';
+import { ConfigService } from '@nestjs/config';
 import { IsActiveEnum, SortEnum } from 'src/common/enums/index.enum';
 import { IKey } from 'src/common/interfaces/index.interface';
 import { isExistMessage, notFoundIdMessage } from 'src/common/utils/exception.util';
 import { computeItemsAndPages } from 'src/common/utils/mongo.util';
 import { hashPass } from 'src/common/utils/security.util';
+import { SignUpSellerDto } from 'src/shared/auth/dto/signup-seller.dto';
 import { UserKeysService } from '../user-keys/user-keys.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { QueryUserDto } from './dto/query-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { IUser } from './schemas/user.schema';
-import { UpdateUserTransform } from './transform/update-user.transform';
+import { UserDoc } from './schemas/user.schema';
 import { UsersRepository } from './users.repository';
-import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UsersService {
   constructor(
     private readonly usersRepo: UsersRepository,
     private readonly userKeysService: UserKeysService,
-    private readonly updateUserTransform: UpdateUserTransform,
     private readonly configService: ConfigService
   ) { }
   //CREATE//
@@ -77,7 +75,7 @@ export class UsersService {
     }
   }
 
-  async createAdmin(payload: CreateUserDto) {
+  async createUser(payload: CreateUserDto) {
     //transform
     try {
       // is exist mail
@@ -88,34 +86,31 @@ export class UsersService {
       }
       // hash password
       const hash = await hashPass(password);
-      //role
-      const role = "ADMIN";
       //create a user
       let created = await this.usersRepo.createOne({
         ...payload,
-        password: hash,
-        role
+        password: hash
       } as any); //{ password: unselect, ... }
       if (!created) {
-        throw new BadRequestException("Có lỗi khi tạo một admin");
+        throw new BadRequestException("Có lỗi khi tạo một user");
       }
       //create key store
       const createdUserKey = await this.userKeysService.createOne({ userId: created._id, verifyToken: null });
       if (!createdUserKey) {
-        throw new BadRequestException("Có lỗi khi cập nhật một userKey");
+        throw new BadRequestException("Có lỗi khi tạo một userKey");
       }
       //return
       const { password: hide, ...newUser } = created;
       return newUser;
     } catch (error) {
       console.log(error);
-      throw new BadRequestException("Có lỗi khi tạo một admin");
+      throw new BadRequestException("Có lỗi khi tạo một user.");
     }
   }
 
   //UPDATE
   async updateOne(payload: UpdateUserDto) {
-    const { id, ...newPayload } = await this.updateUserTransform.transform(payload);
+    const { id, ...newPayload } = payload;
     const updated = await this.usersRepo.updateOneByQuery(newPayload, { _id: id });
     if (!updated) {
       throw new NotFoundException(notFoundIdMessage('user id', id));
@@ -134,12 +129,7 @@ export class UsersService {
 
   //QUERY//
   async findAllByQuery(
-    {
-      page = 1,
-      limit = 24,
-      sort = SortEnum.LATEST,
-      ...query
-    }: QueryUserDto,
+    { page = 1, limit = 24, sort = SortEnum.LATEST, ...query }: QueryUserDto,
     isActive = IsActiveEnum.ACTIVE
   ) {
     const unselect = ['deletedAt', 'isDeleted', '__v'];
@@ -147,14 +137,11 @@ export class UsersService {
       page, limit, sort, unselect, { ...query, isActive: isActive ? true : false }
     );
     const { items, pages } = computeItemsAndPages(metadata, limit);
-    return {
-      data,
-      metadata: { page, limit, items, pages },
-    };
+    return { data, metadata: { page, limit, items, pages } };
   }
 
-  async findByEmail(email: string): Promise<IUser | undefined> {
-    const user = await this.usersRepo.findOneByQuery({ email });
+  async findByEmail(email: string): Promise<UserDoc | null> {
+    const user = await this.usersRepo.findOneByQuery({ email }) || null;
     return user;
   }
 

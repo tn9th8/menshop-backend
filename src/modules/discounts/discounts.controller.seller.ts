@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Param, Patch, Post, Query } from '@nestjs/common';
-import { AuthUserDto } from 'src/shared/auth/dto/auth-user.dto';
+import { IAuthUser } from 'src/common/interfaces/auth-user.interface';
 import { ApiMessage } from 'src/common/decorators/api-message.decorator';
 import { User } from 'src/common/decorators/user.decorator';
-import { ForUserEnum, IsValidEnum } from 'src/common/enums/index.enum';
+import { GroupUserEnum, IsValidEnum } from 'src/common/enums/index.enum';
 import { IKey } from 'src/common/interfaces/index.interface';
 import { IdParamTransform } from 'src/middleware/pipe/id-param.transform';
 import { DiscountsService } from './discounts.service';
@@ -23,7 +23,7 @@ export class DiscountsControllerSeller {
   @Post()
   createOne(
     @Body(CreateDiscountTransform) body: CreateDiscountDto,
-    @User() user: AuthUserDto
+    @User() user: IAuthUser
   ) {
     return this.discountsService.createDiscountForShop(body, user);
   }
@@ -32,7 +32,7 @@ export class DiscountsControllerSeller {
   @Patch()
   updateOne(
     @Body(UpdateDiscountTransform) body: UpdateDiscountDto,
-    @User() user: AuthUserDto
+    @User() user: IAuthUser
   ) {
     return this.discountsService.updateDiscountForShop(body, user);
   }
@@ -41,25 +41,25 @@ export class DiscountsControllerSeller {
   @Get('/valid')
   findAllValidForShop(
     @Query(DiscountQueryTransform) query: DiscountQuery,
-    @User() user: AuthUserDto
+    @User() user: IAuthUser
   ) {
-    return this.discountsService.findDiscountsIsValid(query, IsValidEnum.VALID, ForUserEnum.SELLER, user);
+    return this.discountsService.findDiscountsIsValid(query, IsValidEnum.VALID, GroupUserEnum.SELLER, user);
   }
   @ApiMessage('find all expired discounts')
   @Get('/expired')
   findAllExpired(
     @Query(DiscountQueryTransform) query: DiscountQuery,
-    @User() user: AuthUserDto
+    @User() user: IAuthUser
   ) {
-    return this.discountsService.findDiscountsIsValid(query, IsValidEnum.EXPIRED, ForUserEnum.SELLER, user);
+    return this.discountsService.findDiscountsIsValid(query, IsValidEnum.EXPIRED, GroupUserEnum.SELLER, user);
   }
   //QUERY ONE//
   @ApiMessage('find a discounts')
   @Get('/:id')
   findOne(
     @Param('id', IdParamTransform) id: IKey,
-    @User() user: AuthUserDto
+    @User() user: IAuthUser
   ) {
-    return this.discountsService.findDiscount(id, ForUserEnum.SELLER, user);
+    return this.discountsService.findDiscount(id, GroupUserEnum.SELLER, user);
   }
 }

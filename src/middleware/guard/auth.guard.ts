@@ -1,9 +1,4 @@
-import {
-  CanActivate,
-  ExecutionContext,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
@@ -20,11 +15,9 @@ export class AuthGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const isSkipAuth = this.reflector.getAllAndOverride<boolean>(IS_SKIP_JWT_KEY, [
-      context.getHandler(),
-      context.getClass(),
+      context.getHandler(), context.getClass(),
     ]);
     if (isSkipAuth) {
-      // 💡 See this condition
       return true;
     }
 
@@ -40,7 +33,7 @@ export class AuthGuard implements CanActivate {
           secret: this.configService.get<string>('JWT_SECRET'),
         }
       );
-      // 💡 We're assigning the payload to the request object here
+      // We're assigning the payload to the request object here
       // so that we can access it in our route handlers
       request['user'] = payload;
     } catch {

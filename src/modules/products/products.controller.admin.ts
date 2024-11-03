@@ -1,74 +1,32 @@
-import { Body, Controller, Get, Param, Patch, Post, Query, UsePipes } from '@nestjs/common';
+import { Controller, Get, Param, Patch, Query, UsePipes } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { AuthUserDto } from 'src/shared/auth/dto/auth-user.dto';
 import { ApiMessage } from 'src/common/decorators/api-message.decorator';
 import { User } from 'src/common/decorators/user.decorator';
-import { CreateProductDto } from './dto/create-product.dto';
-import { ProductsService } from './products.service';
-import { IProduct } from './schemas/product.schema';
-import { Types } from 'mongoose';
-import { UpdateProductDto } from './dto/update-product.dto';
-import { QueryProductTransform } from './transform/query-product.transform';
-import { QueryProductDto } from './dto/query-product.dto';
-import { IsActiveEnum, IsPublishedEnum } from 'src/common/enums/index.enum';
-import { IdParamTransform } from 'src/middleware/pipe/id-param.transform';
+import { GroupUserEnum, IsActiveEnum, IsPublishedEnum } from 'src/common/enums/index.enum';
+import { IAuthUser } from 'src/common/interfaces/auth-user.interface';
 import { IKey } from 'src/common/interfaces/index.interface';
+import { IdParamTransform } from 'src/middleware/pipe/id-param.transform';
+import { QueryProductDto } from './dto/query-product.dto';
+import { ProductsService } from './products.service';
+import { QueryProductTransform } from './transform/query-product.transform';
 
 @ApiTags('Products Module For Admin Side')
 @Controller('/admin/products')
 export class ProductsControllerAdmin {
   constructor(private readonly productsService: ProductsService) { }
-
-  //CREATE//
-  @ApiMessage('create a product')
-  @Post()
-  create(
-    @Body() createProductDto: CreateProductDto,
-    @User() user: AuthUserDto
-  ) {
-    return this.productsService.createOne(createProductDto, user);
-  }
-
   //UPDATE//
-  @ApiMessage('publish a product')
-  @Patch('/published/:id([a-f0-9]{24})')
-  publishOne(
-    @Param('id', IdParamTransform) id: IKey,
-    @User() user: AuthUserDto,
-  ) {
-    return this.productsService.updateIsPublished(id, IsPublishedEnum.PUBLISHED, user);
-  }
-
-  @ApiMessage('publish a product')
-  @Patch('/draft/:id([a-f0-9]{24})')
-  unpublishOne(
-    @Param('id', IdParamTransform) id: IKey,
-    @User() user: AuthUserDto,
-  ) {
-    return this.productsService.updateIsPublished(id, IsPublishedEnum.DRAFT, user);
-  }
-
   @ApiMessage('active a shop')
-  @Patch('/active/:id([a-f0-9]{24})')
+  @Patch('/active/:id')
   @UsePipes(IdParamTransform)
   activeOne(@Param('id') id: IKey) {
     return this.productsService.updateIsActive(id, IsActiveEnum.ACTIVE);
   }
 
   @ApiMessage('disable a shop')
-  @Patch('/disable/:id([a-f0-9]{24})')
+  @Patch('/disable/:id')
   @UsePipes(IdParamTransform)
   disableOne(@Param('id') id: IKey) {
     return this.productsService.updateIsActive(id, IsActiveEnum.DISABLE);
-  }
-
-  @ApiMessage('update a product')
-  @Patch()
-  updateOne(
-    @Body() payload: UpdateProductDto,
-    @User() user: AuthUserDto
-  ) {
-    return this.productsService.updateOne(payload, user);
   }
   //END UPDATE//
 
@@ -93,29 +51,25 @@ export class ProductsControllerAdmin {
 
   @ApiMessage('find all draft products')
   @Get('/draft')
-  @UsePipes(QueryProductTransform)
   findAllDraft(
-    @Query() query: QueryProductDto,
-    @User() user: AuthUserDto //todo: token
+    @Query(QueryProductTransform) query: QueryProductDto
   ) {
-    return this.productsService.findAllIsPublishedByQuery(query, IsPublishedEnum.DRAFT, user);
+    return this.productsService.findAllIsPublishedByQuery(query, IsPublishedEnum.DRAFT, GroupUserEnum.ADMIN);
   }
 
   @ApiMessage('find all published products')
   @Get('/published')
-  @UsePipes(QueryProductTransform)
   findAllPublished(
-    @Query() query: QueryProductDto,
-    @User() user: AuthUserDto //todo: token
+    @Query(QueryProductTransform) query: QueryProductDto
   ) {
-    return this.productsService.findAllIsPublishedByQuery(query, IsPublishedEnum.PUBLISHED, user);
+    return this.productsService.findAllIsPublishedByQuery(query, IsPublishedEnum.PUBLISHED, GroupUserEnum.ADMIN);
   }
 
   @ApiMessage('find one user')
-  @Get(':id([a-f0-9]{24})')
+  @Get(':id')
   @UsePipes(IdParamTransform)
   findOne(@Param('id') id: IKey) {
-    return this.productsService.findOneById(id);
+    return this.productsService.findOneById(id, GroupUserEnum.ADMIN);
   }
   //END QUERY//
 }

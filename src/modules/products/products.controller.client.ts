@@ -19,9 +19,8 @@ export class ProductsControllerClient {
   @ApiMessage('Search all products')
   @SkipJwt()
   @Get('/search')
-  @UsePipes(SearchProductTransform)
   searchAll(
-    @Query() query: SearchProductDto
+    @Query(SearchProductTransform) query: SearchProductDto
   ) {
     return this.productsService.searchAll(query);
   }
@@ -29,18 +28,16 @@ export class ProductsControllerClient {
   @ApiMessage('Find all products')
   @SkipJwt()
   @Get()
-  @UsePipes(SearchProductTransform)
   findAll(
-    @Query() query: SearchProductDto
+    @Query(SearchProductTransform) query: SearchProductDto
   ) {
     return this.productsService.findAllForSales(query);
   }
 
   @ApiMessage('Find a product')
   @SkipJwt()
-  @UsePipes(IdParamTransform)
-  @Get('/:id([a-f0-9]{24})')
-  findOne(@Param('id') id: IKey) {
+  @Get('/:id')
+  findOne(@Param('id', IdParamTransform) id: IKey) {
     return this.productsService.findOneValidById(id);
   }
   //END QUERY//

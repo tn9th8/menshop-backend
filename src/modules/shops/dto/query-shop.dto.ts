@@ -11,7 +11,7 @@ export class QueryShopDto {
     name?: string;
     isMall?: boolean;
     //ref
-    user?: IKey;
+    seller?: IKey;
 }
 
 export interface IQueryShop extends QueryShopDto {
