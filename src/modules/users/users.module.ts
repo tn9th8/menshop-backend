@@ -1,19 +1,17 @@
 import { Module } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { User, UserSchema } from './schemas/user.schema';
 import { MongooseModule } from '@nestjs/mongoose';
-import { UsersControllerClient } from './users.controller.client';
+import { UserKeysModule } from '../user-keys/user-keys.module';
+import { User, UserSchema } from './schemas/user.schema';
 import { UsersControllerAdmin } from './users.controller.admin';
 import { UsersRepository } from './users.repository';
-import { KeyStoreModule } from '../key-store/key-store.module';
-import { UpdateUserTransform } from './transform/update-user.transform';
+import { UsersService } from './users.service';
 
 @Module({
-  controllers: [UsersControllerAdmin, UsersControllerClient],
-  providers: [UsersService, UsersRepository, UpdateUserTransform],
+  controllers: [UsersControllerAdmin],
+  providers: [UsersService, UsersRepository],
   imports: [
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
-    KeyStoreModule
+    UserKeysModule
   ],
   exports: [UsersService, UsersRepository],
 })

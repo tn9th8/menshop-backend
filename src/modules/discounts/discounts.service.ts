@@ -1,7 +1,7 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateDiscountDto } from './dto/create-discount.dto';
 import { UpdateDiscountDto } from './dto/update-discount.dto';
-import { AuthUserDto } from 'src/auth/dto/auth-user.dto';
+import { IAuthUser } from 'src/common/interfaces/auth-user.interface';
 import { DiscountsRepository } from './discounts.repository';
 import { createErrorMessage, isExistMessage, notFoundIdMessage, notFoundMessage } from 'src/common/utils/exception.util';
 import { ShopsService } from '../shops/shops.service';
@@ -9,10 +9,10 @@ import { IKey, IReference } from 'src/common/interfaces/index.interface';
 import { DiscountApplyTo, DiscountType } from 'src/common/enums/discount.enum';
 import { ProductsService } from '../products/products.service';
 import { ProductSortEnum } from 'src/common/enums/product.enum';
-import { ForUserEnum, isSelectEnum, IsValidEnum, SortEnum } from 'src/common/enums/index.enum';
-import { Discount, DiscountDoc } from './schemas/discount.schema';
+import { GroupUserEnum, IsSelectEnum, IsValidEnum, SortEnum } from 'src/common/enums/index.enum';
+import { Discount, DiscountDoc, DiscountQuery } from './schemas/discount.schema';
 import { Result } from 'src/common/interfaces/response.interface';
-import { buildQueryExcludeId, buildQueryModelIdSellerId, computeItemsAndPages, toDbLikeQuery } from 'src/common/utils/mongo.util';
+import { buildQueryExcludeId, buildQueryModelIdSellerId, computeItemsAndPages, buildQueryLike } from 'src/common/utils/mongo.util';
 import { IProduct } from '../products/schemas/product.schema';
 import { ApplyDiscountDto } from './dto/apply-discount.dto';
 import { isGreaterThanToday } from 'src/common/utils/index.util';
@@ -25,10 +25,9 @@ export class DiscountsService {
     private readonly productsService: ProductsService,
   ) { }
   //CREATE//
-  async createDiscountForShop(body: CreateDiscountDto, user: AuthUserDto) {
+  async createDiscountForShop(body: CreateDiscountDto, user: IAuthUser) {
     const { id: sellerId } = user;
-    const {
-      name, code, description, type, value, startDate, endDate, minPurchaseValue,
+    const { name, code, description, type, value, startDate, endDate, minPurchaseValue,
       applyMax, applyMaxPerClient, applyTo, specificProducts } = body;
     //code not exist //note: name not exist, specificProducts is exist
     if (await this.discountsRepo.existDiscountByQuery({ code }))
@@ -52,10 +51,9 @@ export class DiscountsService {
     return createdDiscount;
   }
   //UPDATE//
-  async updateDiscountForShop(body: UpdateDiscountDto, user: AuthUserDto) {
+  async updateDiscountForShop(body: UpdateDiscountDto, user: IAuthUser) {
     const { id: sellerId } = user;
-    const {
-      id: discountId, name, code, description, type, value, startDate, endDate, minPurchaseValue,
+    const { id: discountId, name, code, description, type, value, startDate, endDate, minPurchaseValue,
       applyMax, applyMaxPerClient, applyTo, specificProducts } = body;
     //code not exist: //note: discount is expired => ko dc update => query isValid true. discount is valid => update date > tody => isValid = true  (luôn đúng)
     if (await this.discountsRepo.existDiscountByQuery(buildQueryExcludeId({ code, isValid: true }, discountId)))
@@ -79,11 +77,11 @@ export class DiscountsService {
     return updatedDiscount;
   }
   //
-  async applyDiscount(body: ApplyDiscountDto, user: AuthUserDto) {
+  async applyDiscount(body: ApplyDiscountDto, user: IAuthUser) {
     const { code, shop: shopId, products } = body;
     const { id: clientId } = user;
     //find discount by code
-    const foundDiscount = await this.discountsRepo.findDiscountByQuerySelect({ code, shop: shopId });
+    const foundDiscount = await this.discountsRepo.findDiscountByQueryRaw({ code, shop: shopId });
     if (!foundDiscount)
       throw new NotFoundException(notFoundMessage('discount'));
     //check
@@ -125,9 +123,9 @@ export class DiscountsService {
     };
   }
   //
-  async cancelDiscount(code: string, user: AuthUserDto) {
+  async cancelDiscount(code: string, user: IAuthUser) {
     //find discount
-    const foundDiscount = await this.discountsRepo.findDiscountByQuerySelect({ code });
+    const foundDiscount = await this.discountsRepo.findDiscountByQueryRaw({ code });
     if (!foundDiscount)
       throw new NotFoundException(notFoundMessage('discount'));
     //pull client
@@ -154,36 +152,36 @@ export class DiscountsService {
       throw new NotFoundException(notFoundMessage('discount'));
     return updatedDiscount;
   }
-  //QUERY  ALL//
+  //QUERY ALL//
   /**
    *
    * @param query any
    * @param isValid IsValidEnum
-   * @param forUser ForUserEnum: ADMIN | SELLER + auth user | CLIENT + query shop
-   * @param user AuthUserDto ()
+   * @param forUser GroupUserEnum: ADMIN | SELLER + auth user | CLIENT + query shop
+   * @param user IAuthUser ()
    * @returns Promise<Result<DiscountDoc>>
    */
   async findDiscountsIsValid(
-    { page = 1, limit = 24, sort = SortEnum.LATEST, ...query }: any, isValid = IsValidEnum.VALID,
-    forUser = ForUserEnum.ADMIN, user: AuthUserDto = null
+    { page = 1, limit = 24, sort = SortEnum.LATEST, ...query }: DiscountQuery, isValid = IsValidEnum.VALID,
+    forUser = GroupUserEnum.ADMIN, user: IAuthUser = null
   ): Promise<Result<DiscountDoc>> {
     const newQuery =
-      forUser === ForUserEnum.ADMIN
-        ? { ...query, ...toDbLikeQuery(['name'], [query.name]), isValid }
-        : forUser === ForUserEnum.SELLER
-          ? { ...query, ...toDbLikeQuery(['name'], [query.name]), isValid, seller: user?.id }
-          : forUser === ForUserEnum.CLIENT
-            ? { ...query, ...toDbLikeQuery(['name'], [query.name]), isValid, shop: query?.shop || null } : null;
+      forUser === GroupUserEnum.ADMIN
+        ? { ...query, ...buildQueryLike(['name'], [query.name]), isValid }
+        : forUser === GroupUserEnum.SELLER
+          ? { ...query, ...buildQueryLike(['name'], [query.name]), isValid, seller: user?.id }
+          : forUser === GroupUserEnum.CLIENT
+            ? { ...query, ...buildQueryLike(['name'], [query.name]), isValid, shop: query?.shop || null } : null;
     const select = ['_id', 'name', 'code', 'type', 'value', 'startDate', 'endDate', 'applyMax', 'applyTo', 'appliedCount'];
     const { data, metadata } = await this.discountsRepo.findDiscountsByQuery(page, limit, sort, newQuery, select);
     const { items, pages } = computeItemsAndPages(metadata, limit);
     return { data, metadata: { page, limit, items, pages } };
   }
   async findProductsByDiscountCode(
-    { page = 1, limit = 24, sort = ProductSortEnum.CTIME, ...query }
+    { page = 1, limit = 24, sort = ProductSortEnum.CTIME, ...query }: any
   ) {
     //find a valid discount code
-    const foundDiscount = await this.discountsRepo.findDiscountByQuerySelect(
+    const foundDiscount = await this.discountsRepo.findDiscountByQueryRaw(
       { code: query?.code || null, isValid: true }, ['shop', 'applyTo', 'specificProducts']
     );
     if (!foundDiscount)
@@ -202,20 +200,20 @@ export class DiscountsService {
     return productPage;
   }
   //QUERY ONE//
-  async findDiscountById(
-    discountId: IKey, forUser = ForUserEnum.ADMIN, user: AuthUserDto = null
+  async findDiscount(
+    discountId: IKey, forUser = GroupUserEnum.ADMIN, user: IAuthUser = null
   ): Promise<Discount> {
     const query =
-      forUser === ForUserEnum.ADMIN ? { _id: discountId }
-        : forUser === ForUserEnum.SELLER ? { _id: discountId, seller: user?.id }
-          : forUser === ForUserEnum.CLIENT ? { _id: discountId, isValid: true } : null; //luôn đúng
+      forUser === GroupUserEnum.ADMIN ? { _id: discountId }
+        : forUser === GroupUserEnum.SELLER ? { _id: discountId, seller: user?.id }
+          : forUser === GroupUserEnum.CLIENT ? { _id: discountId, isValid: true } : null; //luôn đúng
     const unselect = ['appliedClients', 'createdAt', 'updatedAt', 'isDeleted', 'deletedAt', '__v'];
     const references: IReference[] = [
       { attribute: 'shop', select: ['_id', 'name', 'isActive'] },
       { attribute: 'seller', select: ['_id', 'name', 'isActive'] },
       { attribute: 'specificProducts', select: ['_id', 'name', 'isPublished', 'isActive'] }
     ];
-    const found = await this.discountsRepo.findDiscountByQuery(query, isSelectEnum.UNSELECT, unselect, references);
+    const found = await this.discountsRepo.findDiscountByQueryRefer(query, unselect, IsSelectEnum.UNSELECT, references);
     if (!found) throw new NotFoundException(notFoundIdMessage('discountId', discountId));
     return found;
   }

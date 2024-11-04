@@ -1,9 +1,9 @@
 import { Body, Controller, Get, Param, Patch, Post, Query, UsePipes } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiMessage } from 'src/common/decorators/api-message.decorator';
-import { IsPublishedEnum } from 'src/common/enums/index.enum';
+import { GroupUserEnum, IsPublishedEnum } from 'src/common/enums/index.enum';
 import { IKey } from 'src/common/interfaces/index.interface';
-import { IdParamTransform } from 'src/core/pipe/id-param.transform';
+import { IdParamTransform } from 'src/middleware/pipe/id-param.transform';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { QueryCategoryDto } from './dto/query-category.dto';
@@ -14,14 +14,12 @@ import { QueryCategoryTransform } from './transform/query-category.transform';
 @Controller('admin/categories')
 export class CategoriesControllerAdmin {
   constructor(private readonly categoriesService: CategoriesService) { }
-
   //CREATE//
   @ApiMessage('create a category')
   @Post()
   createOne(@Body() createCategoryDto: CreateCategoryDto) {
     return this.categoriesService.createOne(createCategoryDto);
   }
-
   //UPDATE//
   @ApiMessage('update a category')
   @Patch()
@@ -30,19 +28,18 @@ export class CategoriesControllerAdmin {
   }
 
   @ApiMessage('publish a category')
-  @Patch('/published/:id([a-f0-9]{24})')
+  @Patch('/published/:id')
   @UsePipes(IdParamTransform)
   publishOne(@Param('id') id: IKey) {
     return this.categoriesService.updateIsPublished(id, IsPublishedEnum.PUBLISHED);
   }
 
   @ApiMessage('draft (unpublished) a category')
-  @Patch('/draft/:id([a-f0-9]{24})')
+  @Patch('/draft/:id')
   @UsePipes(IdParamTransform)
   unpublishOne(@Param('id') id: IKey) {
     return this.categoriesService.updateIsPublished(id, IsPublishedEnum.DRAFT);
   }
-
   //QUERY//
   @ApiMessage('find all draft categories')
   @Get('/draft')
@@ -59,10 +56,10 @@ export class CategoriesControllerAdmin {
   }
 
   @ApiMessage('find one categories')
-  @Get(':id([a-f0-9]{24})')
+  @Get(':id')
   @UsePipes(IdParamTransform)
   findOne(@Param('id') id: IKey) {
-    return this.categoriesService.findOneById(id);
+    return this.categoriesService.findOneById(id, GroupUserEnum.ADMIN);
   }
 
 }

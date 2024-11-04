@@ -1,56 +1,31 @@
-import { Body, Controller, Get, Param, Patch, Post, Query, UsePipes } from '@nestjs/common';
+import { Controller, Get, Param, Patch, Query, UsePipes } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { AuthUserDto } from 'src/auth/dto/auth-user.dto';
 import { ApiMessage } from 'src/common/decorators/api-message.decorator';
-import { User } from 'src/common/decorators/user.decorator';
-import { IsActiveEnum } from 'src/common/enums/index.enum';
+import { GroupUserEnum, IsActiveEnum } from 'src/common/enums/index.enum';
 import { IKey } from 'src/common/interfaces/index.interface';
-import { IdParamTransform } from 'src/core/pipe/id-param.transform';
-import { CreateShopDto } from './dto/create-shop.dto';
+import { IdParamTransform } from 'src/middleware/pipe/id-param.transform';
 import { QueryShopDto } from './dto/query-shop.dto';
-import { UpdateShopDto } from './dto/update-shop.dto';
 import { ShopsService } from './shops.service';
 import { QueryShopTransform } from './transform/query-shop.transform';
 
-@ApiTags('Shops Module for Admins')
+@ApiTags('Shops Module for Admin Side')
 @Controller('/admin/shops')
 export class ShopsControllerAdmin {
   constructor(private readonly shopsService: ShopsService) { }
-
-  //CREATE//
-  @ApiMessage('create a shop')
-  @Post()
-  create(
-    @Body() createShopDto: CreateShopDto,
-    @User() user: AuthUserDto
-  ) {
-    return this.shopsService.create(createShopDto, user);
-  }
-
   //UPDATE//
-  @ApiMessage('update a shop')
-  @Patch()
-  update(
-    @Body() updateShopDto: UpdateShopDto,
-    @User() user: AuthUserDto
-  ) {
-    return this.shopsService.update(updateShopDto, user);
-  }
-
   @ApiMessage('active a shop')
-  @Patch('/active/:id([a-f0-9]{24})')
+  @Patch('/active/:id')
   @UsePipes(IdParamTransform)
   activeOne(@Param('id') id: IKey) {
     return this.shopsService.updateIsActive(id, IsActiveEnum.ACTIVE);
   }
 
   @ApiMessage('disable a shop')
-  @Patch('/disable/:id([a-f0-9]{24})')
+  @Patch('/disable/:id')
   @UsePipes(IdParamTransform)
   disableOne(@Param('id') id: IKey) {
     return this.shopsService.updateIsActive(id, IsActiveEnum.DISABLE);
   }
-
   //QUERY//
   @ApiMessage('find all active shops')
   @Get('/active')
@@ -67,9 +42,9 @@ export class ShopsControllerAdmin {
   }
 
   @ApiMessage('find one shop')
-  @Get(':id([a-f0-9]{24})')
+  @Get(':id')
   @UsePipes(IdParamTransform)
   findOne(@Param('id') id: IKey) {
-    return this.shopsService.findOneById(id);
+    return this.shopsService.findOneById(id, GroupUserEnum.ADMIN);
   }
 }

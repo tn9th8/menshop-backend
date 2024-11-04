@@ -12,28 +12,18 @@ export type ICategory = CategoryDocument & IBaseDocument;
 export class Category {
     @Prop({ required: true })
     name: string;
-
-    @Prop({ required: true }) //plugin
-    slug: string;
-
     @Prop({ default: null })
     description: string;
-
     @Prop({ type: Number, default: CategoryLevelEnum.LV1, required: true })
     level: CategoryLevelEnum;
-
     @Prop({ type: [String], default: null })
     attributes: string[];
-
     @Prop({ type: [String], default: null })
     specifications: string[];
-
-    @Prop({ index: true, select: false, default: false, required: true }) //draft or published
-    isPublished: boolean;
-
-    //ref
     @Prop({ type: [SchemaTypes.ObjectId], ref: Category.name, default: null })
     children: IKey[];
+    @Prop({ index: true, default: false, required: true }) //draft or published
+    isPublished: boolean;
 }
 
 export const CategorySchema = SchemaFactory.createForClass(Category);

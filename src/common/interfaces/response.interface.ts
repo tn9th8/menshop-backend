@@ -7,6 +7,7 @@ export interface Metadata {
     //count database documents
     updatedCount?: number,
     queriedCount?: number,
+    deletedCount?: number;
 }
 
 export interface Result<T> {

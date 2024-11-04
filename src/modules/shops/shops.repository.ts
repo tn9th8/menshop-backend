@@ -1,41 +1,40 @@
 import { Injectable } from '@nestjs/common';
-import { CreateShopDto } from './dto/create-shop.dto';
-import { UpdateShopDto } from './dto/update-shop.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { IShop, Shop } from './schemas/shop.schema';
-import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
-import { IKey, IReference } from 'src/common/interfaces/index.interface';
 import { FilterQuery, QueryOptions } from 'mongoose';
-import { SortEnum } from 'src/common/enums/index.enum';
-import { IQueryShop } from './dto/query-shop.dto';
+import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
+import { IsSelectEnum, SortEnum } from 'src/common/enums/index.enum';
+import { IDbSort, IKey, IReference } from 'src/common/interfaces/index.interface';
 import { Result } from 'src/common/interfaces/response.interface';
-import { toDbLikeQuery, toDbSelect, toDbUnselect } from 'src/common/utils/mongo.util';
-import { IDbSort } from 'src/common/interfaces/index.interface';
+import { buildQueryLike, toDbPopulates, toDbSelect, toDbSelectOrUnselect, toDbUnselect } from 'src/common/utils/mongo.util';
+import { IQueryShop } from './dto/query-shop.dto';
+import { Shop, ShopDoc, ShopPartial, ShopQuery } from './schemas/shop.schema';
 
 @Injectable()
 export class ShopsRepository {
   constructor(
     @InjectModel(Shop.name)
-    private readonly shopModel: SoftDeleteModel<IShop>
+    private readonly shopModel: SoftDeleteModel<ShopDoc>
   ) { }
 
   //CREATE//
-  async create(payload: any): Promise<IShop> {
-    const { userId, ...dbPayload } = payload;
-    const created = await this.shopModel.create({ ...dbPayload, user: userId });
-    return created;
+  async createShop(
+    entity: Shop
+  ): Promise<ShopDoc | null> {
+    try {
+      const { _doc: created } = await this.shopModel.create(entity) as any;
+      return created;
+    } catch (error) {
+      console.log('>>> Exception: ShopsRepository: createShop: ' + error);
+      return null;
+    }
   }
 
   //UPDATE//
   async updateOneByQuery(
-    payload: any,
-    query: any,
-    isNew: boolean = true
-  ) {
-    const dbQuery: FilterQuery<any> = { _id: query.shopId, user: query.userId };
-    const dbOptions: QueryOptions = { new: isNew };
-    const updated = await this.shopModel.findOneAndUpdate(dbQuery, payload, dbOptions);
-    return updated;
+    entity: ShopPartial, query: ShopQuery
+  ): Promise<ShopDoc | null> {
+    const updated = await this.shopModel.findOneAndUpdate(query, entity, { new: true });
+    return updated || null;
   }
 
   async updateLeanById(
@@ -74,10 +73,10 @@ export class ShopsRepository {
     sort: SortEnum,
     unselect: string[],
     query: IQueryShop
-  ): Promise<Result<IShop>> {
+  ): Promise<Result<ShopDoc>> {
     const dbQuery = {
       ...query,
-      ...toDbLikeQuery(['name'], [query.name])
+      ...buildQueryLike(['name'], [query.name])
     }
     const dbUnselect = toDbUnselect(unselect);
     const dbSort: IDbSort =
@@ -104,24 +103,29 @@ export class ShopsRepository {
     }
   }
 
-  async findOneById(
-    needId: IKey,
-    unselect: string[],
-    references: IReference[]
-  ): Promise<IShop | null> {
-    const found = await this.shopModel.findById(needId)
-      .select(toDbUnselect(unselect))
-      .populate({
-        path: references[0].attribute,
-        select: toDbSelect(references[0].select)
-      });
+  //QUERY ONE//
+  /**
+   * Tìm kiếm 1 doc đầy đủ với query, select/unselect, refers
+   * @param query
+   * @param isSelect
+   * @param select
+   * @param refers
+   * @returns
+   */
+  async findShopByQueryRefer(
+    query: any, select: string[], isSelect: IsSelectEnum, refers: IReference[] = []
+  ): Promise<Shop | null> {
+    const found = await this.shopModel.findOne(query)
+      .select(toDbSelectOrUnselect(select, isSelect))
+      .populate(toDbPopulates(refers))
+      .lean();
     return found || null;
   }
 
   async findOneByQuerySelect(
     query: any,
     select: string[]
-  ): Promise<IShop | null> {
+  ): Promise<ShopDoc | null> {
     const found = await this.shopModel.findOne(query)
       .select(toDbSelect(select))
       .lean();

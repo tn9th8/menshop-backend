@@ -22,7 +22,7 @@ export class Need {
     @Prop({ type: Number, default: NeedLevelEnum.LV1, required: true })
     level: NeedLevelEnum;
 
-    @Prop({ index: true, select: false, default: false, required: true }) //draft or published (isOnBar)
+    @Prop({ index: true, default: false, required: true }) //draft or published (isOnBar)
     isPublished: boolean;
 
     //ref

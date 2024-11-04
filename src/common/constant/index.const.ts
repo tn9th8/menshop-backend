@@ -1,0 +1,1 @@
+export const unselectConst = ['createdAt', 'updatedAt', 'isDeleted', 'deletedAt', '__v'];

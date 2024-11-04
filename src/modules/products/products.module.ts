@@ -13,10 +13,11 @@ import { CreateProductTransform } from './transform/create-product.transform';
 import { UpdatedProductTransform } from './transform/update-product.transform';
 import { InventoriesModule } from '../inventories/inventories.module';
 import { ProductsHelper } from './helper/products.helper';
+import { ProductsControllerSeller } from './products.controller.seller';
 
 @Module({
   controllers: [
-    ProductsControllerAdmin, ProductsControllerClient
+    ProductsControllerAdmin, ProductsControllerSeller, ProductsControllerClient
   ],
   providers: [
     ProductsService, ProductsRepository,

@@ -1,6 +1,12 @@
 import * as bcrypt from 'bcrypt';
 import { generateKeyPairSync, KeyPairSyncResult } from 'crypto';
 
+export const RefreshToken = 'refreshToken';
+export const extractRefreshToken = function (req: any) {
+    const token = req && req.cookies ? req.cookies[RefreshToken] : null;
+    return token;
+};
+
 // function hash password
 export const hashPass = async (plain: string): Promise<string> => {
     const saltRounds = 14;

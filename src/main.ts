@@ -6,7 +6,7 @@ import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
-import { SignInDto } from './auth/dto/sign-in.dto';
+import { SignInDto } from './shared/auth/dto/signin.dto';
 import metadata from './metadata';
 import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';

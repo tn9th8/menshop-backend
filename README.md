@@ -64,7 +64,7 @@ $ npm run test:cov
 # master is default
 $ git checkout master
 
-# dev1 for user, auth
+# dev1 for user, auth, role, permission
 $ git checkout dev1
 
 # dev2 for product, category, need, sku

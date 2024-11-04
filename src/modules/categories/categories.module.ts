@@ -13,11 +13,10 @@ import { UtilCategoriesService } from './factory/util-categories.service';
 import { Category, CategorySchema } from './schemas/category.schema';
 import { CreateCategoryTransform } from './transform/create-category.transform';
 import { UpdatedCategoryTransform } from './transform/update-category.transform';
+import { CategoriesControllerSeller } from './categories.controller.seller';
 
 @Module({
-  controllers: [
-    CategoriesControllerAdmin, CategoriesControllerClient
-  ],
+  controllers: [CategoriesControllerAdmin, CategoriesControllerSeller, CategoriesControllerClient],
   providers: [
     CategoriesService, CategoriesRepository,
     CategoriesFactory, UtilCategoriesService,

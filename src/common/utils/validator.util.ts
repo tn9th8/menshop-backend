@@ -39,7 +39,7 @@ export const minStringMessage = (attribute: string) => {
 }
 
 export const isNotEmptyMessage = (attribute: string) => {
-    return { message: `${attribute} không là empty/null/undefined` };
+    return { message: `${attribute} không nên để trống` };
 }
 
 export const isArrayMessage = (attribute: string) => {
