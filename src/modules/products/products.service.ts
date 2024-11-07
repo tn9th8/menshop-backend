@@ -96,22 +96,14 @@ export class ProductsService {
 
   //QUERY//
   async findAllIsActiveByQuery(
-    {
-      page = 1,
-      limit = 24,
-      sort = SortEnum.LATEST,
-      ...query
-    }: QueryProductDto,
+    { page = 1, limit = 24, sort = SortEnum.LATEST, ...query }: QueryProductDto,
     isActive = IsActiveEnum.ACTIVE
   ) {
     const { data, metadata } = await this.productsRepository.findAllByQuery(
       page, limit, sort, unselectConst, { ...query, isActive: isActive ? true : false }
     );
     const { items, pages } = computeItemsAndPages(metadata, limit);
-    return {
-      data,
-      metadata: { page, limit, items, pages },
-    };
+    return { data, metadata: { page, limit, items, pages } };
   }
 
   async findAllIsPublishedByQuery(
@@ -129,22 +121,12 @@ export class ProductsService {
     const { data, metadata } = await this.productsRepository.findAllByQuery(
       page, limit, sort, unselectConst, filter);
     const { items, pages } = computeItemsAndPages(metadata, limit);
-    return {
-      data,
-      metadata: { page, limit, items, pages },
-    };
+    return { data, metadata: { page, limit, items, pages } };
   }
 
   async searchAll(
-    {
-      page = 1,
-      limit = 24,
-      sort = ProductSortEnum.CTIME,
-      keyword = '',
-      ...query
-    }: SearchProductDto,
-    isPublished = true,
-    isActive = true
+    { page = 1, limit = 24, sort = ProductSortEnum.CTIME, keyword = '', ...query }: SearchProductDto,
+    isPublished = true, isActive = true
   ) {
     const keywordReg = keyword ? (new RegExp(keyword)).source : ''; //!falsy
     const newQuery = { ...query, isPublished, isActive };
@@ -210,4 +192,28 @@ export class ProductsService {
     return found;
   }
   //END QUERY//
+
+  //QUERY OR OTHER SERVICES//
+  /*
+  shopId
+  productItems: {
+    _id,
+    price
+    quantity,
+  }
+  */
+  async checkProductItem(productItems: any) {
+    productItems = await Promise.all(productItems.map(async productItem => {
+      const found = await this.productsRepository.findOneByQueryRaw(
+        { _id: productItem._id }, ['_id', 'name', 'thumb', 'price']
+      );
+      if (!found)
+        return null;
+      return {
+        ...found,
+        quantity: productItem.quantity
+      }
+    }));
+    return productItems;
+  }
 }

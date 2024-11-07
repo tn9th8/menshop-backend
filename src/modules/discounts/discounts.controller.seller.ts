@@ -8,7 +8,7 @@ import { IdParamTransform } from 'src/middleware/pipe/id-param.transform';
 import { DiscountsService } from './discounts.service';
 import { CreateDiscountDto } from './dto/create-discount.dto';
 import { UpdateDiscountDto } from './dto/update-discount.dto';
-import { DiscountQuery } from './schemas/discount.schema';
+import { DiscountQuery } from './entities/discount.entity';
 import { CreateDiscountTransform } from './transform/create-discount.transform';
 import { DiscountQueryTransform } from './transform/discount-query.transform';
 import { UpdateDiscountTransform } from './transform/update-discount.transform';

@@ -67,13 +67,13 @@ $ git checkout master
 # dev1 for user, auth, role, permission
 $ git checkout dev1
 
-# dev2 for product, category, need, sku
+# dev2 for product, sku, inventory, price,
 $ git checkout dev2
 
-# dev3 for shop, collection, brand
+# dev3 for shop, collection, brand, category, need
 $ git checkout dev3
 
-# dev3 for inventory, price, discount
+# dev3 for cart, purchase, discount
 $ git checkout dev4
 ```
 

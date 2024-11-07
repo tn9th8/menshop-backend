@@ -10,7 +10,7 @@ import { DiscountApplyTo, DiscountType } from 'src/common/enums/discount.enum';
 import { ProductsService } from '../products/products.service';
 import { ProductSortEnum } from 'src/common/enums/product.enum';
 import { GroupUserEnum, IsSelectEnum, IsValidEnum, SortEnum } from 'src/common/enums/index.enum';
-import { Discount, DiscountDoc, DiscountQuery } from './schemas/discount.schema';
+import { Discount, DiscountDoc, DiscountQuery } from './entities/discount.entity';
 import { Result } from 'src/common/interfaces/response.interface';
 import { buildQueryExcludeId, buildQueryModelIdSellerId, computeItemsAndPages, buildQueryLike } from 'src/common/utils/mongo.util';
 import { IProduct } from '../products/schemas/product.schema';
@@ -77,17 +77,16 @@ export class DiscountsService {
     return updatedDiscount;
   }
   //
-  async applyDiscount(body: ApplyDiscountDto, user: IAuthUser) {
-    const { code, shop: shopId, products } = body;
-    const { id: clientId } = user;
+  async applyDiscount(body: ApplyDiscountDto, client: IAuthUser) {
+    const { code, shop: shopId, productItems } = body;
+    const { id: clientId } = client;
     //find discount by code
     const foundDiscount = await this.discountsRepo.findDiscountByQueryRaw({ code, shop: shopId });
     if (!foundDiscount)
       throw new NotFoundException(notFoundMessage('discount'));
     //check
     const { isValid, endDate, applyMax, applyMaxPerClient, appliedClients, minPurchaseValue,
-      applyTo, specificProducts, type, value, _id
-    } = foundDiscount;
+      applyTo, specificProducts, type, value, _id } = foundDiscount;
     if (!isValid)
       throw new BadRequestException('Discount hết hạn');
     if (!isGreaterThanToday([endDate]))
@@ -97,18 +96,18 @@ export class DiscountsService {
     if (!(applyMaxPerClient > appliedClients.filter(item => item.toString() === clientId.toString()).length))
       throw new BadRequestException('Bạn đã dùng hết lượng Discount của mình');
     if (applyTo === DiscountApplyTo.SPECIFIC) {
-      const productIds = products.map(product => product.id)
+      const productIds = productItems.map(product => product._id)
       if (!(productIds.some(productId => specificProducts.includes(productId))))
         throw new BadRequestException('Discount không áp dụng trên những sản phẩm này')
     }
     //compute total order
-    const totalPurchase = products.reduce((sum, product) => {
+    const totalPrice = productItems.reduce((sum, product) => {
       return sum + product.quantity * product.price;
     }, 0);
-    if (!(minPurchaseValue <= totalPurchase))
+    if (!(minPurchaseValue <= totalPrice))
       throw new BadRequestException(`Đơn hàng cần tối thiểu ${minPurchaseValue} để áp dụng Discount`);
     //compute discount amount //todo: tạo trigger cập nhật valid
-    const amount = type === DiscountType.FIXED_AMOUNT ? value : totalPurchase * value / 100;
+    const amount = type === DiscountType.FIXED_AMOUNT ? value : totalPrice * value / 100;
     const updatedDiscount = await this.discountsRepo.updateDiscountByQuery({
       isValid: applyMax - 1 > 0 ? true : false,
       $inc: { applyMax: -1, appliedCount: 1 },
@@ -117,9 +116,9 @@ export class DiscountsService {
     if (!updatedDiscount)
       throw new NotFoundException(notFoundMessage('discount'));
     return {
-      totalPurchase,
-      discount: amount,
-      totalPrice: totalPurchase - amount
+      totalPrice,
+      totalDiscount: amount,
+      totalCheckout: totalPrice - amount
     };
   }
   //
@@ -177,6 +176,7 @@ export class DiscountsService {
     const { items, pages } = computeItemsAndPages(metadata, limit);
     return { data, metadata: { page, limit, items, pages } };
   }
+  //
   async findProductsByDiscountCode(
     { page = 1, limit = 24, sort = ProductSortEnum.CTIME, ...query }: any
   ) {

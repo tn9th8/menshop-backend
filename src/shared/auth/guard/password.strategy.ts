@@ -1,11 +1,10 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy as Local } from 'passport-local';
-import { AuthService } from '../auth.service';
-import { IAuthUser } from '../../../common/interfaces/auth-user.interface';
-import { UsersService } from 'src/modules/users/users.service';
-import { isMatchPass } from 'src/common/utils/security.util';
 import { toObjetId } from 'src/common/utils/mongo.util';
+import { isMatchPass } from 'src/common/utils/security.util';
+import { UsersService } from 'src/modules/users/users.service';
+import { IAuthUser } from '../../../common/interfaces/auth-user.interface';
 
 @Injectable()
 export class PasswordStrategy extends PassportStrategy(Local) {

@@ -1,0 +1,3016 @@
+{
+	"info": {
+		"_postman_id": "d3dc86cd-ef73-46d6-98f5-5509bf0df313",
+		"name": "Menshop Api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "39273924",
+		"_collection_link": "https://restless-water-793088.postman.co/workspace/Team-Workspace~5f52d684-d610-4eba-83ad-a15b1fd5ada8/collection/39273924-d3dc86cd-ef73-46d6-98f5-5509bf0df313?action=share&source=collection_link&creator=39273924"
+	},
+	"item": [
+		{
+			"name": "A. App Module",
+			"item": [
+				{
+					"name": "Hello world",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:8044/api/v1/hello"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "B. Auth Module",
+			"item": [
+				{
+					"name": "Admin",
+					"item": [
+						{
+							"name": "sign in",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"super@menshop.com\",\r\n    \"password\": \"123456\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{api/v1/admin}}/auth/signin"
+							},
+							"response": []
+						},
+						{
+							"name": "sign out",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": "{{api/v1/admin}}/auth/signout"
+							},
+							"response": []
+						},
+						{
+							"name": "refresh an account",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": "{{api/v1/admin}}/auth/refresh"
+							},
+							"response": []
+						},
+						{
+							"name": "find an account",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": "{{api/v1/admin}}/auth/account"
+							},
+							"response": []
+						}
+					],
+					"auth": {
+						"type": "bearer",
+						"bearer": {
+							"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjcyNzA2MTk4M2QxNmY0YzI0ZTZhZjc3IiwibmFtZSI6IkknbSBhIHN1cGVyIGFkbWluIiwiZW1haWwiOiJzdXBlckBtZW5zaG9wLmNvbSIsInBob25lIjoiMDAwMDk4OTg5OCIsInJvbGVzIjpbIjY3MjcwMWFhMmY4ZDgwYWEzMmRiYmIyOCIsIjY3MjcwMDI4ODgyNDg5OTIxMzkyYjk3NCJdfSwiaWF0IjoxNzMwNjk1Mzg3LCJleHAiOjEwMzcwNjk1Mzg3fQ.G6TloCCNJdlszPCKVGFEaGeZY2_nmxyiZjQocxr4F4Q"
+						}
+					},
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Seller",
+					"item": [
+						{
+							"name": "sign up",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"seller\",\r\n    \"email\": \"seller@gmail.com\",\r\n    \"phone\": \"0982636781\",\r\n    \"password\": \"123456\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{api/v1/admin}}/auth/signup"
+							},
+							"response": []
+						},
+						{
+							"name": "sign in",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"seller@menshop.com\",\r\n    \"password\": \"123456\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{api/v1/admin}}/auth/signin"
+							},
+							"response": []
+						},
+						{
+							"name": "sign out",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": "{{api/v1/admin}}/auth/signout"
+							},
+							"response": []
+						},
+						{
+							"name": "refresh an account",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": "{{api/v1/admin}}/auth/refresh"
+							},
+							"response": []
+						},
+						{
+							"name": "find an account",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": "{{api/v1/admin}}/auth/refresh"
+							},
+							"response": []
+						}
+					],
+					"auth": {
+						"type": "bearer",
+						"bearer": {
+							"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NzFmM2Q2MzFlNTkwNmZiZTVlM2U3NTgiLCJpc3MiOiJmcm9tIHRoZSBtZW5zaG9wIHNlcnZlciIsInVzZXIiOnsiaWQiOiI2NzFmM2Q2MzFlNTkwNmZiZTVlM2U3NTgiLCJuYW1lIjoiVHJ1bmcgTmjDom4iLCJlbWFpbCI6InRuOXRoOEBnbWFpbC5jb20iLCJwaG9uZSI6IjA5ODI2MzY3ODEifSwiaWF0IjoxNzMwMTAwODY3LCJleHAiOjEwMzcwMTAwODY3fQ.eNaNJKavLNQTVj86gR2PYXNOmfQL1TDCbQKTgaC1vQE"
+						}
+					},
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Client",
+					"item": [
+						{
+							"name": "sign up",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Trung Nhân\",\r\n    \"email\": \"tn9th8@gmail.com\",\r\n    \"phone\": \"0982636781\",\r\n    \"password\": \"123456\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{api/v1/client}}/auth/signup"
+							},
+							"response": []
+						},
+						{
+							"name": "sign in",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"client@menshop.com\",\r\n    \"password\": \"123456\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{api/v1/client}}/auth/signin"
+							},
+							"response": []
+						},
+						{
+							"name": "sign out",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": "{{api/v1/client}}/auth/signout"
+							},
+							"response": []
+						},
+						{
+							"name": "refresh an account",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": "{{api/v1/client}}/auth/refresh"
+							},
+							"response": []
+						},
+						{
+							"name": "find an account",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": "{{api/v1/client}}/auth/refresh"
+							},
+							"response": []
+						}
+					],
+					"auth": {
+						"type": "bearer",
+						"bearer": {
+							"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NzFmM2Y2MmYzOGIxYjk5MGFkZjhiNzkiLCJpc3MiOiJmcm9tIHRoZSBtZW5zaG9wIHNlcnZlciIsInVzZXIiOnsiaWQiOiI2NzFmM2Y2MmYzOGIxYjk5MGFkZjhiNzkiLCJuYW1lIjoiVHJ1bmcgTmjDom4iLCJlbWFpbCI6InRuOXRoOEBnbWFpbC5jb20iLCJwaG9uZSI6IjA5ODI2MzY3ODEifSwiaWF0IjoxNzMwMTAxMTYzLCJleHAiOjEwMzcwMTAxMTYzfQ.3tdYHvvMz0uOGdMQifnwzhXx3iwAp7awsdgNVlmWVUI"
+						}
+					},
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "C. File Module",
+			"item": [
+				{
+					"name": "upload a file",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "folder_type",
+								"value": "nhan",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "IPRD9uHyL/BAITAP_REDUXNANGCAO.pdf"
+								}
+							]
+						},
+						"url": "{{api/v1/admin}}/files/upload"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "1. User Module",
+			"item": [
+				{
+					"name": "Admin",
+					"item": [
+						{
+							"name": "create an user",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"seller demo\",\r\n    \"email\": \"seller-demo@mail.com\",\r\n    \"phone\": \"0980101010\",\r\n    \"password\": \"123456\",\r\n    \"roles\": [\"672702583fc99fad411eb5e7\"],\r\n    \"age\": 18,\r\n    \"gender\": \"male\", //male, female, other\r\n    \"avatar\": \"demo\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{api/v1/admin}}/users"
+							},
+							"response": []
+						},
+						{
+							"name": "update an user",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id\": \"6728bb59434b7ca15e23f837\",\r\n    \"name\": \"admin demo\",\r\n    \"phone\": \"0980101010\",\r\n    \"roles\": [\"672701aa2f8d80aa32dbbb28\", \"672702a9a7b11823367b7206\"],\r\n    \"age\": 18,\r\n    \"gender\": \"female\", //male, female, other\r\n    \"avatar\": \"demo\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{api/v1/admin}}/users"
+							},
+							"response": []
+						},
+						{
+							"name": "active an user",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"url": {
+									"raw": "{{api/v1/admin}}/users/active/:id",
+									"host": [
+										"{{api/v1/admin}}"
+									],
+									"path": [
+										"users",
+										"active",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "6727061983d16f4c24e6af77"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "disable an user",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"url": {
+									"raw": "{{api/v1/admin}}/users/disable/:id",
+									"host": [
+										"{{api/v1/admin}}"
+									],
+									"path": [
+										"users",
+										"disable",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "6727061983d16f4c24e6af77"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get all active",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{api/v1/admin}}/users/active",
+									"host": [
+										"{{api/v1/admin}}"
+									],
+									"path": [
+										"users",
+										"active"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "limit",
+											"value": null,
+											"description": "24 (default)",
+											"disabled": true
+										},
+										{
+											"key": "sort",
+											"value": null,
+											"description": "nameAz (default), nameZa, latest, oldest",
+											"disabled": true
+										},
+										{
+											"key": "name",
+											"value": null,
+											"description": "like",
+											"disabled": true
+										},
+										{
+											"key": "phone",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "email",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "gender",
+											"value": null,
+											"description": "male, female, other",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get all disable",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{api/v1/admin}}/users/disable",
+									"host": [
+										"{{api/v1/admin}}"
+									],
+									"path": [
+										"users",
+										"disable"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "limit",
+											"value": null,
+											"description": "24 (default)",
+											"disabled": true
+										},
+										{
+											"key": "sort",
+											"value": null,
+											"description": "nameAz (default), nameZa, latest, oldest",
+											"disabled": true
+										},
+										{
+											"key": "name",
+											"value": null,
+											"description": "like",
+											"disabled": true
+										},
+										{
+											"key": "phone",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "email",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "gender",
+											"value": null,
+											"description": "male, female, other",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "find an user",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{api/v1/admin}}/users/:id",
+									"host": [
+										"{{api/v1/admin}}"
+									],
+									"path": [
+										"users",
+										":id"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "limit",
+											"value": null,
+											"description": "24 (default)",
+											"disabled": true
+										},
+										{
+											"key": "sort",
+											"value": null,
+											"description": "nameAz (default), nameZa, latest, oldest",
+											"disabled": true
+										},
+										{
+											"key": "name",
+											"value": null,
+											"description": "like",
+											"disabled": true
+										},
+										{
+											"key": "phone",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "email",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "gender",
+											"value": null,
+											"description": "male, female, other",
+											"disabled": true
+										}
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "6727061983d16f4c24e6af77"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"auth": {
+						"type": "bearer",
+						"bearer": {
+							"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjcyNzA2MTk4M2QxNmY0YzI0ZTZhZjc3IiwibmFtZSI6IkknbSBhIHN1cGVyIGFkbWluIiwiZW1haWwiOiJzdXBlckBtZW5zaG9wLmNvbSIsInBob25lIjoiMDAwMDk4OTg5OCIsInJvbGVzIjpbIjY3MjcwMWFhMmY4ZDgwYWEzMmRiYmIyOCIsIjY3MjcwMDI4ODgyNDg5OTIxMzkyYjk3NCJdfSwiaWF0IjoxNzMwNzE0MTg3LCJleHAiOjEwMzcwNzE0MTg3fQ.feaBS9bPSMkzRnWPOxDFDknHEN9dUtEiq838WK4JcZk"
+						}
+					},
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Seller",
+					"item": []
+				},
+				{
+					"name": "Client",
+					"item": []
+				}
+			]
+		},
+		{
+			"name": "2. Shop Module",
+			"item": [
+				{
+					"name": "Admin",
+					"item": [
+						{
+							"name": "find all active",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{api/v1/admin}}/shops/active",
+									"host": [
+										"{{api/v1/admin}}"
+									],
+									"path": [
+										"shops",
+										"active"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "limit",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "sort",
+											"value": null,
+											"description": "nameAz (default), nameZa, latest, oldest",
+											"disabled": true
+										},
+										{
+											"key": "name",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "isMall",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "seller",
+											"value": "6728d4b5ff617b63dfc80a44",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "find all disable",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{api/v1/admin}}/shops/disable",
+									"host": [
+										"{{api/v1/admin}}"
+									],
+									"path": [
+										"shops",
+										"disable"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "limit",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "sort",
+											"value": "",
+											"description": "nameAz (default), nameZa, latest, oldest",
+											"disabled": true
+										},
+										{
+											"key": "name",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "isMall",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "seller",
+											"value": "6728d4b5ff617b63dfc80a44",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "find a shop",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{api/v1/admin}}/shops/:id",
+									"host": [
+										"{{api/v1/admin}}"
+									],
+									"path": [
+										"shops",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "6728d52eff617b63dfc80a4d"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "active a shop",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"url": {
+									"raw": "{{api/v1/admin}}/shops/active/:id",
+									"host": [
+										"{{api/v1/admin}}"
+									],
+									"path": [
+										"shops",
+										"active",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "66fe7af5efc4a95d4f3684f6"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "disable a shop",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"url": {
+									"raw": "{{api/v1/admin}}/shops/disable/:id",
+									"host": [
+										"{{api/v1/admin}}"
+									],
+									"path": [
+										"shops",
+										"disable",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "66fe7af5efc4a95d4f3684f6"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"auth": {
+						"type": "bearer",
+						"bearer": {
+							"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjcyNzA2MTk4M2QxNmY0YzI0ZTZhZjc3IiwibmFtZSI6IkknbSBhIHN1cGVyIGFkbWluIiwiZW1haWwiOiJzdXBlckBtZW5zaG9wLmNvbSIsInBob25lIjoiMDAwMDk4OTg5OCIsInJvbGVzIjpbIjY3MjcwMWFhMmY4ZDgwYWEzMmRiYmIyOCIsIjY3MjcwMDI4ODgyNDg5OTIxMzkyYjk3NCJdfSwiaWF0IjoxNzMwNzMwNTQ5LCJleHAiOjEwMzcwNzMwNTQ5fQ.6TP0pKvjRH48kgKINiqmO7MhICIwZhzdyj4lSlC5yD0"
+						}
+					},
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Seller",
+					"item": [
+						{
+							"name": "find a own shop",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": "{{api/v1/seller}}/shops"
+							},
+							"response": []
+						},
+						{
+							"name": "create a own shop",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjcyOGQ0YjVmZjYxN2I2M2RmYzgwYTQ0IiwibmFtZSI6InNlbGxlciBkZW1vIiwiZW1haWwiOiJzZWxsZXItZGVtb0BtYWlsLmNvbSIsInBob25lIjoiMDk4MDEwMTAxMCIsInJvbGVzIjpbIjY3MjcwMjU4M2ZjOTlmYWQ0MTFlYjVlNyJdfSwiaWF0IjoxNzMwNzI5MjM3LCJleHAiOjEwMzcwNzI5MjM3fQ.kbI3CbQDDIi0m4wxv2LCxUknhOTCEyQ2aVLpBEJCDE8"
+									}
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Demo Shop\",\r\n    \"description\": \"Demo Shop dùng để test CRUD\",\r\n    \"image\": \"normal-shop-image.png\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{api/v1/seller}}/shops"
+							},
+							"response": []
+						},
+						{
+							"name": "update a own shop",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjcyOGQ0YjVmZjYxN2I2M2RmYzgwYTQ0IiwibmFtZSI6InNlbGxlciBkZW1vIiwiZW1haWwiOiJzZWxsZXItZGVtb0BtYWlsLmNvbSIsInBob25lIjoiMDk4MDEwMTAxMCIsInJvbGVzIjpbIjY3MjcwMjU4M2ZjOTlmYWQ0MTFlYjVlNyJdfSwiaWF0IjoxNzMwNzI5MjM3LCJleHAiOjEwMzcwNzI5MjM3fQ.kbI3CbQDDIi0m4wxv2LCxUknhOTCEyQ2aVLpBEJCDE8"
+									}
+								},
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id\": \"6728d52eff617b63dfc80a4d\",\r\n    \"name\": \"Demo Shop\",\r\n    \"description\": \"Demo Shop dùng để test CRUD và của Demo Seller\",\r\n    \"image\": \"normal-shop-image.png\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{api/v1/seller}}/shops"
+							},
+							"response": []
+						}
+					],
+					"auth": {
+						"type": "bearer",
+						"bearer": {
+							"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjcyNzA2MzJhZTJjNDg4NGY5ZDM3MjgzIiwibmFtZSI6IkknbSBhIG5vcm1hbCBzZWxsZXIiLCJlbWFpbCI6InNlbGxlckBtZW5zaG9wLmNvbSIsInBob25lIjoiMDAwMDU0NTQ1NCIsInJvbGVzIjpbIjY3MjcwMjU4M2ZjOTlmYWQ0MTFlYjVlNyJdfSwiaWF0IjoxNzMwNzE0MjA1LCJleHAiOjEwMzcwNzE0MjA1fQ.PRLz971lbghTDQoRtC73n1Br7-9JBWL8YQhjMXht250"
+						}
+					},
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Client",
+					"item": [
+						{
+							"name": "find all shop",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{api/v1/client}}/shops",
+									"host": [
+										"{{api/v1/client}}"
+									],
+									"path": [
+										"shops"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "limit",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "sort",
+											"value": null,
+											"description": "nameAz (default), nameZa, latest, oldest",
+											"disabled": true
+										},
+										{
+											"key": "name",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "isMall",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "seller",
+											"value": "6728d4b5ff617b63dfc80a44",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "find a shop",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{api/v1/client}}/shops/:id",
+									"host": [
+										"{{api/v1/client}}"
+									],
+									"path": [
+										"shops",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "66fe7af5efc4a95d4f3684f6"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "3. Product Module",
+			"item": [
+				{
+					"name": "Admin",
+					"item": [
+						{
+							"name": "active a product",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{api/v1/admin}}/products/active/671f73cdee47adaf5589dc2e"
+							},
+							"response": []
+						},
+						{
+							"name": "disable a product",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{api/v1/admin}}/products/disable/671f73cdee47adaf5589dc2e"
+							},
+							"response": []
+						},
+						{
+							"name": "find all active",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{api/v1/admin}}/products/active",
+									"host": [
+										"{{api/v1/admin}}"
+									],
+									"path": [
+										"products",
+										"active"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": null,
+											"description": "1",
+											"disabled": true
+										},
+										{
+											"key": "limit",
+											"value": null,
+											"description": "24",
+											"disabled": true
+										},
+										{
+											"key": "sort",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "name",
+											"value": null,
+											"description": "nameAz (default), nameZa, latest, oldest",
+											"disabled": true
+										},
+										{
+											"key": "categories",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "needs",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "shop",
+											"value": null,
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "find all disable",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{api/v1/admin}}/products/disable",
+									"host": [
+										"{{api/v1/admin}}"
+									],
+									"path": [
+										"products",
+										"disable"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "limit",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "sort",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "name",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "categories",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "needs",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "shop",
+											"value": null,
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "find all published",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{api/v1/admin}}/products/published",
+									"host": [
+										"{{api/v1/admin}}"
+									],
+									"path": [
+										"products",
+										"published"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "",
+											"description": "1",
+											"disabled": true
+										},
+										{
+											"key": "limit",
+											"value": "",
+											"description": "24",
+											"disabled": true
+										},
+										{
+											"key": "sort",
+											"value": "",
+											"description": "nameAz (default), nameZa, latest, oldest",
+											"disabled": true
+										},
+										{
+											"key": "name",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "categories",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "needs",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "shop",
+											"value": "",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "find all draft",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{api/v1/admin}}/products/draft",
+									"host": [
+										"{{api/v1/admin}}"
+									],
+									"path": [
+										"products",
+										"draft"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "",
+											"description": "1",
+											"disabled": true
+										},
+										{
+											"key": "limit",
+											"value": "",
+											"description": "24",
+											"disabled": true
+										},
+										{
+											"key": "sort",
+											"value": "",
+											"description": "nameAz (default), nameZa, latest, oldest",
+											"disabled": true
+										},
+										{
+											"key": "categories",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "needs",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "shop",
+											"value": "",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "find a product",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": "{{api/v1/admin}}/products/671f73cdee47adaf5589dc2e"
+							},
+							"response": []
+						}
+					],
+					"auth": {
+						"type": "bearer",
+						"bearer": {
+							"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjcyNzA2MTk4M2QxNmY0YzI0ZTZhZjc3IiwibmFtZSI6IkknbSBhIHN1cGVyIGFkbWluIiwiZW1haWwiOiJzdXBlckBtZW5zaG9wLmNvbSIsInBob25lIjoiMDAwMDk4OTg5OCIsInJvbGVzIjpbIjY3MjcwMWFhMmY4ZDgwYWEzMmRiYmIyOCIsIjY3MjcwMDI4ODgyNDg5OTIxMzkyYjk3NCJdfSwiaWF0IjoxNzMwNzM4MDczLCJleHAiOjEwMzcwNzM4MDczfQ.w7MtS-BT3JEhDSHvbzfZQe8O6y-T_AQNh7xIO1hDHNI"
+						}
+					},
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Seller",
+					"item": [
+						{
+							"name": "create a product",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"áo 33\",\r\n    \"thumb\": \"demo\",\r\n    \"attribute\": [\r\n        {\"name\": \"cổ áo\", \"value\": \"trụ\"},\r\n        {\"name\": \"thương hiệu\", \"value\": \"coolmate\", \"link\": \"demo\"}\r\n    ],\r\n    \"categories\": [\"6718d55f70a73b085ef8788d\"],\r\n    \"needs\": [\"6715d5aa5252b5bae60a8204\"],\r\n    \"stock\": 460\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{api/v1/seller}}/products"
+							},
+							"response": []
+						},
+						{
+							"name": "update a product",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id\": \"6728ff5e38a5fbb836828a17\",\r\n    \"name\": \"áo 33\",\r\n    \"thumb\": \"demo 33\",\r\n    \"attribute\": [\r\n        {\"name\": \"cổ áo\", \"value\": \"trụ\"},\r\n        {\"name\": \"thương hiệu\", \"value\": \"coolmate\", \"link\": \"demo\"}\r\n    ],\r\n    \"categories\": [\"6718d55f70a73b085ef8788d\"],\r\n    \"needs\": [\"6715d5aa5252b5bae60a8204\"],\r\n    \"stock\": 460\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{api/v1/seller}}/products"
+							},
+							"response": []
+						},
+						{
+							"name": "publish a product",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{api/v1/seller}}/products/published/671f73cdee47adaf5589dc2e"
+							},
+							"response": []
+						},
+						{
+							"name": "disable a product",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{api/v1/seller}}/products/draft/671f73cdee47adaf5589dc2e"
+							},
+							"response": []
+						},
+						{
+							"name": "find all published",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{api/v1/seller}}/products/published",
+									"host": [
+										"{{api/v1/seller}}"
+									],
+									"path": [
+										"products",
+										"published"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": null,
+											"description": "1",
+											"disabled": true
+										},
+										{
+											"key": "limit",
+											"value": null,
+											"description": "24",
+											"disabled": true
+										},
+										{
+											"key": "sort",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "name",
+											"value": null,
+											"description": "nameAz (default), nameZa, latest, oldest",
+											"disabled": true
+										},
+										{
+											"key": "categories",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "needs",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "shop",
+											"value": null,
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "find all draft",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{api/v1/seller}}/products/draft",
+									"host": [
+										"{{api/v1/seller}}"
+									],
+									"path": [
+										"products",
+										"draft"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": null,
+											"description": "1",
+											"disabled": true
+										},
+										{
+											"key": "limit",
+											"value": null,
+											"description": "24",
+											"disabled": true
+										},
+										{
+											"key": "sort",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "name",
+											"value": null,
+											"description": "nameAz (default), nameZa, latest, oldest",
+											"disabled": true
+										},
+										{
+											"key": "categories",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "needs",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "shop",
+											"value": null,
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "find a product",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": "{{api/v1/seller}}/products/671f73cdee47adaf5589dc2e"
+							},
+							"response": []
+						}
+					],
+					"auth": {
+						"type": "bearer",
+						"bearer": {
+							"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjcyNzA2MzJhZTJjNDg4NGY5ZDM3MjgzIiwibmFtZSI6IkknbSBhIG5vcm1hbCBzZWxsZXIiLCJlbWFpbCI6InNlbGxlckBtZW5zaG9wLmNvbSIsInBob25lIjoiMDAwMDU0NTQ1NCIsInJvbGVzIjpbIjY3MjcwMjU4M2ZjOTlmYWQ0MTFlYjVlNyJdfSwiaWF0IjoxNzMwNzM5NzgyLCJleHAiOjEwMzcwNzM5NzgyfQ.I3Lig62H1i3l4wjOf20qwJSGdyN4zgqElWzdIzxA1U0"
+						}
+					},
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Client",
+					"item": [
+						{
+							"name": "find all",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{api/v1/client}}/products",
+									"host": [
+										"{{api/v1/client}}"
+									],
+									"path": [
+										"products"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "",
+											"description": "1",
+											"disabled": true
+										},
+										{
+											"key": "limit",
+											"value": "",
+											"description": "24",
+											"disabled": true
+										},
+										{
+											"key": "sort",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "name",
+											"value": "",
+											"description": "ctime, relevant, populate, sales",
+											"disabled": true
+										},
+										{
+											"key": "categories",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "needs",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "shop",
+											"value": "",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "search",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{api/v1/client}}/products/search?keyword=áo",
+									"host": [
+										"{{api/v1/client}}"
+									],
+									"path": [
+										"products",
+										"search"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "",
+											"description": "1",
+											"disabled": true
+										},
+										{
+											"key": "limit",
+											"value": "",
+											"description": "24",
+											"disabled": true
+										},
+										{
+											"key": "sort",
+											"value": "",
+											"description": "ctime, relevant, populate, sales",
+											"disabled": true
+										},
+										{
+											"key": "keyword",
+											"value": "áo"
+										},
+										{
+											"key": "name",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "categories",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "needs",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "shop",
+											"value": "",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "find a product",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{api/v1/client}}/products/671f73cdee47adaf5589dc2e",
+									"host": [
+										"{{api/v1/client}}"
+									],
+									"path": [
+										"products",
+										"671f73cdee47adaf5589dc2e"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": null,
+											"description": "1",
+											"disabled": true
+										},
+										{
+											"key": "limit",
+											"value": null,
+											"description": "24",
+											"disabled": true
+										},
+										{
+											"key": "sort",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "name",
+											"value": null,
+											"description": "nameAz (default), nameZa, latest, oldest",
+											"disabled": true
+										},
+										{
+											"key": "categories",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "needs",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "shop",
+											"value": null,
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "4. Category Module",
+			"item": [
+				{
+					"name": "Admin",
+					"item": [
+						{
+							"name": "create a category",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Áo thun\",\r\n    \"description\": \"Mô tả áo thun\",\r\n    \"attributes\": [\"\", \"\"],\r\n    \"specifications\": [\"\", \"\"],\r\n    \"level\": 1,\r\n    \"children\": [\"\", \"\"],\r\n    \"parent\": \"\"\r\n\r\n    // \"level\": 2,\r\n    // \"children\": [\"\", \"\"],\r\n    // \"parent\": \"\"\r\n\r\n    // \"level\": 3,\r\n    // \"parent\": \"\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{api/v1/admin}}/categories"
+							},
+							"response": []
+						},
+						{
+							"name": "update a category",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id\": \"6728ec0b84aca1e1186aa42b\",\r\n    \"name\": \"Áo thun\",\r\n    \"description\": \"Mô tả áo thun\",\r\n    \"attributes\": [\"cổ áo\", \"chất liệu\"],\r\n    \"specifications\": [\"lưng\", \"tay\"],\r\n    \"level\": 1,\r\n    \"children\": [\"670a236d611a257bd2500881\", \"670aa39415dc9b0dd8421ab8\"],\r\n    \"parent\": \"670a2343611a257bd250087d\"\r\n\r\n    // \"level\": 2,\r\n    // \"children\": [\"\", \"\"],\r\n    // \"parent\": \"\"\r\n\r\n    // \"level\": 3,\r\n    // \"parent\": \"\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{api/v1/admin}}/categories"
+							},
+							"response": []
+						},
+						{
+							"name": "published a category",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"url": {
+									"raw": "{{api/v1/admin}}/categories/published/:id",
+									"host": [
+										"{{api/v1/admin}}"
+									],
+									"path": [
+										"categories",
+										"published",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "6718d55f70a73b085ef8788d"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "draft a category",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"url": {
+									"raw": "{{api/v1/admin}}/categories/draft/:id",
+									"host": [
+										"{{api/v1/admin}}"
+									],
+									"path": [
+										"categories",
+										"draft",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "6718d55f70a73b085ef8788d"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "find all published",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{api/v1/admin}}/categories/published",
+									"host": [
+										"{{api/v1/admin}}"
+									],
+									"path": [
+										"categories",
+										"published"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "limit",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "sort",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "name",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "level",
+											"value": "1",
+											"disabled": true
+										},
+										{
+											"key": "children",
+											"value": "6718d4d9ae50f168c52f2e6c",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "find all draft",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{api/v1/admin}}/categories/draft",
+									"host": [
+										"{{api/v1/admin}}"
+									],
+									"path": [
+										"categories",
+										"draft"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "limit",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "sort",
+											"value": null,
+											"description": "nameAz (default), nameZa, latest, oldest",
+											"disabled": true
+										},
+										{
+											"key": "name",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "level",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "children",
+											"value": null,
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "find a category",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{api/v1/admin}}/categories/:id",
+									"host": [
+										"{{api/v1/admin}}"
+									],
+									"path": [
+										"categories",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "6728ec0b84aca1e1186aa42b"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"auth": {
+						"type": "bearer",
+						"bearer": {
+							"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjcyNzA2MTk4M2QxNmY0YzI0ZTZhZjc3IiwibmFtZSI6IkknbSBhIHN1cGVyIGFkbWluIiwiZW1haWwiOiJzdXBlckBtZW5zaG9wLmNvbSIsInBob25lIjoiMDAwMDk4OTg5OCIsInJvbGVzIjpbIjY3MjcwMWFhMmY4ZDgwYWEzMmRiYmIyOCIsIjY3MjcwMDI4ODgyNDg5OTIxMzkyYjk3NCJdfSwiaWF0IjoxNzMwNzM0MzEyLCJleHAiOjEwMzcwNzM0MzEyfQ.6pq3_aKI5TqI3iz5pJX7Mnxj0voHIejF5ZA11TcGMdQ"
+						}
+					},
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Seller",
+					"item": [
+						{
+							"name": "find all categories",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{api/v1/seller}}/categories",
+									"host": [
+										"{{api/v1/seller}}"
+									],
+									"path": [
+										"categories"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "limit",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "sort",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "name",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "level",
+											"value": "1",
+											"disabled": true
+										},
+										{
+											"key": "children",
+											"value": "6718d4d9ae50f168c52f2e6c",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "find a category",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{api/v1/seller}}/categories/:id",
+									"host": [
+										"{{api/v1/seller}}"
+									],
+									"path": [
+										"categories",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "6728ec0b84aca1e1186aa42b"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Client",
+					"item": [
+						{
+							"name": "find tree",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{api/v1/client}}/categories/tree",
+									"host": [
+										"{{api/v1/client}}"
+									],
+									"path": [
+										"categories",
+										"tree"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "limit",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "sort",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "name",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "level",
+											"value": "1",
+											"disabled": true
+										},
+										{
+											"key": "children",
+											"value": "6718d4d9ae50f168c52f2e6c",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "find a category",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{api/v1/client}}/categories/:id",
+									"host": [
+										"{{api/v1/client}}"
+									],
+									"path": [
+										"categories",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "6718d4d9ae50f168c52f2e6c"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "5. Need Module",
+			"item": [
+				{
+					"name": "Admin",
+					"item": [
+						{
+							"name": "create a need",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Leo núi x\",\r\n    \"description\": \"\",\r\n    \"level\": 2,\r\n    \"children\": [\"\", \"\"],\r\n    \"parent\": []\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{api/v1/admin}}/needs"
+							},
+							"response": []
+						}
+					],
+					"auth": {
+						"type": "bearer",
+						"bearer": {
+							"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NzFmNDljMDIyYzRjOTBiZGUyNGVmNGEiLCJpc3MiOiJmcm9tIHRoZSBtZW5zaG9wIHNlcnZlciIsInVzZXIiOnsiaWQiOiI2NzFmNDljMDIyYzRjOTBiZGUyNGVmNGEiLCJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInBob25lIjoiMDk4NTUwOTA5MSJ9LCJpYXQiOjE3MzAxNzM2MDQsImV4cCI6MTAzNzAxNzM2MDR9.N58xRIHBnUhQKullyWdq1TuYH4265pFnEn5qpdpPJmU"
+						}
+					},
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "6. Inventory Module",
+			"item": []
+		},
+		{
+			"name": "7. Discount Module",
+			"item": [
+				{
+					"name": "Admin",
+					"item": [
+						{
+							"name": "find all valid discounts",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{api/v1/admin}}/discounts/valid?page=2&limit=2&name=giảm",
+									"host": [
+										"{{api/v1/admin}}"
+									],
+									"path": [
+										"discounts",
+										"valid"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "2"
+										},
+										{
+											"key": "limit",
+											"value": "2"
+										},
+										{
+											"key": "sort",
+											"value": "",
+											"description": "nameAz (default), nameZa, latest, oldest",
+											"disabled": true
+										},
+										{
+											"key": "name",
+											"value": "giảm"
+										},
+										{
+											"key": "code",
+											"value": "S1",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "find all expired discounts",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{api/v1/admin}}/discounts/expired?page&limit&sort=oldest&name&code",
+									"host": [
+										"{{api/v1/admin}}"
+									],
+									"path": [
+										"discounts",
+										"expired"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": null,
+											"description": "1"
+										},
+										{
+											"key": "limit",
+											"value": null,
+											"description": "24"
+										},
+										{
+											"key": "sort",
+											"value": "oldest",
+											"description": "nameAz (default), nameZa, latest, oldest"
+										},
+										{
+											"key": "name",
+											"value": null
+										},
+										{
+											"key": "code",
+											"value": null
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "find a discount",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": "{{api/v1/admin}}/discounts/67226fdb42a6ccffcd0da9c2"
+							},
+							"response": []
+						}
+					],
+					"auth": {
+						"type": "bearer",
+						"bearer": {
+							"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NzFmNDljMDIyYzRjOTBiZGUyNGVmNGEiLCJpc3MiOiJmcm9tIHRoZSBtZW5zaG9wIHNlcnZlciIsInVzZXIiOnsiaWQiOiI2NzFmNDljMDIyYzRjOTBiZGUyNGVmNGEiLCJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInBob25lIjoiMDk4NTUwOTA5MSJ9LCJpYXQiOjE3MzAzNDg2MTEsImV4cCI6MTAzNzAzNDg2MTF9.oOMMp9UB-scZ_6sycaVn_bn14SurlcHZTvR5mntE8Hk"
+						}
+					},
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Seller",
+					"item": [
+						{
+							"name": "create a discount",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Giảm 6%\",\r\n    \"code\": \"D6PS2\",\r\n    \"description\": null,//\"Giảm 14k\",\r\n    \"type\": \"percentage\", //fixedAmount (vnd), percentage (%)\r\n    \"value\": 6, //10000 (vnd), 10 (%)\r\n    \"startDate\": \"2024-11-01\", //YYYY-MM_DD\r\n    \"endDate\": \"2024-11-10\",\r\n    \"minPurchaseValue\": 146000,\r\n    \"applyTo\": \"all\", //all (default), specific\r\n    //\"specificProducts\": [\"67207b126da251ee201960aaa\", \"672076ea58a2c171ce0a38cb\"], //specific\r\n    \"applyMax\": 46,\r\n    \"applyMaxPerClient\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{api/v1/seller}}/discounts"
+							},
+							"response": []
+						},
+						{
+							"name": "update a discount",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id\": \"67225870437015908a336f51\",\r\n    \"name\": \"Giảm 10000\",\r\n    // \"code\": \"D10KS2\",\r\n    \"description\": \"Giảm 10k\",\r\n    // \"type\": \"fixedAmount\", //fixedAmount (vnd), percentage (%)\r\n    // \"value\": 14000, //10000 (vnd), 10 (%)\r\n    // \"startDate\": \"2024-10-31\", //YYYY-MM_DD\r\n    // \"endDate\": \"2024-11-10\",\r\n    \"minPurchaseValue\": 100000,\r\n    \"applyTo\": \"all\", //all (default), specific\r\n    // \"specificProducts\": [\"67207b126da251ee201960aaa\", \"672076ea58a2c171ce0a38cb\"], //specific\r\n    \"applyMax\": 40,\r\n    \"applyMaxPerClient\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{api/v1/seller}}/discounts"
+							},
+							"response": []
+						},
+						{
+							"name": "find all valid discounts",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{api/v1/admin}}/discounts/valid?page=2&limit=2&sort=&name=giảm",
+									"host": [
+										"{{api/v1/admin}}"
+									],
+									"path": [
+										"discounts",
+										"valid"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "2"
+										},
+										{
+											"key": "limit",
+											"value": "2"
+										},
+										{
+											"key": "sort",
+											"value": "",
+											"description": "nameAz (default), nameZa, latest, oldest"
+										},
+										{
+											"key": "name",
+											"value": "giảm"
+										},
+										{
+											"key": "code",
+											"value": "S1",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "find all expired discounts",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{api/v1/admin}}/discounts/expired?page&limit&sort=oldest&name&code",
+									"host": [
+										"{{api/v1/admin}}"
+									],
+									"path": [
+										"discounts",
+										"expired"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": null,
+											"description": "1"
+										},
+										{
+											"key": "limit",
+											"value": null,
+											"description": "24"
+										},
+										{
+											"key": "sort",
+											"value": "oldest",
+											"description": "nameAz (default), nameZa, latest, oldest"
+										},
+										{
+											"key": "name",
+											"value": null
+										},
+										{
+											"key": "code",
+											"value": null
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "find a discount",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": "{{api/v1/seller}}/discounts/67225870437015908a336f51"
+							},
+							"response": []
+						}
+					],
+					"auth": {
+						"type": "bearer",
+						"bearer": {
+							"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NzFmNzA0ZmY1ZDQ1MjkwMzA2ZWI1MGMiLCJpc3MiOiJmcm9tIHRoZSBtZW5zaG9wIHNlcnZlciIsInVzZXIiOnsiaWQiOiI2NzFmNzA0ZmY1ZDQ1MjkwMzA2ZWI1MGMiLCJuYW1lIjoic2VsbGVyIiwiZW1haWwiOiJzZWxsZXJAZ21haWwuY29tIiwicGhvbmUiOiIwOTgyNjM2NzgxIn0sImlhdCI6MTczMDE5NDU0NSwiZXhwIjoxMDM3MDE5NDU0NX0.RvxPQOyCm6t1DkNrkRz8_Nw-Oq0A7fyINWOeE26N_to"
+						}
+					},
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Client",
+					"item": [
+						{
+							"name": "find all discounts by shop",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{api/v1/client}}/discounts?shop=671899484273e64bec51ec98&code=D5PS1",
+									"host": [
+										"{{api/v1/client}}"
+									],
+									"path": [
+										"discounts"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1",
+											"disabled": true
+										},
+										{
+											"key": "limit",
+											"value": "2",
+											"disabled": true
+										},
+										{
+											"key": "sort",
+											"value": "",
+											"description": "nameAz (default), nameZa, latest, oldest",
+											"disabled": true
+										},
+										{
+											"key": "shop",
+											"value": "671899484273e64bec51ec98",
+											"description": "required"
+										},
+										{
+											"key": "code",
+											"value": "D5PS1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "find a discount",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{api/v1/client}}/discounts/:id",
+									"host": [
+										"{{api/v1/client}}"
+									],
+									"path": [
+										"discounts",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "6722f496c2c8b2a9df7dee18"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "find all products by code",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{api/v1/client}}/discounts/products",
+									"host": [
+										"{{api/v1/client}}"
+									],
+									"path": [
+										"discounts",
+										"products"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1",
+											"description": "1",
+											"disabled": true
+										},
+										{
+											"key": "limit",
+											"value": "24",
+											"description": "24",
+											"disabled": true
+										},
+										{
+											"key": "sort",
+											"value": "nameAz",
+											"description": "nameAz (default), nameZa, latest, oldest",
+											"disabled": true
+										},
+										{
+											"key": "code",
+											"value": "D5PS1",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "apply a discount",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"D6PS2\",\r\n    \"shop\": \"671899484273e64bec51ec98\",\r\n    \"products\": [\r\n        {\r\n            \"id\": \"67207b126da251ee201960aa\",\r\n            \"price\": \"40000\",\r\n            \"quantity\": \"4\"\r\n        },{\r\n            \"id\": \"672076ea58a2c171ce0a38cb\",\r\n            \"price\": \"40000\",\r\n            \"quantity\": \"4\"\r\n        }\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "http://localhost:8044/api/v1/client/discounts/apply"
+							},
+							"response": []
+						},
+						{
+							"name": "cancel a discount",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8044/api/v1/client/discounts/cancel/:code",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8044",
+									"path": [
+										"api",
+										"v1",
+										"client",
+										"discounts",
+										"cancel",
+										":code"
+									],
+									"variable": [
+										{
+											"key": "code",
+											"value": "D6PS2"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"auth": {
+						"type": "bearer",
+						"bearer": {
+							"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NzFmM2Y2MmYzOGIxYjk5MGFkZjhiNzkiLCJpc3MiOiJmcm9tIHRoZSBtZW5zaG9wIHNlcnZlciIsInVzZXIiOnsiaWQiOiI2NzFmM2Y2MmYzOGIxYjk5MGFkZjhiNzkiLCJuYW1lIjoiVHJ1bmcgTmjDom4iLCJlbWFpbCI6InRuOXRoOEBnbWFpbC5jb20iLCJwaG9uZSI6IjA5ODI2MzY3ODEifSwiaWF0IjoxNzMwMjEyMTc3LCJleHAiOjEwMzcwMjEyMTc3fQ.7ttF2xtBZsOEW865H_AnqGHVL6yODNn7jL7Er_KnxAk"
+						}
+					},
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "8. Permission Module",
+			"item": [
+				{
+					"name": "Admin",
+					"item": [
+						{
+							"name": "create a permission",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "// {\r\n//     \"name\": \"find all permissions\",\r\n//     \"slug\": \"FOXX-PN-AD-V1\",\r\n//     \"version\": \"v1\",\r\n//     \"group\": \"admin\", //admin, seller, client\r\n//     \"module\": \"permissions\",\r\n//     \"apiMethod\": \"GETxxx\", //POST, PATCH, DELETE, GET\r\n//     \"apiPath\": \"/api/v1/admin/permissions/:id\"\r\n// }\r\n{\r\n    \"name\": \"xxxfind all permissions\",\r\n    \"slug\": \"xxxFOXX-PN-AD-V1\",\r\n    \"version\": \"v1\",\r\n    \"group\": \"admin\", //admin, seller, client\r\n    \"module\": \"permissions\",\r\n    \"apiMethod\": \"GETxxx\", //POST, PATCH, DELETE, GET\r\n    \"apiPath\": \"/api/v1/admin/permissions/:id\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{api/v1/admin}}/permissions"
+							},
+							"response": []
+						},
+						{
+							"name": "update a permission",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id\": \"6724d738536523777f94407d\",\r\n    \"name\": \"find one permissions\",\r\n    \"slug\": \"FOXX-PN-AD-V1\",\r\n    \"version\": \"v1\",\r\n    \"group\": \"admin\", //admin, seller, client\r\n    \"module\": \"permissions\",\r\n    \"apiMethod\": \"GET\", //POST, PATCH, DELETE, GET\r\n    \"apiPath\": \"/api/v1/admin/permissions/:id\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{api/v1/admin}}/permissions"
+							},
+							"response": []
+						},
+						{
+							"name": "update a permission",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{api/v1/admin}}/permissions/:id",
+									"host": [
+										"{{api/v1/admin}}"
+									],
+									"path": [
+										"permissions",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "6728a4f538200e4b6d0b098b"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "find all permissions",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": "{{api/v1/admin}}/permissions"
+							},
+							"response": []
+						},
+						{
+							"name": "find a permission",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{api/v1/admin}}/permissions/:id",
+									"host": [
+										"{{api/v1/admin}}"
+									],
+									"path": [
+										"permissions",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "6724d738536523777f94407d"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"auth": {
+						"type": "bearer",
+						"bearer": {
+							"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjcyNzA2MTk4M2QxNmY0YzI0ZTZhZjc3IiwibmFtZSI6IkknbSBhIHN1cGVyIGFkbWluIiwiZW1haWwiOiJzdXBlckBtZW5zaG9wLmNvbSIsInBob25lIjoiMDAwMDk4OTg5OCIsInJvbGVzIjpbIjY3MjcwMWFhMmY4ZDgwYWEzMmRiYmIyOCIsIjY3MjcwMDI4ODgyNDg5OTIxMzkyYjk3NCJdfSwiaWF0IjoxNzMwNjg4MzA4LCJleHAiOjEwMzcwNjg4MzA4fQ.LC9Q4nTJWb4ncco1LjxSeahU-AlgsMEodOqrQeMJU9I"
+						}
+					},
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "9. Role Module",
+			"item": [
+				{
+					"name": "Admin",
+					"item": [
+						{
+							"name": "create a role",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Normal Client\",\r\n    \"slug\": \"n-m-c-l\",\r\n    \"description\": \"for a normal client\",\r\n    \"group\": \"seller\", //admin, seller, client\r\n    \"isActive\": true, //, false\r\n    \"permissions\": []\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{api/v1/admin}}/roles"
+							},
+							"response": []
+						},
+						{
+							"name": "update a role",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id\": \"6725c62100989f9c4bbad5f0\",\r\n    \"name\": \"Super Admin\",\r\n    \"slug\": \"s-r-a-n\",\r\n    \"description\": \"for a super admin\",\r\n    \"group\": \"admin\", //admin, seller, client\r\n    \"isActive\": true, //, false\r\n    \"permissions\": [\"6724d29d5d1217e484b53dfb\", \"6724d6d7536523777f944074\", \"6724d702536523777f944077\", \"6724d729536523777f94407a\", \"6724d738536523777f94407d\"]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{api/v1/admin}}/roles"
+							},
+							"response": []
+						},
+						{
+							"name": "delete a role",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{api/v1/admin}}/roles/:id",
+									"host": [
+										"{{api/v1/admin}}"
+									],
+									"path": [
+										"roles",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "6725c62100989f9c4bbad5f0"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "find all roles",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": "{{api/v1/admin}}/roles"
+							},
+							"response": []
+						},
+						{
+							"name": "find a role",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{api/v1/admin}}/roles/:id",
+									"host": [
+										"{{api/v1/admin}}"
+									],
+									"path": [
+										"roles",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "6725c62100989f9c4bbad5f0"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"auth": {
+						"type": "bearer",
+						"bearer": {
+							"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjcyNzA2MjEzODU5ZDgzYTE4ZmZiMThiIiwibmFtZSI6IkknbSBhIG5vcm1hbCBhZG1pbiIsImVtYWlsIjoiYWRtaW5AbWVuc2hvcC5jb20iLCJwaG9uZSI6IjAwMDA5NDk0OTQiLCJyb2xlcyI6WyI2NzI3MDFhYTJmOGQ4MGFhMzJkYmJiMjgiXX0sImlhdCI6MTczMDY4NzA5MywiZXhwIjoxMDM3MDY4NzA5M30.l-M6kw_bGo5d4B9fRIaAoOEpYXtqveZAamf5qo3dCVI"
+						}
+					},
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "api/v1/admin",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "api/v1/client",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "api/v1/admin/files",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "api/v1/seller",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

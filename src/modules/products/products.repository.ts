@@ -139,29 +139,15 @@ export class ProductsRepository {
 
     const [{ data, metadata }] = await this.productModel.aggregate([
       {
-        $match: {
-          ...newQuery,
-          ...inCategories,
-          ...inNeeds,
-          ...fullTextSearch
-        }
+        $match: { ...newQuery, ...inCategories, ...inNeeds, ...fullTextSearch }
       },
       {
-        $project: {
-          score,
-          ...select
-        }
+        $project: { score, ...select }
       },
       {
         $facet: {
-          metadata: [
-            { $count: "queriedCount" },
-          ],
-          data: [
-            { $sort: dbSort },
-            { $skip: skip },
-            { $limit: limit }
-          ]
+          metadata: [{ $count: "queriedCount" },],
+          data: [{ $sort: dbSort }, { $skip: skip }, { $limit: limit }]
         }
       }
     ]);
@@ -196,6 +182,21 @@ export class ProductsRepository {
     const found = await this.productModel.findOne(query)
       .select(toDbSelectOrUnselect(select, isSelect))
       .populate(toDbPopulates(refers))
+      .lean();
+    return found || null;
+  }
+
+  /**
+ * Tìm kiếm 1 doc ngắn gọn với chỉ query, select
+ * @param query
+ * @param select
+ * @returns
+ */
+  async findOneByQueryRaw(
+    query: any, select: string[] = [] //ko truyen select => select all
+  ): Promise<Product | null> {
+    const found = await this.productModel.findOne(query)
+      .select(toDbSelect(select))
       .lean();
     return found || null;
   }

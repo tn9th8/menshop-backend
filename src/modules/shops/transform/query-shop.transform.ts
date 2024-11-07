@@ -1,6 +1,5 @@
 import { Injectable, PipeTransform } from '@nestjs/common';
 import { SortEnum } from 'src/common/enums/index.enum';
-import { NeedLevelEnum } from 'src/common/enums/need.enum';
 import { cleanNullishAttrs, toBoolean, toEnum, toNumber } from 'src/common/utils/index.util';
 import { toObjetId } from 'src/common/utils/mongo.util';
 import { QueryShopDto } from '../dto/query-shop.dto';

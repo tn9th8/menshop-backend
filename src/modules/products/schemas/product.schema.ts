@@ -1,10 +1,8 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument, SchemaTypes } from "mongoose";
-import { IBaseDocument } from "src/common/interfaces/index.interface";
-import { IKey } from "src/common/interfaces/index.interface";
+import { IBaseDocument, IKey } from "src/common/interfaces/index.interface";
 import { ratingStarProp, slugPlugin } from "src/common/utils/mongo.util";
 import { Category } from "src/modules/categories/schemas/category.schema";
-import { Need } from "src/modules/needs/schemas/need.schema";
 import { Shop } from "src/modules/shops/schemas/shop.schema";
 import { User } from "src/modules/users/schemas/user.schema";
 import { ProductAsset, ProductAttribute, ProductSize, ProductVariation } from "./nested-types.schema";

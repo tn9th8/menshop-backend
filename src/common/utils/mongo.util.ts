@@ -31,6 +31,9 @@ export const toObjetId = (id: IKey | string): IKey | null => {
 }
 
 export const toObjetIds = (ids: IKey[] | string[], isCleanEachNull = true): IKey[] => {
+    if (!Array.isArray(ids)) {
+        return null;
+    }
     ids = ids.map((id: IKey | string) => toObjetId(id));
     ids = isCleanEachNull ? ids.filter(Boolean) : ids; //[]
     return ids;

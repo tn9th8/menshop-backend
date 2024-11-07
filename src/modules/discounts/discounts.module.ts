@@ -4,7 +4,7 @@ import { DiscountsControllerSeller } from './discounts.controller.seller';
 import { DiscountsControllerClient } from './discounts.controller.client';
 import { DiscountsRepository } from './discounts.repository';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Discount, DiscountSchema } from './schemas/discount.schema';
+import { Discount, DiscountSchema } from './entities/discount.entity';
 import { ShopsModule } from '../shops/shops.module';
 import { ProductsModule } from '../products/products.module';
 import { DiscountsControllerAdmin } from './discounts.controller.admin';
@@ -17,5 +17,6 @@ import { DiscountsControllerAdmin } from './discounts.controller.admin';
     ShopsModule,
     ProductsModule
   ],
+  exports: [DiscountsService, DiscountsRepository]
 })
 export class DiscountsModule { }
