@@ -1,13 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
-import { UserDoc, User } from './schemas/user.schema';
-import { buildQueryLike, toDbSelect, toDbSkip, toDbSort, toDbUnselect } from 'src/common/utils/mongo.util';
-import { SignUpSellerDto } from 'src/shared/auth/dto/signup-seller.dto';
-import { IKey, IReference } from 'src/common/interfaces/index.interface';
 import { SortEnum } from 'src/common/enums/index.enum';
+import { IKey } from 'src/common/interfaces/index.interface';
 import { Result } from 'src/common/interfaces/response.interface';
-import { IDbSort } from 'src/common/interfaces/index.interface';
+import { buildQueryLike, toDbSkip, toDbSort, toDbUnselect } from 'src/common/utils/mongo.util';
+import { User, UserDoc } from './schemas/user.schema';
 
 @Injectable()
 export class UsersRepository {

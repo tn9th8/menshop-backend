@@ -1,5 +1,9 @@
 import { IKey } from "../interfaces/index.interface";
 
+export const isDisableMessage = (object: string) => {
+    return `${object} đã bị vô hiệu hóa`;
+}
+
 export const createErrorMessage = (object: string) => {
     return `có lỗi khi tạo một ${object}`;
 }

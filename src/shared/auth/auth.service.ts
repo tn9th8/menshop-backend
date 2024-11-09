@@ -1,9 +1,8 @@
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
 import ms from 'ms';
 import { JwtEnum } from 'src/common/enums/index.enum';
-import { isMatchPass } from 'src/common/utils/security.util';
 import { UserKeysService } from 'src/modules/user-keys/user-keys.service';
 import { UsersService } from 'src/modules/users/users.service';
 import { MailsService } from 'src/shared/mails/mails.service';
@@ -35,7 +34,7 @@ export class AuthService {
       const verifyToken = await this.authHelper.genVerifyToken(authUser);
       const createdUserKey = await this.userKeysService.createOne({ userId, verifyToken });
       if (!createdUserKey) {
-        throw new BadRequestException("Có lỗi khi taoj một userKey");
+        throw new BadRequestException("Có lỗi khi tạo một userKey");
       }
       // send a verify link
       const verifyLink =

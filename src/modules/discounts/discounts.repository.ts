@@ -6,7 +6,7 @@ import { IsSelectEnum, SortEnum } from 'src/common/enums/index.enum';
 import { IKey, IReference } from 'src/common/interfaces/index.interface';
 import { Result } from 'src/common/interfaces/response.interface';
 import { toDbPopulates, toDbSelect, toDbSelectOrUnselect, toDbSkip, toDbSort } from 'src/common/utils/mongo.util';
-import { Discount, DiscountDoc, DiscountDocPartial, DiscountPartial } from './schemas/discount.schema';
+import { Discount, DiscountDoc, DiscountDocPartial, DiscountPartial } from './entities/discount.entity';
 
 @Injectable()
 export class DiscountsRepository {

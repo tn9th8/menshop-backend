@@ -6,14 +6,14 @@ import { ApplyDiscountDto } from "../dto/apply-discount.dto";
 @Injectable()
 export class ApplyDiscountTransform implements PipeTransform {
     async transform(body: ApplyDiscountDto) {
-        let { code, shop, products } = body;
+        let { code, shop, productItems } = body;
         code = trim(code);
         shop = toObjetId(shop);
-        products = products.map(item => {
-            const { id, price, quantity } = item;
-            return { id: toObjetId(id), price, quantity }
+        productItems = productItems.map(item => {
+            const { _id, price, quantity } = item;
+            return { _id: toObjetId(_id), price, quantity }
         })
-        const cleaned: ApplyDiscountDto = { code, shop, products };
+        const cleaned: ApplyDiscountDto = { code, shop, productItems };
         return cleaned;
     }
 }

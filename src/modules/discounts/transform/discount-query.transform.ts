@@ -1,6 +1,6 @@
 import { Injectable, PipeTransform } from "@nestjs/common";
 import { cleanNullishAttrs, toPageQuery, trims } from "src/common/utils/index.util";
-import { DiscountQuery } from "../schemas/discount.schema";
+import { DiscountQuery } from "../entities/discount.entity";
 import { toObjetId } from "src/common/utils/mongo.util";
 
 @Injectable()

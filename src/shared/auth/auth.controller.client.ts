@@ -4,7 +4,6 @@ import { Response } from 'express';
 import { Cookies } from 'src/common/decorators/cookie.decorator';
 import { SkipJwt } from 'src/common/decorators/skip-jwt.decorator';
 import { User } from 'src/common/decorators/user.decorator';
-
 import { ApiMessage } from 'src/common/decorators/api-message.decorator';
 import { AuthService } from './auth.service';
 import { IAuthUser } from '../../common/interfaces/auth-user.interface';

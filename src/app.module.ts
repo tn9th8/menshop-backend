@@ -24,6 +24,8 @@ import { ProductsModule } from './modules/products/products.module';
 import { RolesModule } from './modules/roles/roles.module';
 import { ShopsModule } from './modules/shops/shops.module';
 import { UsersModule } from './modules/users/users.module';
+import { CartsModule } from './modules/cart/carts.module';
+import { OrdersModule } from './modules/orders/orders.module';
 
 @Module({
   controllers: [AppController],
@@ -77,9 +79,9 @@ import { UsersModule } from './modules/users/users.module';
       ],
     }),
     // Technique Module
-    DatabasesModule,
+    // DatabasesModule,
     AuthModule,
-    MailsModule,
+    // MailsModule,
     FilesModule,
     // Business Module
     UsersModule,
@@ -92,6 +94,8 @@ import { UsersModule } from './modules/users/users.module';
     NeedsModule,
     InventoriesModule,
     DiscountsModule,
+    CartsModule,
+    OrdersModule
   ],
   exports: [AppRepository]
 })

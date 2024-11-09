@@ -5,12 +5,11 @@ import { ApiMessage } from 'src/common/decorators/api-message.decorator';
 import { Cookies } from 'src/common/decorators/cookie.decorator';
 import { SkipJwt } from 'src/common/decorators/skip-jwt.decorator';
 import { User } from 'src/common/decorators/user.decorator';
+import { RefreshToken } from 'src/common/utils/security.util';
 import { IAuthUser } from '../../common/interfaces/auth-user.interface';
 import { AuthService } from './auth.service';
 import { SignInDto } from './dto/signin.dto';
 import { PasswordGuard } from './guard/password.guard';
-import { RefreshJwtStrategy } from './guard/refresh-jwt.strategy';
-import { RefreshToken } from 'src/common/utils/security.util';
 import { RefreshJwtGuard } from './guard/refresh-jwt.guard';
 
 @ApiTags('Auth Module for Admin Side')

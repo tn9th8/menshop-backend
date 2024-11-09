@@ -4,8 +4,8 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Strategy as Jwt } from 'passport-jwt';
 import { JwtEnum } from 'src/common/enums/index.enum';
 import { toObjetId } from 'src/common/utils/mongo.util';
+import { extractRefreshToken } from 'src/common/utils/security.util';
 import { IAuthUser } from '../../../common/interfaces/auth-user.interface';
-import { extractRefreshToken, RefreshToken } from 'src/common/utils/security.util';
 
 @Injectable()
 export class RefreshJwtStrategy extends PassportStrategy(Jwt, 'jwt-refresh') {
