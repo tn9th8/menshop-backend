@@ -1,10 +1,14 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { IAuthUser } from 'src/common/interfaces/auth-user.interface';
+import { FilterQuery } from 'mongoose';
+import { unselectConst } from 'src/common/constant/index.const';
 import { GroupUserEnum, IsActiveEnum, IsPublishedEnum, IsSelectEnum, SortEnum } from 'src/common/enums/index.enum';
 import { ProductSortEnum } from 'src/common/enums/product.enum';
+import { IAuthUser } from 'src/common/interfaces/auth-user.interface';
 import { IKey, IReference } from 'src/common/interfaces/index.interface';
+import { Result } from 'src/common/interfaces/response.interface';
 import { notFoundIdMessage, notFoundMessage } from 'src/common/utils/exception.util';
 import { computeItemsAndPages } from 'src/common/utils/mongo.util';
+import { InventoriesService } from '../inventories/inventories.service';
 import { ShopsService } from '../shops/shops.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { QueryProductDto } from './dto/query-product.dto';
@@ -14,11 +18,6 @@ import { ProductsRepository } from './products.repository';
 import { IProduct } from './schemas/product.schema';
 import { CreateProductTransform } from './transform/create-product.transform';
 import { UpdatedProductTransform } from './transform/update-product.transform';
-import { ShopsRepository } from '../shops/shops.repository';
-import { InventoriesService } from '../inventories/inventories.service';
-import { Result } from 'src/common/interfaces/response.interface';
-import { FilterQuery } from 'mongoose';
-import { unselectConst } from 'src/common/constant/index.const';
 
 @Injectable()
 export class ProductsService {
@@ -46,7 +45,7 @@ export class ProductsService {
       const inventoryPayload = {
         product: created._id,
         shop: shop._id,
-        user: user.id,
+        seller: user.id,
         stock: payload.stock
       }
       const createdInventory = await this.inventoriesService.createModel(inventoryPayload);

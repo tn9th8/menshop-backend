@@ -11,11 +11,16 @@ import { QueryProductDto } from './dto/query-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductsService } from './products.service';
 import { QueryProductTransform } from './transform/query-product.transform';
+import { AddStockToInventory } from '../inventories/dto/create-inventory.dto';
+import { ProductInventoriesService } from './services/product-inventories.service';
 
 @ApiTags('Products Module For Admin Side')
 @Controller('/seller/products')
 export class ProductsControllerSeller {
-  constructor(private readonly productsService: ProductsService) { }
+  constructor(
+    private readonly productsService: ProductsService,
+    private readonly productInventoriesService: ProductInventoriesService,
+  ) { }
   //CREATE//
   @ApiMessage('create a product')
   @Post()
@@ -33,6 +38,12 @@ export class ProductsControllerSeller {
     @User() user: IAuthUser
   ) {
     return this.productsService.updateOne(payload, user);
+  }
+
+  @ApiMessage('add stock')
+  @Patch('/add-stock')
+  async addStock(@Body() body: AddStockToInventory, @User() seller: IAuthUser) {
+    return await this.productInventoriesService.addStockToInventory(body, seller);
   }
 
   @ApiMessage('publish a product')

@@ -10,7 +10,7 @@ import { DiscountApplyTo, DiscountType } from 'src/common/enums/discount.enum';
 import { ProductsService } from '../products/products.service';
 import { ProductSortEnum } from 'src/common/enums/product.enum';
 import { GroupUserEnum, IsSelectEnum, IsValidEnum, SortEnum } from 'src/common/enums/index.enum';
-import { Discount, DiscountDoc, DiscountQuery } from './entities/discount.entity';
+import { Discount, DiscountDoc, DiscountQuery } from './schemas/discount.schema';
 import { Result } from 'src/common/interfaces/response.interface';
 import { buildQueryExcludeId, buildQueryModelIdSellerId, computeItemsAndPages, buildQueryLike } from 'src/common/utils/mongo.util';
 import { IProduct } from '../products/schemas/product.schema';

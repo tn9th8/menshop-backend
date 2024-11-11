@@ -11,8 +11,17 @@ export class OrdersRepository {
     @InjectModel(Order.name)
     private readonly orderModel: SoftDeleteModel<OrderDoc>
   ) { }
-  create(createOrderDto: CreateOrderDto) {
-    return 'This action adds a new order';
+  //CREATE//
+  async createOrder(
+    payload: Order
+  ): Promise<OrderDoc | null> {
+    try {
+      const { _doc: created } = await this.orderModel.create(payload) as any;
+      return created;
+    } catch (error) {
+      console.log('>>> Exception: OrdersRepository: createOrder: ' + error);
+      return null;
+    }
   }
 
   findAll() {

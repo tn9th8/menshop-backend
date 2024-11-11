@@ -14,6 +14,7 @@ import { UpdatedProductTransform } from './transform/update-product.transform';
 import { InventoriesModule } from '../inventories/inventories.module';
 import { ProductsHelper } from './helper/products.helper';
 import { ProductsControllerSeller } from './products.controller.seller';
+import { ProductInventoriesService } from './services/product-inventories.service';
 
 @Module({
   controllers: [
@@ -22,7 +23,8 @@ import { ProductsControllerSeller } from './products.controller.seller';
   providers: [
     ProductsService, ProductsRepository,
     CreateProductTransform, UpdatedProductTransform,
-    ProductsHelper
+    ProductsHelper,
+    ProductInventoriesService
   ],
   imports: [
     MongooseModule.forFeature([{ name: Product.name, schema: ProductSchema }]),
@@ -32,9 +34,7 @@ import { ProductsControllerSeller } from './products.controller.seller';
     UsersModule,
     InventoriesModule
   ],
-  exports: [
-    ProductsService, ProductsRepository,
-  ]
+  exports: [ProductsService, ProductsRepository, ProductInventoriesService]
 })
 export class ProductsModule { }
 

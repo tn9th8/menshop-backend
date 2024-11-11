@@ -5,7 +5,7 @@ import { GroupUserEnum, IsValidEnum } from 'src/common/enums/index.enum';
 import { IKey } from 'src/common/interfaces/index.interface';
 import { IdParamTransform } from 'src/middleware/pipe/id-param.transform';
 import { DiscountsService } from './discounts.service';
-import { DiscountQuery } from './entities/discount.entity';
+import { DiscountQuery } from './schemas/discount.schema';
 import { DiscountQueryTransform } from './transform/discount-query.transform';
 
 @ApiTags('Permission Module For Admin Side')

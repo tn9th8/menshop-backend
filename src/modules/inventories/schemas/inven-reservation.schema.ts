@@ -6,7 +6,7 @@ export class InventoryReservation {
     cartId: string;
 
     @Prop({ required: true })
-    stock: string;
+    quantity: string;
 
     @Prop({ required: true })
     createdAt: string;
