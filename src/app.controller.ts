@@ -11,6 +11,8 @@ export class AppController {
   @SkipJwt()
   @Get('hello')
   getHello(): string {
+    console.log("xxx");
+
     return this.appService.getHello();
   }
 

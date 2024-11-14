@@ -77,6 +77,25 @@ $ git checkout dev3
 $ git checkout dev4
 ```
 
+## Apache benchmark (For loading/performance testing)
+
+```bash
+# guide to write a apache-benchmark-testing command
+$ ab: run Apache benchmark
+$ -n: number of requests
+$ -c: number of concurrency (lượng users đồng thời gửi requests)
+$ -H: custom-header
+$ -T: content-type
+$ -p: include-body
+
+# example on CMD
+>> ab -n 10 -c 5 `
+>> -H "Authorization: Bearer X.ACCESS.TOKEN.DEMO.X" `
+>> -T "application/json" `
+>> -p ./test/apache/body.json `
+>> http://localhost:8044/api/v1/client/orders/confirm-checkout
+```
+
 ## Resources
 
 Check out a few resources that may come in handy when working with NestJS:

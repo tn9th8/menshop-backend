@@ -6,20 +6,23 @@ import { Product } from "src/modules/products/schemas/product.schema";
 import { Shop } from "src/modules/shops/schemas/shop.schema";
 import { User } from "src/modules/users/schemas/user.schema";
 import { InventoryReservation } from "./inven-reservation.schema";
+import { IPageQuery } from "src/common/interfaces/query.interface";
 
 export type InventoryDocument = HydratedDocument<Inventory>;
-export type IInventory = InventoryDocument & IBaseDocument;
+export type InventoryDoc = InventoryDocument & IBaseDocument;
+export type InventoryPartial = Partial<InventoryDoc>;
+export type InventoryQuery = Inventory & IPageQuery;
 
 @Schema({ timestamps: true })
 export class Inventory {
     @Prop({ type: SchemaTypes.ObjectId, ref: Product.name, required: true })
     product: IKey;
 
-    @Prop({ type: SchemaTypes.ObjectId, ref: Shop.name, required: true })
+    @Prop({ type: SchemaTypes.ObjectId, ref: Shop.name })
     shop: IKey;
 
     @Prop({ type: SchemaTypes.ObjectId, ref: User.name, required: true })
-    user: IKey;
+    seller: IKey;
 
     @Prop({ default: 'unknown' })
     location?: string;

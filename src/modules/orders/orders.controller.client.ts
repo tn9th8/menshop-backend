@@ -16,6 +16,14 @@ export class OrdersControllerClient {
     return await this.ordersService.reviewCheckout(shopOrders, client);
   }
 
+  @ApiMessage('confirm a checkout')
+  @Post('/confirm-checkout')
+  async confirmCheckout(@Body() shopOrders: any, @User() client: IAuthUser) {
+    const time = new Date();
+    console.log(">>> order time:" + time);
+    return await this.ordersService.confirmCheckout(shopOrders, client);
+  }
+
   @Post()
   create(@Body() createOrderDto: CreateOrderDto) {
     return this.ordersService.create(createOrderDto);

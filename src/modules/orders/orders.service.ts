@@ -3,13 +3,17 @@ import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { IAuthUser } from 'src/common/interfaces/auth-user.interface';
 import { CartsService } from '../cart/carts.service';
-import { notFoundMessage } from 'src/common/utils/exception.util';
+import { createErrorMessage, notFoundMessage } from 'src/common/utils/exception.util';
 import { ProductsService } from '../products/products.service';
 import { DiscountsService } from '../discounts/discounts.service';
+import { OrdersRedis } from './redis/orders.redis';
+import { OrdersRepository } from './orders.repository';
 
 @Injectable()
 export class OrdersService {
   constructor(
+    private readonly ordersRepo: OrdersRepository,
+    private readonly ordersRedis: OrdersRedis,
     private readonly cartService: CartsService,
     private readonly productsService: ProductsService,
     private readonly discountsService: DiscountsService,
@@ -17,30 +21,29 @@ export class OrdersService {
 
   /**
   client: {
-    clientId
+    id
   }
-  shopOrders: {
-    shopOrderIds: [
-      shopId:
+  shopOrders: [
+      shop: id
       discountCodes: [code (bị dư á ???)]
       productItems: [
         {
           _id
-          price
+          // price
           quantity
         }
       ]
     ]
-  }
+
    * @param shopOrders
    * @param client
    */
   async reviewCheckout(shopOrders: any, client: IAuthUser) {
     const { id: clientId } = client;
     //check cart is available
-    const foundCart = await this.cartService.findOwnCartId(clientId);
-    if (!foundCart)
-      throw new NotFoundException(notFoundMessage('cart'));
+    // const foundCart = await this.cartService.findOwnCartId(clientId);
+    // if (!foundCart)
+    //   throw new NotFoundException(notFoundMessage('cart'));
 
     const checkoutOrder = {
       totalPrice: 0,
@@ -86,6 +89,45 @@ export class OrdersService {
       newShopOrders.push(newShopOrder);
     }
     return { checkoutOrder, newShopOrders };
+  }
+
+  async confirmCheckout(shopOrders: any, client: IAuthUser, shipTo = {}, payment = {}) {
+    const { checkoutOrder, newShopOrders } = await this.reviewCheckout(shopOrders, client); //apply discount two times
+    //check cart is available
+    const foundCart = await this.cartService.findOwnCartId(client.id);
+    if (!foundCart)
+      throw new NotFoundException(notFoundMessage('cart'));
+    //get array of products
+    const productItems = newShopOrders.flatMap(shopOrder => shopOrder.productItems);
+    const acquireProduct = [];
+    for (const productItem of productItems) {
+      const { _id: productId, quantity } = productItem;
+      const keyLock = await this.ordersRedis.acquireLock(productId, quantity, foundCart._id);
+      acquireProduct.push(keyLock ? true : false);
+      if (keyLock) {
+        await this.ordersRedis.releaseLock(keyLock);
+      }
+    }
+    //nếu product hết hàng
+    if (acquireProduct.includes(false)) {
+      throw new BadRequestException('Thật là tiết. Một/Một số sản phẩm đã hết hàng. Vui lòng quay lại giỏ hàng');
+    }
+    //create order
+    const createdOrder = await this.ordersRepo.createOrder({
+      client: client.id,
+      checkout: checkoutOrder,
+      shopOrder: newShopOrders,
+      trackingNumber: "#00000",
+      shipTo,
+      payment,
+      status: "pending"
+    });
+
+    if (!createdOrder)
+      throw new BadRequestException(createErrorMessage('Lỗi khi tạo 1 order'));
+
+    //order thành công thì remove product items trong cart
+
   }
 
   create(createOrderDto: CreateOrderDto) {
