@@ -26,12 +26,10 @@ async function bootstrap() {
   app.use(helmet());
 
   app.enableCors({
-    origin: 'http://localhost:3066,http://localhost:3088',
+    origin: ['http://localhost:3066', 'http://localhost:3000'],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    allowedHeaders: 'Content-Type,Authorization,X-Custom-Header,X-No-Compression',
-    exposedHeaders: 'X-Custom-Header,X-Another-Header', // todo
+    preflightContinue: false,
     credentials: true,
-    preflightContinue: true,
   });
 
   // config middlewares

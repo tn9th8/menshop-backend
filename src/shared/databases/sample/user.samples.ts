@@ -2,7 +2,7 @@ import { ConfigService } from "@nestjs/config";
 import { toObjetId, toObjetIds } from "src/common/utils/mongo.util";
 import { hashPass } from "src/common/utils/security.util";
 import { RoleIdEnum } from "./role.samples";
-import { GenderEnum } from "src/common/enums/gender.enum";
+import { UserGenderEnum } from "src/modules/users/enum/user.enum";
 
 export enum UserIdEnum {
     SUPER_ADMIN = '6727061983d16f4c24e6af77',
@@ -20,9 +20,9 @@ export const USER_SAMPLES = async (configService: ConfigService) => {
             name: "I'm a super admin",
             phone: "0000989898",
             email: "super@menshop.com",
-            roles: toObjetIds([RoleIdEnum.NORMAL_ADMIN, RoleIdEnum.SUPER_ADMIN]),
+            roles: toObjetIds([RoleIdEnum.SUPER_ADMIN]),
             age: 20,
-            gender: GenderEnum.MALE,
+            gender: UserGenderEnum.MALE,
             avatar: 'super-admin-avatar.jpg',
             password,
             isActive
@@ -32,9 +32,9 @@ export const USER_SAMPLES = async (configService: ConfigService) => {
             name: "I'm a normal admin",
             phone: "0000949494",
             email: "admin@menshop.com",
-            roles: toObjetIds([RoleIdEnum.NORMAL_ADMIN]),
+            roles: toObjetIds([RoleIdEnum.NORMAL_ADMIN, RoleIdEnum.NORMAL_CLIENT]),
             age: 20,
-            gender: GenderEnum.MALE,
+            gender: UserGenderEnum.MALE,
             avatar: 'normal-admin-avatar.jpg',
             password,
             isActive
@@ -44,9 +44,9 @@ export const USER_SAMPLES = async (configService: ConfigService) => {
             name: "I'm a normal seller",
             phone: "0000545454",
             email: "seller@menshop.com",
-            roles: toObjetIds([RoleIdEnum.NORMAL_SELLER]),
+            roles: toObjetIds([RoleIdEnum.NORMAL_SELLER, RoleIdEnum.NORMAL_CLIENT]),
             age: 20,
-            gender: GenderEnum.FEMALE,
+            gender: UserGenderEnum.FEMALE,
             avatar: 'normal-seller-avatar.png',
             password,
             isActive
@@ -58,7 +58,7 @@ export const USER_SAMPLES = async (configService: ConfigService) => {
             email: "client@menshop.com",
             roles: toObjetIds([RoleIdEnum.NORMAL_CLIENT]),
             age: 20,
-            gender: GenderEnum.MALE,
+            gender: UserGenderEnum.MALE,
             avatar: 'normal-client-avatar.jpg',
             password,
             isActive

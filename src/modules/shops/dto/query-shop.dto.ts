@@ -12,6 +12,7 @@ export class QueryShopDto {
     isMall?: boolean;
     //ref
     seller?: IKey;
+    isOpen?: boolean;
 }
 
 export interface IQueryShop extends QueryShopDto {

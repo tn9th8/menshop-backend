@@ -1,21 +1,20 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { DiscountApplyTo, DiscountType } from 'src/common/enums/discount.enum';
+import { GroupUserEnum, IsSelectEnum, IsValidEnum, SortEnum } from 'src/common/enums/index.enum';
+import { IAuthUser } from 'src/common/interfaces/auth-user.interface';
+import { IKey, IReference } from 'src/common/interfaces/index.interface';
+import { Result, ResultOne } from 'src/common/interfaces/response.interface';
+import { createErrorMessage, isExistMessage, notFoundIdMessage, notFoundMessage } from 'src/common/utils/exception.util';
+import { isGreaterThanToday } from 'src/common/utils/index.util';
+import { buildQueryExcludeId, buildQueryLike, buildQueryModelIdSellerId, computeItemsAndPages } from 'src/common/utils/mongo.util';
+import { ProductSortEnum } from 'src/modules/products/enum/product.enum';
+import { ProductsService } from '../products/products.service';
+import { ProductDocument } from '../products/schemas/product.schema';
+import { ShopsService } from '../shops/shops.service';
+import { DiscountsRepository } from './discounts.repository';
 import { CreateDiscountDto } from './dto/create-discount.dto';
 import { UpdateDiscountDto } from './dto/update-discount.dto';
-import { IAuthUser } from 'src/common/interfaces/auth-user.interface';
-import { DiscountsRepository } from './discounts.repository';
-import { createErrorMessage, isExistMessage, notFoundIdMessage, notFoundMessage } from 'src/common/utils/exception.util';
-import { ShopsService } from '../shops/shops.service';
-import { IKey, IReference } from 'src/common/interfaces/index.interface';
-import { DiscountApplyTo, DiscountType } from 'src/common/enums/discount.enum';
-import { ProductsService } from '../products/products.service';
-import { ProductSortEnum } from 'src/common/enums/product.enum';
-import { GroupUserEnum, IsSelectEnum, IsValidEnum, SortEnum } from 'src/common/enums/index.enum';
 import { Discount, DiscountDoc, DiscountQuery } from './schemas/discount.schema';
-import { Result } from 'src/common/interfaces/response.interface';
-import { buildQueryExcludeId, buildQueryModelIdSellerId, computeItemsAndPages, buildQueryLike } from 'src/common/utils/mongo.util';
-import { IProduct } from '../products/schemas/product.schema';
-import { ApplyDiscountDto } from './dto/apply-discount.dto';
-import { isGreaterThanToday } from 'src/common/utils/index.util';
 
 @Injectable()
 export class DiscountsService {
@@ -33,12 +32,12 @@ export class DiscountsService {
     if (await this.discountsRepo.existDiscountByQuery({ code }))
       throw new ConflictException(isExistMessage('code'));
     //find shopId
-    const shopId = await this.shopsService.findShopIdBySeller(sellerId);
+    const shop = await this.shopsService.findShopBySeller(sellerId);
     //create discount: case applyTo is all => exclude specificProducts
     let createdDiscount: DiscountDoc;
     const newBody = {
       name, code, description, type, value, startDate, endDate, minPurchaseValue,
-      applyMax, applyMaxPerClient, applyTo, shop: shopId, seller: sellerId
+      applyMax, applyMaxPerClient, applyTo, shop: shop._id, seller: sellerId
     };
     if (applyTo === DiscountApplyTo.ALL)
       createdDiscount = await this.discountsRepo.createDiscount(newBody)
@@ -77,11 +76,23 @@ export class DiscountsService {
     return updatedDiscount;
   }
   //
-  async applyDiscount(body: ApplyDiscountDto, client: IAuthUser) {
-    const { code, shop: shopId, productItems } = body;
-    const { id: clientId } = client;
+  /*
+   * @param body: {
+    shop,
+    code,
+    productItems: [{
+      product: {_id, price}
+      quantity
+    }]
+  }
+   * @param client
+   * @param isConfirm
+   * @returns
+   */
+  async applyDiscount(body: any, client: IAuthUser, isConfirm: boolean) {
+    const { code, shop, productItems } = body;
     //find discount by code
-    const foundDiscount = await this.discountsRepo.findDiscountByQueryRaw({ code, shop: shopId });
+    const foundDiscount = await this.discountsRepo.findDiscountByQueryRaw({ code, shop });
     if (!foundDiscount)
       throw new NotFoundException(notFoundMessage('discount'));
     //check
@@ -93,32 +104,183 @@ export class DiscountsService {
       throw new BadRequestException('Discount hết hạn');
     if (!(applyMax > 0))
       throw new BadRequestException('Discount đã hết số lượng');
-    if (!(applyMaxPerClient > appliedClients.filter(item => item.toString() === clientId.toString()).length))
+    if (!(applyMaxPerClient > appliedClients.filter(item => item.toString() === client.id.toString()).length))
       throw new BadRequestException('Bạn đã dùng hết lượng Discount của mình');
     if (applyTo === DiscountApplyTo.SPECIFIC) {
-      const productIds = productItems.map(product => product._id)
+      const productIds = productItems.map(productItem => productItem.product._id)
       if (!(productIds.some(productId => specificProducts.includes(productId))))
         throw new BadRequestException('Discount không áp dụng trên những sản phẩm này')
     }
     //compute total order
-    const totalPrice = productItems.reduce((sum, product) => {
-      return sum + product.quantity * product.price;
+    const totalPrice = productItems.reduce((acc, productItem) => {
+      acc += (productItem.product.price * productItem.quantity);
+      return acc;
     }, 0);
     if (!(minPurchaseValue <= totalPrice))
-      throw new BadRequestException(`Đơn hàng cần tối thiểu ${minPurchaseValue} để áp dụng Discount`);
+      throw new BadRequestException(`Đơn hàng cần tối thiểu ${minPurchaseValue}`);
     //compute discount amount //todo: tạo trigger cập nhật valid
     const amount = type === DiscountType.FIXED_AMOUNT ? value : totalPrice * value / 100;
-    const updatedDiscount = await this.discountsRepo.updateDiscountByQuery({
-      isValid: applyMax - 1 > 0 ? true : false,
-      $inc: { applyMax: -1, appliedCount: 1 },
-      $push: { appliedClients: clientId }
-    }, { _id, code, applyMax: { $gt: 0 } });
-    if (!updatedDiscount)
-      throw new NotFoundException(notFoundMessage('discount'));
+    //review or confirm discount
+    if (isConfirm === true) {
+      const updatedDiscount = await this.discountsRepo.updateDiscountByQuery({
+        isValid: applyMax - 1 > 0 ? true : false,
+        $inc: { applyMax: -1, appliedCount: 1 },
+        $push: { appliedClients: client.id }
+      }, { _id, code, applyMax: { $gt: 0 } });
+
+      if (!updatedDiscount)
+        throw new NotFoundException(notFoundMessage('discount'));
+    }
+
     return {
       totalPrice,
       totalDiscount: amount,
       totalCheckout: totalPrice - amount
+    };
+  }
+  // apply without exception
+  /*
+ * @param body: {
+  shop,
+  code,
+  productItems: [{
+    product: {_id, price}
+    quantity
+  }]
+}
+ * @param client
+ * @param isConfirm
+ * @returns
+ */
+  async applyDiscountV2(body: any, client: IAuthUser, isConfirm: boolean) {
+    const { code, shop, productItems } = body;
+    //find discount by code
+    const foundDiscount = await this.discountsRepo.findDiscountByQueryRaw({ code, shop });
+    if (!foundDiscount)
+      return null;
+    //check
+    const { isValid, endDate, applyMax, applyMaxPerClient, appliedClients, minPurchaseValue,
+      applyTo, specificProducts, type, value, _id } = foundDiscount;
+    if (!isValid)
+      return null;
+    if (!isGreaterThanToday([endDate]))
+      return null;
+    if (!(applyMax > 0))
+      return null
+    if (!(applyMaxPerClient > appliedClients.filter(item => item.toString() === client.id.toString()).length))
+      return null;
+    if (applyTo === DiscountApplyTo.SPECIFIC) {
+      const productIds = productItems.map(productItem => productItem.product._id)
+      if (!(productIds.some(productId => specificProducts.includes(productId))))
+        return null;
+    }
+    //compute total order
+    const totalPrice = productItems.reduce((acc, productItem) => {
+      acc += (productItem.product.price * productItem.quantity);
+      return acc;
+    }, 0);
+    if (!(minPurchaseValue <= totalPrice))
+      return null;
+    //compute discount amount //todo: tạo trigger cập nhật valid
+    const amount = type === DiscountType.FIXED_AMOUNT ? value : totalPrice * value / 100;
+    //review or confirm discount
+    if (isConfirm === true) {
+      const updatedDiscount = await this.discountsRepo.updateDiscountByQuery({
+        isValid: applyMax - 1 > 0 ? true : false,
+        $inc: { applyMax: -1, appliedCount: 1 },
+        $push: { appliedClients: client.id }
+      }, { _id, code, applyMax: { $gt: 0 } });
+
+      if (!updatedDiscount)
+        return null;
+    }
+
+    return 'OK';
+  }
+  // apply without exception
+  /*
+ * @param body: {
+  shop,
+  code,
+  productItems: [{
+    product: {_id, price}
+    quantity
+  }]
+}
+ * @param client
+ * @param isConfirm
+ * @returns
+ */
+  async applyDiscountV3(body: any, client: IAuthUser, isConfirm: boolean) {
+    const { code, shop, productItems } = body;
+    let isApplyDiscount = true;
+    let errorDiscount = "";
+    //find discount by code
+    const foundDiscount = await this.discountsRepo.findDiscountByQueryRaw({ code, shop });
+    if (!foundDiscount) {
+      errorDiscount = 'Discount không tìm thấy';
+      isApplyDiscount = false;
+    }
+    //check
+    const { isValid, endDate, applyMax, applyMaxPerClient, appliedClients, minPurchaseValue,
+      applyTo, specificProducts, type, value, _id } = foundDiscount;
+    if (!isValid) {
+      errorDiscount = 'Discount hết hạn';
+      isApplyDiscount = false;
+    }
+    if (!isGreaterThanToday([endDate])) {
+      errorDiscount = 'Discount hết hạn';
+      isApplyDiscount = false;
+    }
+    if (!(applyMax > 0)) {
+      errorDiscount = 'Discount đã hết số lượng';
+      isApplyDiscount = false;
+    }
+    if (!(applyMaxPerClient > appliedClients.filter(item => item.toString() === client.id.toString()).length)) {
+      errorDiscount = 'Bạn đã dùng hết lượng Discount của mình';
+      isApplyDiscount = false;
+    }
+    if (applyTo === DiscountApplyTo.SPECIFIC) {
+      const productIds = productItems.map(productItem => productItem.product._id)
+      if (!(productIds.some(productId => specificProducts.includes(productId)))) {
+        errorDiscount = 'Discount không áp dụng trên những sản phẩm này';
+        isApplyDiscount = false;
+      }
+    }
+    //compute total order
+    const totalPrice = productItems.reduce((acc, productItem) => {
+      acc += (productItem.product.price * productItem.quantity);
+      return acc;
+    }, 0);
+    if (!(minPurchaseValue <= totalPrice)) {
+      errorDiscount = `Đơn hàng cần tối thiểu ${minPurchaseValue}`;
+      isApplyDiscount = false;
+    }
+    //compute discount amount //todo: tạo trigger cập nhật valid
+    let amount = 0;
+    if (isApplyDiscount === true) {
+      amount = type === DiscountType.FIXED_AMOUNT ? value : totalPrice * value / 100;
+      //review or confirm discount
+      if (isConfirm === true && isApplyDiscount === true) {
+        const updatedDiscount = await this.discountsRepo.updateDiscountByQuery({
+          isValid: applyMax - 1 > 0 ? true : false,
+          $inc: { applyMax: -1, appliedCount: 1 },
+          $push: { appliedClients: client.id }
+        }, { _id, code, applyMax: { $gt: 0 } });
+
+        if (!updatedDiscount) {
+          errorDiscount = `Discount không tìm thấy`;
+          isApplyDiscount = false;
+        }
+      }
+    }
+
+    return {
+      totalPrice,
+      totalDiscount: amount,
+      totalCheckout: totalPrice - amount,
+      isApplyDiscount,
+      errorDiscount
     };
   }
   //
@@ -171,7 +333,7 @@ export class DiscountsService {
           ? { ...query, ...buildQueryLike(['name'], [query.name]), isValid, seller: user?.id }
           : forUser === GroupUserEnum.CLIENT
             ? { ...query, ...buildQueryLike(['name'], [query.name]), isValid, shop: query?.shop || null } : null;
-    const select = ['_id', 'name', 'code', 'type', 'value', 'startDate', 'endDate', 'applyMax', 'applyTo', 'appliedCount'];
+    const select = ['_id', 'name', 'code', 'type', 'value', 'startDate', 'endDate', 'applyMax', 'applyTo', 'appliedCount', 'minPurchaseValue'];
     const { data, metadata } = await this.discountsRepo.findDiscountsByQuery(page, limit, sort, newQuery, select);
     const { items, pages } = computeItemsAndPages(metadata, limit);
     return { data, metadata: { page, limit, items, pages } };
@@ -188,7 +350,7 @@ export class DiscountsService {
       throw new NotFoundException(notFoundMessage('discount code'));
     //find all product by discount shop
     const { shop: shopId, applyTo, specificProducts: specificProductIds } = foundDiscount;
-    let productPage: Result<IProduct> = { metadata: { items: 0, pages: 0, page, limit }, data: [] };
+    let productPage: Result<ProductDocument> = { metadata: { items: 0, pages: 0, page, limit }, data: [] };
     //case ApplyTo.ALL
     if (applyTo === DiscountApplyTo.ALL) {
       productPage = await this.productsService.findAllForSales({ page, limit, sort, shop: shopId });
@@ -213,7 +375,8 @@ export class DiscountsService {
       { attribute: 'seller', select: ['_id', 'name', 'isActive'] },
       { attribute: 'specificProducts', select: ['_id', 'name', 'isPublished', 'isActive'] }
     ];
-    const found = await this.discountsRepo.findDiscountByQueryRefer(query, unselect, IsSelectEnum.UNSELECT, references);
+    const found = await this.discountsRepo.findDiscountByQueryRefer(
+      query, unselect, IsSelectEnum.UNSELECT, references);
     if (!found) throw new NotFoundException(notFoundIdMessage('discountId', discountId));
     return found;
   }

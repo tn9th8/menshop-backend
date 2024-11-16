@@ -10,6 +10,7 @@ export class Level1CategoriesService {
      * Level 1:
      * - Can have children. If not, []
      * - No parent
+     * - Have to have search
      */
 
     constructor(private readonly categoriesRepository: CategoriesRepository) { }

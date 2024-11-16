@@ -1,7 +1,7 @@
-import { IsArray, IsEmail, IsEnum, IsMongoId, IsNotEmpty, IsNumber, IsPhoneNumber, IsString } from "class-validator";
-import { GenderEnum } from "src/common/enums/gender.enum";
+import { IsArray, IsEmail, IsEmpty, IsEnum, IsMongoId, IsNotEmpty, IsNumber, IsPhoneNumber, IsString } from "class-validator";
+import { UserGenderEnum } from "src/modules/users/enum/user.enum";
 import { IKey } from "src/common/interfaces/index.interface";
-import { isArrayMessage, isEnumMessage, isObjectIdMessage, isStringMessage } from "src/common/utils/validator.util";
+import { isArrayMessage, isEnumMessage, isNotEmptyMessage, isObjectIdMessage, isStringMessage } from "src/common/utils/validator.util";
 
 export class CreateUserDto {
     @IsString(isStringMessage('name'))
@@ -12,13 +12,12 @@ export class CreateUserDto {
     email: string;
     @IsString(isStringMessage('password'))
     password: string; // todo: check a strong password
-    @IsMongoId({ each: true, ...isObjectIdMessage('roles') })
-    @IsArray(isArrayMessage('roles'))
-    roles: IKey[];
+    @IsMongoId(isObjectIdMessage('role'))
+    role: IKey;
     @IsNumber()
     age: number; // todo: check >8 < 150
-    @IsEnum(GenderEnum, isEnumMessage('gender', GenderEnum))
-    gender: GenderEnum;
+    @IsEnum(UserGenderEnum, isEnumMessage('gender', UserGenderEnum))
+    gender: UserGenderEnum;
     @IsString(isStringMessage('avatar'))
     avatar: string;
 }

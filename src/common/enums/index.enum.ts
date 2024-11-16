@@ -8,6 +8,11 @@ export enum IsActiveEnum {
     DISABLE = 0
 }
 
+export enum IsOpenEnum {
+    OPEN = 1,
+    CLOSE = 0
+}
+
 export enum IsValidEnum {
     VALID = 1,
     EXPIRED = 0

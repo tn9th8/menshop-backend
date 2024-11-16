@@ -35,13 +35,13 @@ export class OrdersRedis {
             if (keyLock) {
                 //thao tác với inventory
                 const updated = await this.inventoriesService.reserveInventory(productId, quantity, cartId);
-                if (updated.updatedCount) {
+                if (updated.updatedCount == 1) {
                     return key; //todo
                 }
                 //Hết time thì giải phóng key (cơ chế TTL: time-to-live)
                 const keyExpired = await this.redisClient.set(key, "", { EX: expireTime });
                 console.log(`expire: ${keyExpired}. get: ${await this.redisClient.get(key)}`);
-                return key;
+                return null;
             } else {
                 //có một tiến trình khác đang xử lý sản phẩm này
                 //hệ thống sẽ chờ 50ms rồi thử lại (retry) trong một số lần giới hạn (retryTimes)
@@ -54,7 +54,7 @@ export class OrdersRedis {
     public releaseLock = async (keyLock: any) => {
         const keyDeleted = await this.redisClient.del(keyLock);
         console.log(`delete: ${keyDeleted}. get: ${await this.redisClient.get(keyLock)}`);
-        await this.redisClient.quit();
+        // await this.redisClient.quit();
         return keyDeleted;
     }
 }

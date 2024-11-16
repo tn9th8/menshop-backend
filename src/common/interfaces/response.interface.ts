@@ -8,10 +8,17 @@ export interface Metadata {
     updatedCount?: number,
     queriedCount?: number,
     deletedCount?: number;
+    //
+    message?: string[];
 }
 
 export interface Result<T> {
     metadata: Metadata,
     data: T[]
+}
+
+export interface ResultOne<T> {
+    metadata: Metadata,
+    data: T
 }
 

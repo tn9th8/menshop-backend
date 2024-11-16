@@ -10,6 +10,7 @@ export class Level2CategoriesService {
     * Level 2:
     * - Can have children. If not, []
     * - Can have parent
+    * - Search
     */
 
     constructor(

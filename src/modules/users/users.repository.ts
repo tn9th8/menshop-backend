@@ -5,13 +5,13 @@ import { SortEnum } from 'src/common/enums/index.enum';
 import { IKey } from 'src/common/interfaces/index.interface';
 import { Result } from 'src/common/interfaces/response.interface';
 import { buildQueryLike, toDbSkip, toDbSort, toDbUnselect } from 'src/common/utils/mongo.util';
-import { User, UserDoc } from './schemas/user.schema';
+import { User, UserDocument } from './schemas/user.schema';
 
 @Injectable()
 export class UsersRepository {
   constructor(
     @InjectModel(User.name)
-    private readonly userModel: SoftDeleteModel<UserDoc>
+    private readonly userModel: SoftDeleteModel<UserDocument>
   ) { }
 
   async count() {
@@ -20,20 +20,27 @@ export class UsersRepository {
   }
 
   //CREATE//
-  async createOne(payload: User): Promise<UserDoc> {
+  async createOne(payload: User): Promise<UserDocument> {
     const created = await this.userModel.create(payload);
     return (created as any)._doc || null;
   }
 
+  async createUser(payload: User): Promise<UserDocument | null> {
+    try {
+      const { _doc: created } = await this.userModel.create(payload) as any;
+      return created;
+    } catch (error) {
+      console.log('>>> Exception: DiscountsRepository: createDiscount: ' + error);
+      return null;
+    }
+  }
+
   //UPDATE//
   async updateOneByQuery(
-    payload: any,
-    query: any,
-    isNew: boolean = true
+    payload: any, query: any
   ) {
-    const dbOptions = { new: isNew };
-    const updated = await this.userModel.findOneAndUpdate(query, payload, dbOptions);
-    return updated;
+    const updated = await this.userModel.findOneAndUpdate(query, payload, { new: true });
+    return updated ? updated._doc : null;
   }
 
   //EXIST//
@@ -67,7 +74,7 @@ export class UsersRepository {
 
   async findAllByQuery(
     page: number, limit: number, sort: SortEnum, unselect: string[], query: any
-  ): Promise<Result<UserDoc>> {
+  ): Promise<Result<UserDocument>> {
     const dbQuery = { ...query, ...buildQueryLike(['name'], [query.name]) };
     const [queriedCount, data] = await Promise.all([
       this.userModel.countDocuments(dbQuery),

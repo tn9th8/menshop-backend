@@ -29,7 +29,7 @@ export const trims = (items: string[]): string[] | ''[] | null[] => {
  */
 export const isNotEmptyOrException = (items: any[], names: string[]) => {
     items.map((item, index) => {
-        if (item === '')
+        if (!item)
             throw new BadRequestException(notEmptyMessage(names[index]));
     });
 }

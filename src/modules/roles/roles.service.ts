@@ -9,6 +9,7 @@ import { buildQueryExcludeId, buildQueryLike, computeItemsAndPages } from 'src/c
 import { CreateRoleDto, UpdateRoleDto } from './dto/roles.dto';
 import { RolesRepository } from './roles.repository';
 import { Role, RoleDoc, RoleQuery } from './schemas/role.schema';
+import { RoleGroupEnum } from './enum/role.enum';
 
 @Injectable()
 export class RolesService {
@@ -69,9 +70,32 @@ export class RolesService {
   }
 
   async findRoleForAuth(roleId: IKey): Promise<RoleDoc> {
-    const select = ['_id', 'group', 'permissions'];
+    const select = ['_id', 'name', 'group', 'permissions'];
     const references: IReference[] = [{ attribute: 'permissions', select: ['_id', 'apiPath', 'apiMethod'] }];
     const found = await this.rolesRepo.findRoleByQueryRefer({ _id: roleId }, select, IsSelectEnum.SELECT, references);
+    if (!found) throw new NotFoundException(notFoundMessage('role'));
+    return found;
+  }
+  //OTHER SERVICE
+  //users
+  async findRolesForUser(roleIds: IKey[]) {
+    const select = ['_id', 'name', 'group'];
+    let founds = await Promise.all(roleIds.map(roleId => {
+      const found = this.rolesRepo.findRoleByQueryRefer(
+        { _id: roleId, isActive: true }, select, IsSelectEnum.SELECT);
+      return found;
+    }));
+    founds = founds.filter(Boolean);
+    const ids = founds.map(founds => founds._id);
+    const isSeller = founds.find(
+      found => found.group === RoleGroupEnum.SELLER) ? true : false;
+    return { ids, isSeller };
+  }
+
+  async findRoleForUser(roleId: IKey[]): Promise<RoleDoc> {
+    const select = ['_id', 'name', 'group'];
+    const found = this.rolesRepo.findRoleByQueryRefer(
+      { _id: roleId, isActive: true }, select, IsSelectEnum.SELECT);
     if (!found) throw new NotFoundException(notFoundMessage('role'));
     return found;
   }

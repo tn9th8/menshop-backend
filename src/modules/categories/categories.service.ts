@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { GroupUserEnum, IsPublishedEnum, IsSelectEnum, SortEnum } from 'src/common/enums/index.enum';
+import { GroupUserEnum, IsActiveEnum, IsPublishedEnum, IsSelectEnum, SortEnum } from 'src/common/enums/index.enum';
 import { IKey, IReference } from 'src/common/interfaces/index.interface';
 import { notFoundIdMessage, notFoundMessage } from 'src/common/utils/exception.util';
 import { computeItemsAndPages } from 'src/common/utils/mongo.util';
@@ -35,8 +35,8 @@ export class CategoriesService {
     return updated;
   }
 
-  async updateIsPublished(categoryId: IKey, isPublished = IsPublishedEnum.PUBLISHED) {
-    const payload = { isPublished: isPublished ? true : false };
+  async updateIsPublished(categoryId: IKey, isActive: IsActiveEnum) {
+    const payload = { isActive: isActive ? true : false };
     const result = await this.catesRepo.updateLeanById(categoryId, payload);
     if (!result.updatedCount) {
       throw new NotFoundException(notFoundIdMessage('id param', categoryId));
@@ -47,11 +47,11 @@ export class CategoriesService {
   //QUERY//
   async findAllByQuery(
     { page = 1, limit = 24, sort = SortEnum.LATEST, ...query }: QueryCategoryDto,
-    isPublished = IsPublishedEnum.PUBLISHED
+    isActive: IsActiveEnum
   ) {
     const unselect = ['deletedAt', 'isDeleted', '__v'];
     const { data, metadata } = await this.catesRepo.findAllByQuery(
-      page, limit, sort, unselect, { ...query, isPublished: isPublished ? true : false }
+      page, limit, sort, unselect, { ...query, isActive: isActive ? true : false }
     );
     const { items, pages } = computeItemsAndPages(metadata, limit);
     return {
@@ -62,7 +62,7 @@ export class CategoriesService {
 
   async findOneById(categoryId: IKey, group: GroupUserEnum) {
     const query = group === GroupUserEnum.ADMIN ?
-      { _id: categoryId } : { _id: categoryId, isPublished: true };
+      { _id: categoryId } : { _id: categoryId, isActive: true };
     const refers: IReference[] = [{
       attribute: 'children',
       select: ['_id', 'name', 'slug', 'level', 'attributes', 'specifications'],
@@ -74,8 +74,8 @@ export class CategoriesService {
     return found;
   }
 
-  async findTree(isPublished: IsPublishedEnum = IsPublishedEnum.PUBLISHED) {
-    const query = { level: 1, isPublished: isPublished ? true : false };
+  async findTree(isActive: IsActiveEnum = IsActiveEnum.ACTIVE) {
+    const query = { level: 1, isActive: isActive ? true : false };
     const select = ['_id', 'name', 'slug', 'level'];
     const references: IReference[] = [
       {

@@ -21,9 +21,7 @@ export class AuthControllerAdmin {
   @ApiMessage('sign up')
   @SkipJwt()
   @Post('signup')
-  signUp(
-    @Body() signUpSellerDto: SignUpSellerDto
-  ) {
+  signUp(@Body() signUpSellerDto: SignUpSellerDto) {
     return this.authService.signUpSeller(signUpSellerDto);
   }
 

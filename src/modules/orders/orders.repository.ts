@@ -3,7 +3,11 @@ import { InjectModel } from '@nestjs/mongoose';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
-import { Order, OrderDoc } from './schemas/order.schema';
+import { Order, OrderDoc, OrderPartial } from './schemas/order.schema';
+import { SortEnum } from 'src/common/enums/index.enum';
+import { Result } from 'src/common/interfaces/response.interface';
+import { toDbPopulates, toDbSelect, toDbSkip, toDbSort } from 'src/common/utils/mongo.util';
+import { IReference } from 'src/common/interfaces/index.interface';
 
 @Injectable()
 export class OrdersRepository {
@@ -23,17 +27,30 @@ export class OrdersRepository {
       return null;
     }
   }
-
-  findAll() {
-    return `This action returns all orders`;
+  //UPDATE//
+  async updateOne(
+    document: OrderPartial, query: any
+  ): Promise<OrderDoc | null> {
+    const updated = await this.orderModel.findOneAndUpdate(query, document, { new: true }).lean();
+    return updated || null;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} order`;
+  //QUERY//
+  async findAll(
+    query: any, select: string[], refers: IReference[] = []
+  ): Promise<Array<OrderDoc>> {
+    const data = this.orderModel.find(query)
+      .select(toDbSelect(select))
+      .populate(toDbPopulates(refers))
+      .sort({ updatedAt: -1 })
+      .lean();
+    return data;
   }
 
-  update(id: number, updateOrderDto: UpdateOrderDto) {
-    return `This action updates a #${id} order`;
+  async findOne(query: any, select: string[], refers: IReference[] = []) {
+    const found = await this.orderModel.findOne(query)
+      .populate(toDbPopulates(refers))
+    return found;
   }
 
   remove(id: number) {

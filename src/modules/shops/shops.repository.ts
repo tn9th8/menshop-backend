@@ -5,7 +5,7 @@ import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { IsSelectEnum, SortEnum } from 'src/common/enums/index.enum';
 import { IDbSort, IKey, IReference } from 'src/common/interfaces/index.interface';
 import { Result } from 'src/common/interfaces/response.interface';
-import { buildQueryLike, toDbPopulates, toDbSelect, toDbSelectOrUnselect, toDbUnselect } from 'src/common/utils/mongo.util';
+import { buildQueryLike, toDbPopulates, toDbSelect, toDbSelectOrUnselect, toDbSkip, toDbSort, toDbUnselect } from 'src/common/utils/mongo.util';
 import { IQueryShop } from './dto/query-shop.dto';
 import { Shop, ShopDoc, ShopPartial, ShopQuery } from './schemas/shop.schema';
 
@@ -17,14 +17,14 @@ export class ShopsRepository {
   ) { }
 
   //CREATE//
-  async createShop(
-    entity: Shop
+  async createOne(
+    document: Shop
   ): Promise<ShopDoc | null> {
     try {
-      const { _doc: created } = await this.shopModel.create(entity) as any;
+      const { _doc: created } = await this.shopModel.create(document) as any;
       return created;
     } catch (error) {
-      console.log('>>> Exception: ShopsRepository: createShop: ' + error);
+      console.log('>>> Exception: ShopsRepository: createOne: ' + error);
       return null;
     }
   }
@@ -78,21 +78,13 @@ export class ShopsRepository {
       ...query,
       ...buildQueryLike(['name'], [query.name])
     }
-    const dbUnselect = toDbUnselect(unselect);
-    const dbSort: IDbSort =
-      sort == SortEnum.LATEST ? { updatedAt: -1 }
-        : sort == SortEnum.OLDEST ? { updatedAt: 1 }
-          : sort == SortEnum.NAME_AZ ? { name: 1 }
-            : sort == SortEnum.NAME_ZA ? { name: -1 }
-              : { updatedAt: -1 } //default SortEnum.LATEST
-    const skip = limit * (page - 1);
 
     const [queriedCount, data] = await Promise.all([
       this.shopModel.countDocuments(dbQuery),
       this.shopModel.find(dbQuery)
-        .select(dbUnselect)
-        .sort(dbSort)
-        .skip(skip)
+        .select(toDbUnselect(unselect))
+        .sort(toDbSort(sort))
+        .skip(toDbSkip(page, limit))
         .limit(limit)
         .exec()
     ]);
@@ -114,7 +106,7 @@ export class ShopsRepository {
    */
   async findShopByQueryRefer(
     query: any, select: string[], isSelect: IsSelectEnum, refers: IReference[] = []
-  ): Promise<Shop | null> {
+  ): Promise<ShopDoc | null> {
     const found = await this.shopModel.findOne(query)
       .select(toDbSelectOrUnselect(select, isSelect))
       .populate(toDbPopulates(refers))

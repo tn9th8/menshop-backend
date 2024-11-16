@@ -7,7 +7,7 @@ import { QueryShopDto } from '../dto/query-shop.dto';
 @Injectable()
 export class QueryShopTransform implements PipeTransform {
     async transform(value: QueryShopDto) {
-        let { page, limit, sort, name, isMall, seller } = value;
+        let { page, limit, sort, name, isMall, seller, isOpen } = value;
 
         page = toNumber(page);
         limit = toNumber(limit);
@@ -16,7 +16,7 @@ export class QueryShopTransform implements PipeTransform {
         isMall = toBoolean(isMall);
         seller = toObjetId(seller);
 
-        const cleaned: QueryShopDto = cleanNullishAttrs({ page, limit, sort, name, isMall, seller });
+        const cleaned: QueryShopDto = cleanNullishAttrs({ page, limit, sort, name, isMall, seller, isOpen });
         return cleaned;
     }
 }

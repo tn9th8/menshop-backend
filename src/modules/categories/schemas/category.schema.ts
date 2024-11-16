@@ -1,9 +1,19 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument, SchemaTypes, Types } from "mongoose";
+import { HydratedDocument, SchemaTypes } from "mongoose";
 import { CategoryLevelEnum } from "src/common/enums/category.enum";
-import { IBaseDocument } from "src/common/interfaces/index.interface";
-import { IKey } from "src/common/interfaces/index.interface";
-import { slugPlugin } from "src/common/utils/mongo.util";
+import { IBaseDocument, IKey } from "src/common/interfaces/index.interface";
+
+/**
+ * define Prop() Attribute
+ */
+@Schema()
+export class CategorySearch {
+    @Prop({ default: null })
+    name: string;
+
+    @Prop({ default: null })
+    value: string;
+}
 
 export type CategoryDocument = HydratedDocument<Category>;
 export type ICategory = CategoryDocument & IBaseDocument;
@@ -16,15 +26,18 @@ export class Category {
     description: string;
     @Prop({ type: Number, default: CategoryLevelEnum.LV1, required: true })
     level: CategoryLevelEnum;
+    @Prop({ type: [SchemaTypes.ObjectId], ref: Category.name, default: null })
+    children: IKey[];
+    @Prop({ index: true, default: false, required: true }) //draft or published
+    isActive: boolean;
+    //search to products
+    @Prop({ type: [Object], default: {} })
+    search: CategorySearch
+    //constraint to products
     @Prop({ type: [String], default: null })
     attributes: string[];
     @Prop({ type: [String], default: null })
     specifications: string[];
-    @Prop({ type: [SchemaTypes.ObjectId], ref: Category.name, default: null })
-    children: IKey[];
-    @Prop({ index: true, default: false, required: true }) //draft or published
-    isPublished: boolean;
 }
 
 export const CategorySchema = SchemaFactory.createForClass(Category);
-CategorySchema.plugin(slugPlugin);

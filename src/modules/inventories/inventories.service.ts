@@ -10,23 +10,18 @@ export class InventoriesService {
   constructor(private readonly inventoriesRepo: InventoriesRepository) { }
 
   //CREATE//
-  //create one Doc (document) phân biệt với create Dto
-  async createModel(payload: Inventory) {
-    try {
-      const created = await this.inventoriesRepo.createOne(payload);
-      if (!created)
-        throw new BadRequestException(createErrorMessage('inventory'));
-      return created;
-    } catch (error) {
-      throw error;
-    }
+  async createInventoryForProduct(payload: Inventory) {
+    const created = await this.inventoriesRepo.createOne(payload);
+    if (!created)
+      throw new BadRequestException(createErrorMessage('inventory'));
+    return created;
   }
 
   //UPDATE//
   async reserveInventory(productId: IKey, quantity: number, cartId: IKey): Promise<Metadata> {
     const query = { product: productId, stock: { $gte: quantity } };
     const payload = {
-      $in: { stock: -quantity },
+      $inc: { stock: -quantity, sold: +quantity },
       $push: { reservations: { cartId, quantity, createdAt: new Date() } }
     };
     const updated = await this.inventoriesRepo.updateOneByQuery(payload, query);

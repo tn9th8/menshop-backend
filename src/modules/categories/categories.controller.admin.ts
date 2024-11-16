@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Patch, Post, Query, UsePipes } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiMessage } from 'src/common/decorators/api-message.decorator';
-import { GroupUserEnum, IsPublishedEnum } from 'src/common/enums/index.enum';
+import { GroupUserEnum, IsActiveEnum, IsPublishedEnum } from 'src/common/enums/index.enum';
 import { IKey } from 'src/common/interfaces/index.interface';
 import { IdParamTransform } from 'src/middleware/pipe/id-param.transform';
 import { CategoriesService } from './categories.service';
@@ -27,32 +27,32 @@ export class CategoriesControllerAdmin {
     return this.categoriesService.updateOne(updateCategoryDto);
   }
 
-  @ApiMessage('publish a category')
-  @Patch('/published/:id')
+  @ApiMessage('active a category')
+  @Patch('/active/:id')
   @UsePipes(IdParamTransform)
-  publishOne(@Param('id') id: IKey) {
-    return this.categoriesService.updateIsPublished(id, IsPublishedEnum.PUBLISHED);
+  activeOne(@Param('id') id: IKey) {
+    return this.categoriesService.updateIsPublished(id, IsActiveEnum.ACTIVE);
   }
 
-  @ApiMessage('draft (unpublished) a category')
-  @Patch('/draft/:id')
+  @ApiMessage('disable a category')
+  @Patch('/disable/:id')
   @UsePipes(IdParamTransform)
-  unpublishOne(@Param('id') id: IKey) {
-    return this.categoriesService.updateIsPublished(id, IsPublishedEnum.DRAFT);
+  disableOne(@Param('id') id: IKey) {
+    return this.categoriesService.updateIsPublished(id, IsActiveEnum.DISABLE);
   }
   //QUERY//
-  @ApiMessage('find all draft categories')
-  @Get('/draft')
+  @ApiMessage('find all disable categories')
+  @Get('/disable')
   @UsePipes(QueryCategoryTransform)
-  findAllDraft(@Query() query: QueryCategoryDto) {
-    return this.categoriesService.findAllByQuery(query, IsPublishedEnum.DRAFT);
+  findAllActive(@Query() query: QueryCategoryDto) {
+    return this.categoriesService.findAllByQuery(query, IsActiveEnum.DISABLE);
   }
 
-  @ApiMessage('find all published categories')
-  @Get('/published')
+  @ApiMessage('find all active categories')
+  @Get('/active')
   @UsePipes(QueryCategoryTransform)
-  findAllPublished(@Query() query: QueryCategoryDto) {
-    return this.categoriesService.findAllByQuery(query, IsPublishedEnum.PUBLISHED);
+  findAllDisable(@Query() query: QueryCategoryDto) {
+    return this.categoriesService.findAllByQuery(query, IsActiveEnum.ACTIVE);
   }
 
   @ApiMessage('find one categories')

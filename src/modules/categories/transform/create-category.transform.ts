@@ -11,7 +11,7 @@ export class CreateCategoryTransform implements PipeTransform {
     constructor(private readonly cateRepo: CategoriesRepository) { }
 
     async transform(value: CreateCategoryDto) {
-        let { name, description, level, attributes, specifications, children, parent } = value;
+        let { name, description, level, attributes, specifications, children, parent, search } = value;
 
         //name: trim, not empty, not exist
         name = trim(name);
@@ -70,7 +70,7 @@ export class CreateCategoryTransform implements PipeTransform {
         }
 
         const cleaned: CreateCategoryDto = cleanNullishAttrs(
-            { name, description, level, attributes, specifications, children, parent });
+            { name, description, level, attributes, specifications, children, parent, search });
         return cleaned;
     }
 }

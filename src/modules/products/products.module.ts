@@ -12,7 +12,7 @@ import { UsersModule } from '../users/users.module';
 import { CreateProductTransform } from './transform/create-product.transform';
 import { UpdatedProductTransform } from './transform/update-product.transform';
 import { InventoriesModule } from '../inventories/inventories.module';
-import { ProductsHelper } from './helper/products.helper';
+import { ProductsHelper } from './services/products.helper';
 import { ProductsControllerSeller } from './products.controller.seller';
 import { ProductInventoriesService } from './services/product-inventories.service';
 

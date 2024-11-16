@@ -16,5 +16,5 @@ export class QueryCategoryDto {
 }
 
 export class IQueryCategory extends QueryCategoryDto {
-    isPublished?: boolean;
+    isActive?: boolean;
 }

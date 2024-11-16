@@ -11,17 +11,17 @@ export class UpdatedCategoryTransform implements PipeTransform {
     constructor(private readonly cateRepo: CategoriesRepository) { }
 
     async transform(value: UpdateCategoryDto) {
-        let { id, name, description, attributes, specifications, children, parent } = value;
+        let { id, name, description, attributes, specifications, children, parent, search, level } = value;
 
         //id: objectId, get level
         id = toObjetId(id);
         if (!id) {
             throw new BadRequestException(isObjectIdMessage('id param', id));
         }
-        const { level } = await this.cateRepo.findLeanById(id, ['level']) || { level: null };
-        if (!level) {
-            throw new NotFoundException(notFoundIdMessage('id param', id));
-        }
+        // const { level } = await this.cateRepo.findLeanById(id, ['level']) || { level: null };
+        // if (!level) {
+        //     throw new NotFoundException(notFoundIdMessage('id param', id));
+        // }
 
         //trim name, not empty, not exist
         name = trim(name);
@@ -78,7 +78,7 @@ export class UpdatedCategoryTransform implements PipeTransform {
         }
 
         const cleaned: IUpdateCategory = cleanNullishAttrs(
-            { id, name, description, attributes, specifications, children, parent, level });
+            { id, name, description, attributes, specifications, children, parent, level, search });
         return cleaned;
     }
 }

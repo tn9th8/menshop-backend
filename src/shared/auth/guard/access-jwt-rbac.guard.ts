@@ -35,6 +35,8 @@ export class AccessJwtRbacGuard extends AuthGuard('jwt') {
     }
 
     validateRbac(user: IAuthUser, context: ExecutionContext): IAuthUser {
+        if (user.isSuperAdmin)
+            return user;
         //skip authorize by decorator
         const isSkipPermission = this.reflector.getAllAndOverride<boolean>(IS_SKIP_PERMISSION_KEY, [
             context.getHandler(), context.getClass()

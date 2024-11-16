@@ -31,16 +31,16 @@ export class CategoriesFactory {
     }
 
     async updateOne(payload: IUpdateCategory) {
-        const { level, ...newPayload } = payload;
+        const { level } = payload;
         switch (level) {
             case CategoryLevelEnum.LV1:
-                return this.level1CategoriesService.updateOne(newPayload);
+                return this.level1CategoriesService.updateOne(payload);
             case CategoryLevelEnum.LV2:
-                return this.level2CategoriesService.updateOne(newPayload);
+                return this.level2CategoriesService.updateOne(payload);
             case CategoryLevelEnum.LV3:
-                return this.level3CategoriesService.updateOne(newPayload);
+                return this.level3CategoriesService.updateOne(payload);
             default:
-                return this.defaultCategoriesService.updateOne(newPayload);
+                return this.defaultCategoriesService.updateOne(payload);
         }
     }
 }

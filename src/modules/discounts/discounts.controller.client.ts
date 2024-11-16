@@ -23,7 +23,8 @@ export class DiscountsControllerClient {
     @Body(ApplyDiscountTransform) body: ApplyDiscountDto,
     @User() user: IAuthUser
   ) {
-    return this.discountsService.applyDiscount(body, user);
+    const isConfirm = false;
+    return this.discountsService.applyDiscount(body, user, isConfirm);
   }
   @ApiMessage('cancel a discount')
   @Patch('/cancel/:code')

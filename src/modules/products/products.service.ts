@@ -2,12 +2,12 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { FilterQuery } from 'mongoose';
 import { unselectConst } from 'src/common/constant/index.const';
 import { GroupUserEnum, IsActiveEnum, IsPublishedEnum, IsSelectEnum, SortEnum } from 'src/common/enums/index.enum';
-import { ProductSortEnum } from 'src/common/enums/product.enum';
+import { ProductSortEnum } from 'src/modules/products/enum/product.enum';
 import { IAuthUser } from 'src/common/interfaces/auth-user.interface';
 import { IKey, IReference } from 'src/common/interfaces/index.interface';
 import { Result } from 'src/common/interfaces/response.interface';
 import { notFoundIdMessage, notFoundMessage } from 'src/common/utils/exception.util';
-import { computeItemsAndPages } from 'src/common/utils/mongo.util';
+import { buildQueryLike, computeItemsAndPages } from 'src/common/utils/mongo.util';
 import { InventoriesService } from '../inventories/inventories.service';
 import { ShopsService } from '../shops/shops.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -15,7 +15,7 @@ import { QueryProductDto } from './dto/query-product.dto';
 import { SearchProductDto } from './dto/search-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductsRepository } from './products.repository';
-import { IProduct } from './schemas/product.schema';
+import { ProductDocument } from './schemas/product.schema';
 import { CreateProductTransform } from './transform/create-product.transform';
 import { UpdatedProductTransform } from './transform/update-product.transform';
 
@@ -30,29 +30,25 @@ export class ProductsService {
   ) { }
 
   //CREATE//
-  async createOne(payload: CreateProductDto, user: IAuthUser): Promise<IProduct> {
-    try {
-      //create a product
-      let { stock, ...productPayload } = await this.createProductTransform.transform(payload);
-      const shop = await this.shopsService.findShopIdBySeller(user.id);
-      const created = await this.productsRepository.createOne({
-        ...productPayload, seller: user.id, shop: shop._id
-      });
-      if (!created) {
-        throw new BadRequestException('Lỗi khi tạo 1 product');
-      }
-      //created an inventory
-      const inventoryPayload = {
-        product: created._id,
-        shop: shop._id,
-        seller: user.id,
-        stock: payload.stock
-      }
-      const createdInventory = await this.inventoriesService.createModel(inventoryPayload);
-      return created;
-    } catch (error) {
-      throw error;
+  async createOne(payload: CreateProductDto, seller: IAuthUser): Promise<ProductDocument> {
+    //create a product
+    let { stock, ...productPayload } = await this.createProductTransform.transform(payload);
+    const shop = await this.shopsService.findShopBySeller(seller.id);
+    const tags = productPayload.attributes.map(attr => attr.value)
+    const createdProduct = await this.productsRepository.createOne({
+      ...productPayload, seller: seller.id, shop: shop._id, tags,
+      isActive: true, isPublished: true
+    });
+    if (!createdProduct) throw new BadRequestException('Lỗi khi tạo 1 product');
+    //created an inventory
+    const inventoryPayload = {
+      product: createdProduct._id,
+      shop: createdProduct.shop,
+      seller: createdProduct.seller,
+      stock
     }
+    await this.inventoriesService.createInventoryForProduct(inventoryPayload);
+    return createdProduct;
   }
   //UPDATE//
   async updateOne(payload: UpdateProductDto, user: IAuthUser) {
@@ -81,11 +77,10 @@ export class ProductsService {
   async updateIsPublished(
     productId: IKey,
     isPublished: IsPublishedEnum,
-    user: IAuthUser,
-    isActive = IsActiveEnum.ACTIVE
+    user: IAuthUser
   ) {
     const payload = { isPublished: isPublished ? true : false };
-    const query = { _id: productId, seller: user.id, isActive: true };
+    const query = { _id: productId, seller: user.id };
     const updated = await this.productsRepository.updateOneByQuery(payload, query);
     if (!updated) {
       throw new NotFoundException(notFoundMessage("product"));
@@ -96,7 +91,7 @@ export class ProductsService {
   //QUERY//
   async findAllIsActiveByQuery(
     { page = 1, limit = 24, sort = SortEnum.LATEST, ...query }: QueryProductDto,
-    isActive = IsActiveEnum.ACTIVE
+    isActive: IsActiveEnum
   ) {
     const { data, metadata } = await this.productsRepository.findAllByQuery(
       page, limit, sort, unselectConst, { ...query, isActive: isActive ? true : false }
@@ -124,30 +119,41 @@ export class ProductsService {
   }
 
   async searchAll(
-    { page = 1, limit = 24, sort = ProductSortEnum.CTIME, keyword = '', ...query }: SearchProductDto,
+    { page = 1, limit = 24, sort = ProductSortEnum.RELEVANT, keyword, categories, ...query }: SearchProductDto,
     isPublished = true, isActive = true
   ) {
-    const keywordReg = keyword ? (new RegExp(keyword)).source : ''; //!falsy
-    const newQuery = { ...query, isPublished, isActive };
-    const select = ['name', 'displayName', 'price', 'discount', 'thumb'];
-
+    //prepare
+    const fullTextSearch: FilterQuery<any> = keyword ? {
+      text: { $text: { $search: (new RegExp(keyword, 'i')).source } },
+      score: { $meta: 'textScore' }
+    } : {
+      text: {},
+      score: null
+    }
+    if (fullTextSearch.score === null)
+      sort = ProductSortEnum.POPULATE;
+    const inCategories = categories ? {
+      categories: { $in: categories }
+      // categories: { $elemMatch: { $eq: query.categories } }  //truthy: ?: || if() - falsy: if(!) //nullish: ?? ?.
+    } : {};
+    const newQuery = { ...query, ...inCategories, isPublished, isActive };
+    const select = ['name', 'thumb', 'variationFirst', 'variationSecond', 'price', 'ratingStar', 'views', 'likes', 'updatedAt', 'shop'];
+    //query
     const { data, metadata } = await this.productsRepository.searchAll(
-      limit, page, sort, newQuery, keywordReg, select
+      limit, page, sort, newQuery, fullTextSearch, select
     );
+
     const { items, pages } = computeItemsAndPages(metadata, limit);
-    return {
-      data,
-      metadata: { page, limit, items, pages },
-    };
+    return { data, metadata: { page, limit, items, pages } };
   }
 
   async findAllForSales(
-    { page = 1, limit = 24, sort = ProductSortEnum.CTIME, ...query }: FilterQuery<IProduct>, //client query
+    { page = 1, limit = 24, sort = ProductSortEnum.CTIME, ...query }: FilterQuery<ProductDocument>, //client query
     isPublished = true, isActive = true //add query
-  ): Promise<Result<IProduct>> {
+  ): Promise<Result<ProductDocument>> {
     const newQuery = { ...query, isPublished, isActive };
-    const select = ['_id', 'name', 'thumb', 'price', 'ratingStar'];
-    const { data, metadata } = await this.productsRepository.findAllByProductSort(
+    const select = ['_id', 'name', 'thumb', 'price', 'ratingStar', 'shop'];
+    const { data, metadata } = await this.productsRepository.findAllByProductSortV2(
       page, limit, sort, select, newQuery
     );
     const { items, pages } = computeItemsAndPages(metadata, limit);

@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument, SchemaTypes } from "mongoose";
 import { IBaseDocument, IKey } from "src/common/interfaces/index.interface";
 import { IPageQuery } from "src/common/interfaces/query.interface";
+import { Shop } from "src/modules/shops/schemas/shop.schema";
 import { User } from "src/modules/users/schemas/user.schema";
 
 export type OrderDocument = HydratedDocument<Order>;
@@ -14,6 +15,10 @@ export class Order {
     @Prop({ type: SchemaTypes.ObjectId, ref: User.name, required: true })
     client: IKey;
 
+    @Prop({ type: SchemaTypes.ObjectId, ref: Shop.name, required: true })
+    shop: IKey;
+
+    @Prop({ type: Object })
     checkout: Object;
     /*
         checkout: {
@@ -25,24 +30,35 @@ export class Order {
      */
 
     @Prop({ type: [Object] })
-    shopOrder: Object[];
+    productItems: Object[];
     /*
-        shop,
-        totalPrice,
-        totalDiscount
-        totalCheckout,
-        productItems
+    [
+        {
+            "cartProductItem":,
+            "product": {
+                "_id":,
+                "name":,
+                "thumb":,
+                "price":
+            },
+            "variant":,
+            "quantity":
+        }
+    ],
     */
 
     //todo trackings, payment
-    @Prop({ type: Object })
-    payment: Object;
+    @Prop()
+    payment: string;
 
     @Prop()
     trackingNumber: string; //#0001020241113
 
-    @Prop({ type: Object })
-    shipTo: Object;
+    @Prop()
+    phone: string;
+
+    @Prop()
+    shipTo: string;
     /*
         street,
         city,

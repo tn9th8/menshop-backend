@@ -10,6 +10,7 @@ import { IAuthUser } from '../../common/interfaces/auth-user.interface';
 import { SignUpClientDto } from './dto/signup-client.dto';
 import { SignUpSellerDto } from './dto/signup-seller.dto';
 import { AuthHelper } from './helper/auth.helper';
+import { RoleIdEnum } from '../databases/sample/role.samples';
 
 @Injectable()
 export class AuthService {
@@ -18,14 +19,14 @@ export class AuthService {
     private readonly userKeysService: UserKeysService,
     private readonly configService: ConfigService,
     private readonly mailService: MailsService,
-    private readonly authHelper: AuthHelper
+    private readonly authHelper: AuthHelper,
   ) { }
 
   //SIGN UP //todo: transaction
-  async signUpSeller(payload: SignUpSellerDto) {
+  async signUpSeller(body: SignUpSellerDto) {
     try {
-      //create a seller
-      const createdUser = await this.usersService.createSeller(payload);
+      //create normal seller
+      const createdUser = await this.usersService.createUserFactory({ ...body, role: RoleIdEnum.NORMAL_SELLER });
       if (!createdUser)
         throw new BadRequestException("Có lỗi khi tạo một seller");
       const { _id: userId, name, email, phone, roles } = createdUser;
@@ -47,10 +48,10 @@ export class AuthService {
     }
   }
 
-  async signUpClient(payload: SignUpClientDto) {
+  async signUpClient(body: SignUpClientDto) {
     try {
       //create a seller
-      const createdUser = await this.usersService.createClient(payload);
+      const createdUser = await this.usersService.createUserFactory({ ...body, role: RoleIdEnum.NORMAL_CLIENT });
       if (!createdUser)
         throw new BadRequestException("Có lỗi khi tạo một client");
       const { _id: userId, name, email, phone, roles } = createdUser;

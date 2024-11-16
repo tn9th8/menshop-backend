@@ -7,4 +7,6 @@ import { isObjectIdMessage } from 'src/common/utils/validator.util';
 export class UpdateShopDto extends PartialType(CreateShopDto) {
     @IsMongoId(isObjectIdMessage('id'))
     id: IKey;
+
+    isOpen?: boolean;
 }

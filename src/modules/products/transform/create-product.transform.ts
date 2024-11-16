@@ -12,12 +12,13 @@ import { NeedsRepository } from 'src/modules/needs/needs.repository';
 export class CreateProductTransform implements PipeTransform {
     constructor(
         private readonly productRepo: ProductsRepository,
-        private readonly categoriesRepo: CategoriesRepository,
-        private readonly needsRepo: NeedsRepository
+        private readonly categoriesRepo: CategoriesRepository
     ) { }
 
-    async transform(value: CreateProductDto) {
-        let { name, description, thumb, stock, asset, attributes, categories, needs } = value;
+    async transform(value: any) {
+        let { name, description, thumb, asset, variationFirst, variationSecond, attributes, stock, price, categories,
+            views, likes
+        } = value;
 
         //name: trim, not empty, not exist
         name = trim(name);
@@ -33,6 +34,8 @@ export class CreateProductTransform implements PipeTransform {
         thumb = thumb || 'unknown';
         //stock: >=0, default 0
         stock = stock >= 0 ? stock : 0;
+        //price: >=0, default 0
+        price = price >= 0 ? price : 0;
         //categories to objectId
         if (!Array.isArray(categories)) {
             categories = null;
@@ -49,25 +52,12 @@ export class CreateProductTransform implements PipeTransform {
                 categories = null;
             }
         }
-        //needs to objectId
-        if (!Array.isArray(needs)) {
-            needs = null;
-        }
-        else {
-            needs = await Promise.all(needs.map(async item => {
-                item = toObjetId(item);
-                if (!item) { return null; }
-                const isExist = await this.needsRepo.isExistById(item);
-                return isExist ? item : null;
-            }));
-            needs = needs.filter(Boolean); //[]
-            if (needs.length === 0) {
-                needs = null;
-            }
-        }
         //todo: transform
         const cleaned: CreateProductDto = cleanNullishAttrs(
-            { name, description, thumb, stock, asset, attributes, categories, needs });
+            {
+                name, description, thumb, stock, price, asset, variationFirst, variationSecond, attributes, categories,
+                views, likes
+            });
         return cleaned;
     }
 }

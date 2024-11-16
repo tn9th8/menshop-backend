@@ -26,10 +26,17 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
+## Pre-condition:
+```bash
+$ node 18.19.1
+$ redis 5.0.14
+```
+
 ## Project setup
 
 ```bash
 $ npm install
+$ redis-server
 ```
 
 ## Compile and run the project
@@ -89,10 +96,10 @@ $ -T: content-type
 $ -p: include-body
 
 # example on CMD
->> ab -n 10 -c 5 `
+>> ab -n 100 -c 100 `
 >> -H "Authorization: Bearer X.ACCESS.TOKEN.DEMO.X" `
 >> -T "application/json" `
->> -p ./test/apache/body.json `
+>> -p ./test/apache/checkout.body.json `
 >> http://localhost:8044/api/v1/client/orders/confirm-checkout
 ```
 

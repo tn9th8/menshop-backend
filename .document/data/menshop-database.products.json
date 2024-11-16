@@ -1,0 +1,654 @@
+[
+  {
+    "_id": {
+      "$oid": "673aca63a9edd9903a1e293e"
+    },
+    "name": "Áo Thun Gym thể thao Essentials II co giãn 4 chiều thấm hút nhanh khô Coolmate",
+    "description": "Tự hào sản xuất tại Việt Nam.\nNgười mẫu: 179cm - 80kg, mặc áo 2XL.",
+    "thumb": "coolmate-aotheothao-1-1731905079408.png",
+    "asset": {
+      "productImages": [
+        "coolmate-aotheothao-11-1731905195445.png",
+        "coolmate-aotheothao-12-1731905228509.png",
+        "coolmate-aotheothao-13-1731905252210.png"
+      ],
+      "variationImages": [],
+      "sizeImage": "coolmate-aotheothao-1size-1731905173049.png"
+    },
+    "variationFirst": {
+      "name": "Cở áo",
+      "options": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "2XL",
+        "3XL"
+      ]
+    },
+    "variationSecond": {
+      "name": "Màu sắc",
+      "options": [
+        "Đen",
+        "Xanh stone",
+        "Xanh titan"
+      ]
+    },
+    "attributes": [
+      {
+        "name": "Thương hiệu",
+        "value": "Coolmate",
+        "group": "Chung"
+      },
+      {
+        "name": "Xuất sứ",
+        "value": "Hàng Việt Nam",
+        "group": "Chung"
+      },
+      {
+        "name": "Chất liệu",
+        "value": "90% Polyester + 10% Spandex, dệt Knit - Mesh",
+        "group": "Về sản phẩm"
+      },
+      {
+        "name": "Công nghệ",
+        "value": "ExDry thấm hút tốt, nhanh khô, thoáng khí",
+        "group": "Về sản phẩm"
+      },
+      {
+        "name": "Độ co giãn",
+        "value": "co giãn 4 chiều thoải mái",
+        "group": "sản phẩm"
+      },
+      {
+        "name": "Form áo",
+        "value": "Regulart fit",
+        "group": "Về sản phẩm"
+      },
+      {
+        "name": "Nhu cầu",
+        "value": "Tập gym",
+        "group": "Về sản phẩm"
+      }
+    ],
+    "tags": [
+      "Coolmate",
+      "Hàng Việt Nam",
+      "90% Polyester + 10% Spandex, dệt Knit - Mesh",
+      "ExDry thấm hút tốt, nhanh khô, thoáng khí",
+      "co giãn 4 chiều thoải mái",
+      "Regular fit",
+      "Tập gym"
+    ],
+    "price": 199000,
+    "ratingStar": 5,
+    "views": 542,
+    "likes": 0,
+    "categories": [
+      {
+        "$oid": "6739a5af95e9295b374308ba"
+      },
+      {
+        "$oid": "6739a8c9822a609a762fe65a"
+      }
+    ],
+    "shop": {
+      "$oid": "67384683c3eecbca6dfbeef4"
+    },
+    "seller": {
+      "$oid": "67384683c3eecbca6dfbeeef"
+    },
+    "isPublished": true,
+    "isActive": true,
+    "isDeleted": false,
+    "deletedAt": null,
+    "createdAt": {
+      "$date": "2024-11-18T05:02:27.322Z"
+    },
+    "updatedAt": {
+      "$date": "2024-11-18T05:02:27.339Z"
+    },
+    "slug": "ao-thun-gym-the-thao-essentials-ii-co-gian-4-chieu-tham-hut-nhanh-kho-coolmate",
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "673acd8ca9edd9903a1e2948"
+    },
+    "name": "Combo 2 áo thun nam Cotton Compact phiên bản Premium chống nhăn Coolmate",
+    "description": "Premium Tshirt Coolmate chính là chiếc áo thun dành cho bạn, một phiên bản áo thun hoàn toàn mới và đầy sự cải tiến được Coolmate team nghiên cứu kỹ lưỡng và ngày càng cải tiến hơn với chất liệu Cotton Compact chất lượng cao.\nNgười mẫu: 179cm - 80kg, mặc áo 2XL.\nChất liệu co giãn 4 chiều đem lại sự thoải mái suốt ngày dài.\nBền dai, không bai, nhão, xù lông.\nTự hào sản xuất tại Việt Nam",
+    "thumb": "coolmate-aothun-1-1731906628662.png",
+    "asset": {
+      "productImages": [
+        "coolmate-aothun-12-1731906669857.png",
+        "coolmate-aothun-11-1731906695869.png"
+      ],
+      "variationImages": [],
+      "sizeImage": "coolmate-aothun-1size-1731906649193.png"
+    },
+    "variationFirst": {
+      "name": "Màu sắc",
+      "options": [
+        "Đen-Trắng",
+        "Trắng-Xám",
+        "Xám-Xanh",
+        "Xanh-Đen"
+      ]
+    },
+    "variationSecond": {
+      "name": "Cở áo",
+      "options": [
+        "M",
+        "L",
+        "XL"
+      ]
+    },
+    "attributes": [
+      {
+        "name": "Thương hiệu",
+        "value": "Coolmate",
+        "group": "Chung"
+      },
+      {
+        "name": "Xuất sứ",
+        "value": "Hàng Việt Nam",
+        "group": "Chung"
+      },
+      {
+        "name": "Chất liệu",
+        "value": "95% Cotton Compact - 5% Spandex",
+        "group": "Về sản phẩm"
+      },
+      {
+        "name": "Công nghệ",
+        "value": "ExDry thấm hút tốt, nhanh khô, thoáng khí",
+        "group": "Về sản phẩm"
+      },
+      {
+        "name": "Độ co giãn",
+        "value": "Co giãn 4 chiều thoải mái",
+        "group": "sản phẩm"
+      },
+      {
+        "name": "Đặc điểm",
+        "value": "Bền dai, không bai, nhão, xù lông, mềm mại và không gây khó chịu khi mặc"
+      },
+      {
+        "name": "Form áo",
+        "value": "Regulart fit",
+        "group": "Về sản phẩm"
+      },
+      {
+        "name": "Nhu cầu",
+        "value": "Tập mặc hằng ngày, mặc ở nhà",
+        "group": "Về sản phẩm"
+      }
+    ],
+    "tags": [
+      "Coolmate",
+      "Hàng Việt Nam",
+      "95% Cotton Compact - 5% Spandex",
+      "ExDry thấm hút tốt, nhanh khô, thoáng khí",
+      "Co giãn 4 chiều thoải mái",
+      "Bền dai, không bai, nhão, xù lông, mềm mại và không gây khó chịu khi mặc",
+      "Regular fit",
+      "Tập mặc hằng ngày, mặc ở nhà"
+    ],
+    "price": 437000,
+    "ratingStar": 5,
+    "views": 692,
+    "likes": 0,
+    "categories": [
+      {
+        "$oid": "6739a5af95e9295b374308ba"
+      },
+      {
+        "$oid": "6739a9e0822a609a762fe66c"
+      }
+    ],
+    "shop": {
+      "$oid": "67384683c3eecbca6dfbeef4"
+    },
+    "seller": {
+      "$oid": "67384683c3eecbca6dfbeeef"
+    },
+    "isPublished": true,
+    "isActive": true,
+    "isDeleted": false,
+    "deletedAt": null,
+    "createdAt": {
+      "$date": "2024-11-18T05:15:56.152Z"
+    },
+    "updatedAt": {
+      "$date": "2024-11-18T05:15:56.157Z"
+    },
+    "slug": "combo-2-ao-thun-nam-cotton-compact-phien-ban-premium-chong-nhan-coolmate",
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "673ad13ca9edd9903a1e2955"
+    },
+    "name": "Áo polo nam CARLI vải cá sấu cotton interlock xuất xịn, nam tính, thanh lịch sang trọng",
+    "description": "Áo polo nam CARLI vải cá sấu cotton interlock xuất xịn, nam tính, thanh lịch sang trọng - POLOMANOR.\n* Chính sách và điều kiện đổi trả của POLOMANOR:\n+ Cam kết chất lượng và mẫu mã sản phẩm giống với hình ảnh.\n+ Cam kết được đổi trả hàng trong vòng 30 ngày.\n+ Hàng phải còn mới  và chưa qua sử dụng\n+ Sản phẩm bị lỗi do vận chuyển và do nhà sản xuất.\n LƯU Ý:  Khi quý khách có gặp bất kì vấn đề gì về sản phẩm và vận chuyển đừng vội đánh giá mà hãy liên hệ Shop để đc hỗ trợ 1 cách tốt nhất nhé.",
+    "thumb": "poloman-polo-1.png",
+    "asset": {
+      "productImages": [
+        "poloman-polo-11.png",
+        "poloman-polo-12.png",
+        "poloman-polo-13.png",
+        "poloman-polo-14.png",
+        "poloman-polo-15.png"
+      ],
+      "variationImages": [],
+      "sizeImage": "poloman-polo-1size.png"
+    },
+    "variationFirst": {
+      "name": "Cở áo",
+      "options": [
+        "M",
+        "L",
+        "XL",
+        "2XL"
+      ]
+    },
+    "variationSecond": {
+      "name": "Màu sắc",
+      "options": [
+        "Trắng"
+      ]
+    },
+    "attributes": [
+      {
+        "name": "Thương hiệu",
+        "value": "Polomanor",
+        "group": "Chung"
+      },
+      {
+        "name": "Xuất sứ",
+        "value": "Hàng Việt Nam",
+        "group": "Chung"
+      },
+      {
+        "name": "Chất liệu",
+        "value": "Cotton",
+        "group": "Về sản phẩm"
+      },
+      {
+        "name": "Form áo",
+        "value": "Regulart fit",
+        "group": "Về sản phẩm"
+      },
+      {
+        "name": "Tay áo",
+        "value": "Tay ngắn",
+        "group": "Về sản phẩm"
+      },
+      {
+        "name": "Kiểu nút",
+        "value": "Nút tròn",
+        "group": "Về sản phẩm"
+      },
+      {
+        "name": "Nhu cầu",
+        "value": "Formal, thanh lịch, sang trọng, đơn giản",
+        "group": "Về sản phẩm"
+      }
+    ],
+    "tags": [
+      "Polomanor",
+      "Hàng Việt Nam",
+      "Cotton",
+      "Regular fit",
+      "Tay ngắn",
+      "Nút tròn",
+      "Formal, thanh lịch, sang trọng, đơn giản"
+    ],
+    "price": 396000,
+    "ratingStar": 5,
+    "views": 206,
+    "likes": 0,
+    "categories": [
+      {
+        "$oid": "6739a5af95e9295b374308ba"
+      },
+      {
+        "$oid": "6739aa51822a609a762fe679"
+      }
+    ],
+    "shop": {
+      "$oid": "673ad73cbf60f4fbad845012"
+    },
+    "seller": {
+      "$oid": "673ad73bbf60f4fbad84500d"
+    },
+    "isPublished": true,
+    "isActive": true,
+    "isDeleted": false,
+    "deletedAt": null,
+    "createdAt": {
+      "$date": "2024-11-18T05:31:40.078Z"
+    },
+    "updatedAt": {
+      "$date": "2024-11-18T05:31:40.081Z"
+    },
+    "slug": "ao-polo-nam-carli-vai-ca-sau-cotton-interlock-xuat-xin-nam-tinh-thanh-lich-sang-trong",
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "673ad635a9edd9903a1e295f"
+    },
+    "name": "Áo Sơ Mi Nam Cuban Netstripes, Chất Vải Cotton PL Dệt Blend Thoải Mái,SM0115,SOMEHOW",
+    "description": "Somehow - thương hiệu thời trang ứng dụng hằng ngày.\n\nDịch vụ khách hàng:\n+ Cam kết chất lượng và mẫu mã sản phẩm giống với hình ảnh.\n+ Thời gian đổi hàng: 10 ngày.\n+ Số lần đổi hàng: 1 lần\n+ Chi phí vận chuyển đổi hàng: Somehow chịu trách nhiệm.\n\nLƯU Ý:  Khi quý khách có gặp bất kì vấn đề gì về sản phẩm và vận chuyển đừng vội đánh giá mà hãy liên hệ Shop để đc hỗ trợ 1 cách tốt nhất nhé.",
+    "thumb": "somehow-aosomi-1.png",
+    "asset": {
+      "productImages": [
+        "somehow-aosomi-11.png",
+        "somehow-aosomi-12.png",
+        "somehow-aosomi-13.png"
+      ],
+      "variationImages": [],
+      "sizeImage": "somehow-aosomi-1size.png"
+    },
+    "variationFirst": {
+      "name": "Cở áo",
+      "options": [
+        "S (50-62kg)",
+        "M (63-70kg)",
+        "L (70-76kg)"
+      ]
+    },
+    "variationSecond": {
+      "name": "Màu sắc",
+      "options": [
+        "Trắng",
+        "Đen",
+        "Nâu"
+      ]
+    },
+    "attributes": [
+      {
+        "name": "Thương hiệu",
+        "value": "Somehow",
+        "group": "Chung"
+      },
+      {
+        "name": "Xuất sứ",
+        "value": "Hàng Việt Nam",
+        "group": "Chung"
+      },
+      {
+        "name": "Chất liệu",
+        "value": "Cotton PL Dệt Blend",
+        "group": "Về sản phẩm"
+      },
+      {
+        "name": "Độ co giản",
+        "value": "Không",
+        "group": "Về sản phẩm"
+      },
+      {
+        "name": "Form áo",
+        "value": "Regulart, relaxed",
+        "group": "Về sản phẩm"
+      },
+      {
+        "name": "Cổ áo",
+        "value": "Cổ V (Cuba truyền thống)",
+        "group": "Về sản phẩm"
+      },
+      {
+        "name": "Tay áo",
+        "value": "Tay ngắn",
+        "group": "Về sản phẩm"
+      },
+      {
+        "name": "Nhu cầu",
+        "value": "Mặc hàng ngày, đơn giản, cơ bản, đường phố",
+        "group": "Về sản phẩm"
+      }
+    ],
+    "tags": [
+      "Somehow",
+      "Hàng Việt Nam",
+      "Cotton PL Dệt Blend",
+      "Không",
+      "Regular, relaxed",
+      "Cổ V (Cuba truyền thống)",
+      "Tay ngắn",
+      "Mặc hàng ngày, đơn giản, cơ bản, đường phố"
+    ],
+    "price": 316000,
+    "ratingStar": 5,
+    "views": 488,
+    "likes": 0,
+    "categories": [
+      {
+        "$oid": "6739a5af95e9295b374308ba"
+      },
+      {
+        "$oid": "6739ab63822a609a762fe686"
+      }
+    ],
+    "shop": {
+      "$oid": "67385fe2402bd47062263e71"
+    },
+    "seller": {
+      "$oid": "67385fe2402bd47062263e6c"
+    },
+    "isPublished": true,
+    "isActive": true,
+    "isDeleted": false,
+    "deletedAt": null,
+    "createdAt": {
+      "$date": "2024-11-18T05:52:53.661Z"
+    },
+    "updatedAt": {
+      "$date": "2024-11-18T05:52:53.663Z"
+    },
+    "slug": "ao-so-mi-nam-cuban-netstripes-chat-vai-cotton-pl-det-blend-thoai-maism0115somehow",
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "673adab4bf60f4fbad845027"
+    },
+    "name": "Đồng hồ nam dây kim loại chính hãng Casio MTP-V001D-1BUDF",
+    "description": "CASIO - thương hiệu đồng hồ uy tín từ Nhật Bản.\n\nCác tính năng:\n+ Chống nước 3ATM.\n+ Dây đeo bằng thép không gỉ.\n+Thiết kế đơn giản, dễ sử dụng.\n\nLƯU Ý: Bảo hành 01 năm tất cả các lỗi về máy chính hãng Casio toàn quốc.",
+    "thumb": "casio-watch-1.png",
+    "asset": {
+      "productImages": [
+        "casio-watch-11.png",
+        "casio-watch-12.png",
+        "casio-watch-13.png"
+      ]
+    },
+    "variationFirst": null,
+    "variationSecond": null,
+    "attributes": [
+      {
+        "name": "Thương hiệu",
+        "value": "Casio",
+        "group": "Chung"
+      },
+      {
+        "name": "Xuất sứ",
+        "value": "Nhật Bản",
+        "group": "Chung"
+      },
+      {
+        "name": "Chất liệu dây",
+        "value": "Thép không rỉ",
+        "group": "Về sản phẩm"
+      },
+      {
+        "name": "Chất liệu mặt",
+        "value": "Hợp kim",
+        "group": "Về sản phẩm"
+      },
+      {
+        "name": "Đường kính mặt",
+        "value": "38mm",
+        "group": "Về sản phẩm"
+      },
+      {
+        "name": "Chống nước",
+        "value": "Chống nước 30m-50m",
+        "group": "Về sản phẩm"
+      },
+      {
+        "name": "Màu",
+        "value": "Mặt đen",
+        "group": "Về sản phẩm"
+      },
+      {
+        "name": "Nhu cầu",
+        "value": "Đơn giản, cơ bản, thanh lịch, formal",
+        "group": "Về sản phẩm"
+      }
+    ],
+    "tags": [
+      "Casio",
+      "Nhật Bản",
+      "Thép không rỉ",
+      "Hợp kim",
+      "38mm",
+      "Chống nước 30m-50m",
+      "Mặt đen",
+      "Đơn giản, cơ bản, thanh lịch, formal"
+    ],
+    "price": 652000,
+    "ratingStar": 5,
+    "views": 707,
+    "likes": 0,
+    "categories": [
+      {
+        "$oid": "6739b0e32eecfc712a8465cc"
+      }
+    ],
+    "shop": {
+      "$oid": "673ad7e4bf60f4fbad84501e"
+    },
+    "seller": {
+      "$oid": "673ad7e4bf60f4fbad845019"
+    },
+    "isPublished": true,
+    "isActive": true,
+    "isDeleted": false,
+    "deletedAt": null,
+    "createdAt": {
+      "$date": "2024-11-18T06:12:04.885Z"
+    },
+    "updatedAt": {
+      "$date": "2024-11-18T06:23:19.257Z"
+    },
+    "slug": "djong-ho-nam-day-kim-loai-chinh-hang-casio-mtp-v001d-1budf",
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "673b1ab8f78aa4eb7f4e7e70"
+    },
+    "name": "Quần dài tây nam SIDETAB cao cấp chuẩn form xuất xịn, sang trọng, tôn dáng - POLOMANOR",
+    "description": "Somehow - thương hiệu đồng hồ uy tín từ Nhật Bản.\n\nCác tính năng:\n+ Chống nước 3ATM.\n+ Dây đeo bằng thép không gỉ.\n+Thiết kế đơn giản, dễ sử dụng.\n\nLƯU Ý: Bảo hành 01 năm tất cả các lỗi về máy chính hãng Casio toàn quốc.",
+    "thumb": "poloman-quantay-2.png",
+    "asset": {
+      "productImages": [
+        "poloman-quantay-21.png",
+        "poloman-quantay-22.png",
+        "poloman-quantay-23.png",
+        "poloman-quantay-24.png"
+      ],
+      "sizeImage": "poloman-quantay-2size.png"
+    },
+    "variationFirst": {
+      "name": "Cở áo",
+      "options": [
+        "29",
+        "30",
+        "31",
+        "32",
+        "33"
+      ]
+    },
+    "variationSecond": {
+      "name": "Màu sắc",
+      "options": [
+        "Đen",
+        "Xám nhạt",
+        "Xanh đậm"
+      ]
+    },
+    "attributes": [
+      {
+        "name": "Thương hiệu",
+        "value": "Polomanor",
+        "group": "Chung"
+      },
+      {
+        "name": "Xuất sứ",
+        "value": "Hàng Việt Nam",
+        "group": "Chung"
+      },
+      {
+        "name": "Chất liệu",
+        "value": "Vải kaki",
+        "group": "Về sản phẩm"
+      },
+      {
+        "name": "Loại quần",
+        "value": "Quần dài",
+        "group": "Về sản phẩm"
+      },
+      {
+        "name": "Form quần",
+        "value": "Smart fit, slim fit",
+        "group": "Về sản phẩm"
+      },
+      {
+        "name": "Nhu cầu",
+        "value": "Công sở, thanh lịch, formal",
+        "group": "Về sản phẩm"
+      }
+    ],
+    "tags": [
+      "Polomanor",
+      "Hàng Việt Nam",
+      "Vải kaki",
+      "Quần dài",
+      "Smart fit, slim fit",
+      "Công sở, thanh lịch, formal"
+    ],
+    "price": 469000,
+    "ratingStar": 5,
+    "views": 741,
+    "likes": 0,
+    "categories": [
+      {
+        "$oid": "6739ac65822a609a762fe68f"
+      },
+      {
+        "$oid": "6739af782eecfc712a8465c3"
+      }
+    ],
+    "shop": {
+      "$oid": "673ad73cbf60f4fbad845012"
+    },
+    "seller": {
+      "$oid": "673ad73bbf60f4fbad84500d"
+    },
+    "isPublished": true,
+    "isActive": true,
+    "isDeleted": false,
+    "deletedAt": null,
+    "createdAt": {
+      "$date": "2024-11-18T10:45:13.002Z"
+    },
+    "updatedAt": {
+      "$date": "2024-11-18T10:45:13.009Z"
+    },
+    "slug": "quan-dai-tay-nam-sidetab-cao-cap-chuan-form-xuat-xin-sang-trong-ton-dang-polomanor",
+    "__v": 0
+  }
+]

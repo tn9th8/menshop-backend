@@ -15,15 +15,18 @@ export class Shop {
     @Prop({ required: true })
     name: string;
     @Prop({ default: null })
-    description: string;
-    @Prop({ required: true })
-    image: string;
-    @Prop({ default: false, required: true })
+    description?: string;
+    @Prop({ default: null })
+    image?: string;
+    @Prop({ default: false })
     isMall?: boolean;
     @Prop({ type: SchemaTypes.ObjectId, ref: User.name, required: true })
     seller: IKey;
-    @Prop({ index: true, default: true, required: true })
+    @Prop({ default: false })
+    isOpen?: boolean;
+    @Prop({ default: true })
     isActive?: boolean;
 }
 
 export const ShopSchema = SchemaFactory.createForClass(Shop);
+ShopSchema.index({ isOpen: 1, isActive: 1 });

@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { UsersModule } from '../users/users.module';
 import { Shop, ShopSchema } from './schemas/shop.schema';
 import { ShopsControllerAdmin } from './shops.controller.admin';
 import { ShopsControllerClient } from './shops.controller.client';
@@ -18,12 +17,7 @@ import { UpdateShopTransform } from './transform/update-shop.transform';
     ShopsService, ShopsRepository,
     CreateShopTransform, UpdateShopTransform
   ],
-  imports: [
-    MongooseModule.forFeature([{ name: Shop.name, schema: ShopSchema }]),
-    UsersModule
-  ],
-  exports: [
-    ShopsService, ShopsRepository
-  ]
+  imports: [MongooseModule.forFeature([{ name: Shop.name, schema: ShopSchema }])],
+  exports: [ShopsService, ShopsRepository]
 })
 export class ShopsModule { }

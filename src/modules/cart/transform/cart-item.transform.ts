@@ -6,11 +6,11 @@ import { CartItemDto } from "../dto/cart-item.dto";
 @Injectable()
 export class CartItemTransform implements PipeTransform {
     async transform(bodyValue: CartItemDto) {
-        let { product, shop, quantity } = bodyValue;
+        let { product, shop, quantity, variant } = bodyValue;
         [product, shop] = toObjetIds([product, shop]);
         //number is greater than 0
         isGreaterOrException([quantity], ['quantity']);
-        const cleaned: CartItemDto = { product, shop, quantity };
+        const cleaned: CartItemDto = { product, shop, quantity, variant };
         return cleaned;
     }
 }

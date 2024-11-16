@@ -127,7 +127,6 @@ export const toDbUnselect = (select = []) => {
  */
 export const ratingStarProp = {
     default: 5.0,
-    required: true,
     validate: {
         validator: (value: number) => value >= 1.0 && value <= 5.0,
         message: 'ratingsAverage nên ở ở giữa 1.0 và 5.0'

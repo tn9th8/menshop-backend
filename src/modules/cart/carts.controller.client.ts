@@ -1,17 +1,16 @@
-import { Body, Controller, Delete, Get, Param, Patch } from '@nestjs/common';
+import { Body, Controller, Get, Patch } from '@nestjs/common';
 import { ApiMessage } from 'src/common/decorators/api-message.decorator';
 import { User } from 'src/common/decorators/user.decorator';
 import { IAuthUser } from 'src/common/interfaces/auth-user.interface';
 import { CartsService } from './carts.service';
-import { CartItemDto, RemoveItemsDto } from './dto/cart-item.dto';
-import { UpdateCartDto } from './dto/update-cart.dto';
+import { CartItemDto, RemoveItemsDto, UpdateCartItemDto } from './dto/cart-item.dto';
 
 @Controller('/client/carts')
 export class CartsControllerClient {
   constructor(private readonly cartService: CartsService) { }
 
   //UPDATE//
-  @ApiMessage('add a item to cart')
+  @ApiMessage('add a product item to cart')
   @Patch('/add-to-cart')
   addToCart(
     @Body() body: CartItemDto,
@@ -20,7 +19,7 @@ export class CartsControllerClient {
     return this.cartService.addToCart(body, client);
   }
 
-  @ApiMessage('add a item to cart')
+  @ApiMessage('remove product items from cart')
   @Patch('/remove-from-cart')
   removeFromCart(
     @Body() body: RemoveItemsDto,
@@ -32,7 +31,7 @@ export class CartsControllerClient {
   @ApiMessage('add a item to cart')
   @Patch('/update-quantity')
   updateQuantity(
-    @Body() body: CartItemDto,
+    @Body() body: UpdateCartItemDto,
     @User() client: IAuthUser
   ) {
     return this.cartService.updateQuantity(body, client);
@@ -44,6 +43,6 @@ export class CartsControllerClient {
   findOwn(
     @User() client: IAuthUser
   ) {
-    return this.cartService.findOwnCart(client);
+    return this.cartService.findMyCart(client);
   }
 }

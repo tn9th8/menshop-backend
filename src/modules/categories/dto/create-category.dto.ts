@@ -1,7 +1,7 @@
-import { IsArray, IsEnum, IsOptional, IsString } from "class-validator";
+import { IsArray, IsEnum, IsOptional, IsString, ValidateNested } from "class-validator";
 import { CategoryLevelEnum } from "src/common/enums/category.enum";
 import { IKey } from "src/common/interfaces/index.interface";
-import { isArrayMessage, isEnumMessage, isStringMessage } from "src/common/utils/validator.util";
+import { isArrayMessage, isEnumMessage, isObjectMessage, isStringMessage } from "src/common/utils/validator.util";
 
 export class CreateCategoryDto {
     @IsString(isStringMessage('name'))
@@ -10,14 +10,6 @@ export class CreateCategoryDto {
     @IsOptional()
     @IsString(isStringMessage('description'))
     description?: string; //trim
-
-    @IsOptional()
-    @IsArray(isArrayMessage('attributes'))
-    attributes?: string[]; //each: trim, clean empty
-
-    @IsOptional()
-    @IsArray(isArrayMessage('specifications'))
-    specifications?: string[]; //each: trim, clean empty
 
     @IsOptional()
     @IsEnum(CategoryLevelEnum, isEnumMessage('level', CategoryLevelEnum))
@@ -30,5 +22,20 @@ export class CreateCategoryDto {
 
     @IsOptional()
     parent?: IKey; //objId
+
+    //search
+    @IsOptional()
+    @IsArray(isArrayMessage('search'))
+    @ValidateNested({ each: true, ...isObjectMessage('item của search') })
+    search?: string[]; //each: trim, clean empty
+
+    //constraints
+    @IsOptional()
+    @IsArray(isArrayMessage('attributes'))
+    attributes?: string[]; //each: trim, clean empty
+
+    @IsOptional()
+    @IsArray(isArrayMessage('specifications'))
+    specifications?: string[]; //each: trim, clean empty
 
 }

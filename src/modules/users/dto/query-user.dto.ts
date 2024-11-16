@@ -1,4 +1,4 @@
-import { GenderEnum } from "src/common/enums/gender.enum";
+import { UserGenderEnum } from "src/modules/users/enum/user.enum";
 import { SortEnum } from "src/common/enums/index.enum";
 import { IKey } from "src/common/interfaces/index.interface";
 
@@ -12,7 +12,7 @@ export class QueryUserDto {
     name?: string;
     email?: string;
     phone?: string;
-    gender?: GenderEnum;
+    gender?: UserGenderEnum;
 }
 
 export interface IQueryUser extends QueryUserDto {

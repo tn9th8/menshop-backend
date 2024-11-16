@@ -11,7 +11,7 @@ export class UpdateShopTransform implements PipeTransform {
     constructor(private readonly shopsRepository: ShopsRepository) { }
 
     async transform(value: UpdateShopDto) {
-        let { id, name, description, image } = value;
+        let { id, name, description, image, isOpen } = value;
 
         //id: objectId
         id = toObjetId(id);
@@ -24,11 +24,10 @@ export class UpdateShopTransform implements PipeTransform {
 
         //trim name, not empty, not exist
         name = trim(name);
-        if (!name) {
-            throw new BadRequestException(notEmptyMessage('name'));
-        }
-        if (await this.shopsRepository.isExistByQueryAndExcludeId({ name }, id)) {
-            throw new BadRequestException(isExistMessage('name'));
+        if (name) {
+            if (await this.shopsRepository.isExistByQueryAndExcludeId({ name }, id)) {
+                throw new BadRequestException(isExistMessage('name'));
+            }
         }
         //description: trim
         description = trim(description);
@@ -36,7 +35,7 @@ export class UpdateShopTransform implements PipeTransform {
         //name: trim, not empty
         image = trim(image);
 
-        const transformed: UpdateShopDto = cleanNullishAttrs({ id, name, description, image });
+        const transformed: UpdateShopDto = cleanNullishAttrs({ id, name, description, image, isOpen });
         return transformed;
     }
 }

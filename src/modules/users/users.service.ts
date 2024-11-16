@@ -1,121 +1,51 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { IsActiveEnum, SortEnum } from 'src/common/enums/index.enum';
 import { IKey } from 'src/common/interfaces/index.interface';
-import { isExistMessage, notFoundIdMessage } from 'src/common/utils/exception.util';
+import { isExistMessage, notFoundIdMessage, notFoundMessage } from 'src/common/utils/exception.util';
 import { computeItemsAndPages } from 'src/common/utils/mongo.util';
 import { hashPass } from 'src/common/utils/security.util';
 import { SignUpSellerDto } from 'src/shared/auth/dto/signup-seller.dto';
-import { UserKeysService } from '../user-keys/user-keys.service';
-import { CreateUserDto } from './dto/create-user.dto';
 import { QueryUserDto } from './dto/query-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UserDoc } from './schemas/user.schema';
+import { UserDocument } from './schemas/user.schema';
+import { UsersFactory } from './services/users.factory';
 import { UsersRepository } from './users.repository';
+import { IAuthUser } from 'src/common/interfaces/auth-user.interface';
 
 @Injectable()
 export class UsersService {
   constructor(
     private readonly usersRepo: UsersRepository,
-    private readonly userKeysService: UserKeysService,
-    private readonly configService: ConfigService
+    private readonly usersFactory: UsersFactory
   ) { }
-  //CREATE//
-  async createSeller(payload: SignUpSellerDto) {
-    try {
-      //is not exist email
-      const { email, password: plain } = payload;
-      if (await this.usersRepo.isExistByQuery({ email })) {
-        throw new ConflictException(isExistMessage('email'));
-      }
-      //hash password
-      const password = await hashPass(plain);
-      //role
-      const role = "SELLER";
-      //create a user
-      let created = await this.usersRepo.createOne({
-        ...payload,
-        password,
-        role
-      } as any); //{ password: unselect, ... }
-      if (!created) {
-        throw new BadRequestException("Có lỗi khi tạo một seller");
-      }
-      const { password: hide, ...newUser } = created;
-      return newUser;
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  async createClient(payload: SignUpSellerDto) {
-    try {
-      //is not exist email
-      const { email, password: plain } = payload;
-      if (await this.usersRepo.isExistByQuery({ email })) {
-        throw new ConflictException(isExistMessage('email'));
-      }
-      //hash password
-      const password = await hashPass(plain);
-      //role
-      const role = "CLIENT";
-      //create a user
-      let created = await this.usersRepo.createOne({
-        ...payload,
-        password,
-        role
-      } as any); //{ password: unselect, ... }
-      if (!created) {
-        throw new BadRequestException("Có lỗi khi tạo một client");
-      }
-      const { password: hide, ...newUser } = created;
-      return newUser;
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  async createUser(payload: CreateUserDto) {
-    //transform
-    try {
-      // is exist mail
-      const { email, password } = payload;
-      const isExist = await this.usersRepo.isExistByQuery({ email });
-      if (isExist) {
-        throw new ConflictException(isExistMessage('email'));
-      }
-      // hash password
-      const hash = await hashPass(password);
-      //create a user
-      let created = await this.usersRepo.createOne({
-        ...payload,
-        password: hash
-      } as any); //{ password: unselect, ... }
-      if (!created) {
-        throw new BadRequestException("Có lỗi khi tạo một user");
-      }
-      //create key store
-      const createdUserKey = await this.userKeysService.createOne({ userId: created._id, verifyToken: null });
-      if (!createdUserKey) {
-        throw new BadRequestException("Có lỗi khi tạo một userKey");
-      }
-      //return
-      const { password: hide, ...newUser } = created;
-      return newUser;
-    } catch (error) {
-      console.log(error);
-      throw new BadRequestException("Có lỗi khi tạo một user.");
-    }
+  /**
+   * @param body {
+   *    name *
+   *    email *
+   *    phone
+   *    password *
+   *    role *
+   *    age
+   *    gender
+   *    avatar
+   * }
+   * @returns created object that excluded password
+   */
+  async createUserFactory(body: any) {
+    const created = await this.usersFactory.createUser(body);
+    return created;
   }
 
   //UPDATE
-  async updateOne(payload: UpdateUserDto) {
-    const { id, ...newPayload } = payload;
-    const updated = await this.usersRepo.updateOneByQuery(newPayload, { _id: id });
-    if (!updated) {
-      throw new NotFoundException(notFoundIdMessage('user id', id));
-    }
-    return updated ? { updatedCount: 1 } : { updatedCount: 0 };
+  async updateOne(body: UpdateUserDto) {
+    const { id, password, ...payload } = body;
+    //ko cho update password
+    const updated = await this.usersRepo.updateOneByQuery(
+      { ...payload }, { _id: id });
+    if (!updated)
+      throw new NotFoundException(notFoundMessage('user'));
+    const { password: hide, ...newUser } = updated;
+    return newUser;
   }
 
   async updateIsActive(userId: IKey, isActive: IsActiveEnum) {
@@ -140,7 +70,7 @@ export class UsersService {
     return { data, metadata: { page, limit, items, pages } };
   }
 
-  async findByEmail(email: string): Promise<UserDoc | null> {
+  async findByEmail(email: string): Promise<UserDocument | null> {
     const user = await this.usersRepo.findOneByQuery({ email }) || null;
     return user;
   }
@@ -152,5 +82,10 @@ export class UsersService {
       throw new NotFoundException(notFoundIdMessage('user id', userId));
     }
     return found;
+  }
+
+  async findOwnProfile(user: IAuthUser) {
+    const profile = await this.findOneById(user.id);
+    return profile;
   }
 }

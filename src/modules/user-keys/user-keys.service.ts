@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { Metadata } from 'src/common/interfaces/response.interface';
 import { UpdateUserKeyDto } from './dto/update-user-keys.dto';
 import { UserKeysRepository } from './user-keys.repository';
@@ -19,6 +19,16 @@ export class UserKeysService {
       return created;
     } catch (error) {
       throw error;
+    }
+  }
+
+  async createKeyForUser({ userId, verifyToken = null }): Promise<UserKeyDoc> {
+    try {
+      const payload = { userId, verifyToken };
+      const created = await this.userKeysRepo.createOne(payload);
+      return created;
+    } catch (error) {
+      throw new BadRequestException("Có lỗi khi tạo một userKey");
     }
   }
 

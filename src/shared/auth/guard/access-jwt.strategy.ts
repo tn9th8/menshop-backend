@@ -26,13 +26,16 @@ export class AccessJwtStrategy extends PassportStrategy(Jwt) {
             throw new UnauthorizedException("Xác thực không thành công: Token không hợp lệ");
         const { id, name, phone, email, roles = [], groups = [], permissions = [] } = user;
         //find role, group, permissions
+        let isSuperAdmin = false;
         await Promise.all(user.roles.map(async (item, index) => {
             const roleDoc = await this.rolesService.findRoleForAuth(toObjetId(item));
+            if (roleDoc.name === 'super admin')
+                isSuperAdmin = true;
             roles[index] = roleDoc._id;
             groups.push(roleDoc.group);
             permissions.push(...roleDoc.permissions as any);
         }));
         //return the auth user
-        return { id: toObjetId(id), name, phone, email, roles, groups, permissions };
+        return { id: toObjetId(id), name, phone, email, roles, groups, permissions, isSuperAdmin };
     }
 }

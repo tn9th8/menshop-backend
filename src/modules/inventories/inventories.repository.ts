@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { UpdateQuery } from 'mongoose';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { Inventory, InventoryDoc, InventoryPartial } from './schemas/inventory.schema';
+import { toDbSelect } from 'src/common/utils/mongo.util';
 
 @Injectable()
 export class InventoriesRepository {
@@ -12,9 +13,14 @@ export class InventoriesRepository {
   ) { }
 
   //CREATE//
-  async createOne(payload: Inventory) {
-    const created = await this.inventoryModel.create(payload);
-    return created;
+  async createOne(payload: Inventory): Promise<InventoryDoc | null> {
+    try {
+      const { _doc: created } = await this.inventoryModel.create(payload);
+      return created;
+    } catch (error) {
+      console.log('>>> Exception: InventoriesRepository: createOne: ' + error);
+      return null;
+    }
   }
 
   //UPDATE//
@@ -31,5 +37,15 @@ export class InventoriesRepository {
   ): Promise<InventoryDoc | null> {
     const upserted = await this.inventoryModel.findOneAndUpdate(query, payload, { upsert: true, new: true }).lean();
     return upserted || null;
+  }
+
+  //QUERY//
+  async findOneByQueryRaw(
+    query: any, select: string[] = [] //ko truyen select => select all
+  ): Promise<InventoryDoc | null> {
+    const found = await this.inventoryModel.findOne(query)
+      .select(toDbSelect(select))
+      .lean();
+    return found || null;
   }
 }

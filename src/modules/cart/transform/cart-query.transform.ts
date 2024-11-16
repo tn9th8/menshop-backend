@@ -7,15 +7,15 @@ import { CartQuery } from '../schemas/cart.schema';
 @Injectable()
 export class CartQueryTransform implements PipeTransform {
     async transform(value: CartQuery) {
-        let { page, limit, sort, client, count } = value;
+        let { page, limit, sort, client } = value;
 
         page = toNumber(page);
         limit = toNumber(limit);
         sort = toEnum(sort, SortEnum);
         client = toObjetId(client);
-        count = toNumber(count);
+        // count = toNumber(count);
 
-        const cleaned: CartQuery = cleanNullishAttrs({ page, limit, sort, client, count });
+        const cleaned: CartQuery = cleanNullishAttrs({ page, limit, sort, client });
         return cleaned;
     }
 }

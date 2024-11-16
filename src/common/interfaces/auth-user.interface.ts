@@ -7,4 +7,5 @@ export interface IAuthUser extends Pick<User, 'name' | 'email' | 'phone' | 'role
     id: IKey;
     groups?: string[];
     permissions?: Pick<PermissionDoc, '_id' | 'apiMethod' | 'apiPath'>[];
+    isSuperAdmin?: boolean;
 }

@@ -1,4 +1,4 @@
-import { ProductSortEnum } from "src/common/enums/product.enum";
+import { ProductSortEnum } from "src/modules/products/enum/product.enum";
 import { IKey } from "src/common/interfaces/index.interface";
 
 export class SearchProductDto {
@@ -11,7 +11,7 @@ export class SearchProductDto {
     //attr
     name?: string; //price, discountPrice, discount;
     //ref
-    categories?: IKey;
+    categories?: IKey[];
     needs?: IKey;
     shop?: IKey;
 }

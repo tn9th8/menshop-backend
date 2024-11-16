@@ -5,7 +5,7 @@ import { SkipJwt } from 'src/common/decorators/skip-jwt.decorator';
 import { CategoriesService } from './categories.service';
 import { IdParamTransform } from 'src/middleware/pipe/id-param.transform';
 import { IKey } from 'src/common/interfaces/index.interface';
-import { GroupUserEnum, IsPublishedEnum } from 'src/common/enums/index.enum';
+import { GroupUserEnum, IsActiveEnum, IsPublishedEnum } from 'src/common/enums/index.enum';
 import { QueryCategoryTransform } from './transform/query-category.transform';
 import { QueryCategoryDto } from './dto/query-category.dto';
 
@@ -20,7 +20,7 @@ export class CategoriesControllerSeller {
   @SkipJwt()
   @UsePipes(QueryCategoryTransform)
   findAll(@Query() query: QueryCategoryDto) {
-    return this.categoriesService.findAllByQuery(query, IsPublishedEnum.PUBLISHED);
+    return this.categoriesService.findAllByQuery(query, IsActiveEnum.ACTIVE);
   }
 
   @ApiMessage('find one categories')

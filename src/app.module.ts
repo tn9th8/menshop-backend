@@ -7,25 +7,24 @@ import { softDeletePlugin } from 'soft-delete-plugin-mongoose';
 import { AppController } from './app.controller';
 import { AppRepository } from './app.repository';
 import { AppService } from './app.service';
-import { AuthModule } from './shared/auth/auth.module';
-import { AccessJwtRbacGuard } from './shared/auth/guard/access-jwt-rbac.guard';
 import { timestampsPlugin } from './common/utils/mongo.util';
 import { TransformInterceptor } from './middleware/interceptor/transform.interceptor';
-import { DatabasesModule } from './shared/databases/databases.module';
-import { FilesModule } from './shared/files/files.module';
-import { MailsModule } from './shared/mails/mails.module';
+import { CartsModule } from './modules/cart/carts.module';
 import { CategoriesModule } from './modules/categories/categories.module';
 import { DiscountsModule } from './modules/discounts/discounts.module';
 import { InventoriesModule } from './modules/inventories/inventories.module';
-import { UserKeysModule } from './modules/user-keys/user-keys.module';
 import { NeedsModule } from './modules/needs/needs.module';
+import { OrdersModule } from './modules/orders/orders.module';
 import { PermissionsModule } from './modules/permissions/permissions.module';
 import { ProductsModule } from './modules/products/products.module';
 import { RolesModule } from './modules/roles/roles.module';
 import { ShopsModule } from './modules/shops/shops.module';
+import { UserKeysModule } from './modules/user-keys/user-keys.module';
 import { UsersModule } from './modules/users/users.module';
-import { CartsModule } from './modules/cart/carts.module';
-import { OrdersModule } from './modules/orders/orders.module';
+import { AuthModule } from './shared/auth/auth.module';
+import { AccessJwtRbacGuard } from './shared/auth/guard/access-jwt-rbac.guard';
+import { FilesModule } from './shared/files/files.module';
+import { CartDiscountModule } from './modules/cart-discount/cart-discount.module';
 
 @Module({
   controllers: [AppController],
@@ -33,10 +32,10 @@ import { OrdersModule } from './modules/orders/orders.module';
     AppService,
     AppRepository,
     // bind to all routes
-    {
-      provide: APP_GUARD,
-      useClass: ThrottlerGuard
-    },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: ThrottlerGuard
+    // },
     {
       provide: APP_GUARD,
       useClass: AccessJwtRbacGuard,
@@ -95,7 +94,8 @@ import { OrdersModule } from './modules/orders/orders.module';
     InventoriesModule,
     DiscountsModule,
     CartsModule,
-    OrdersModule
+    OrdersModule,
+    CartDiscountModule
   ],
   exports: [AppRepository]
 })

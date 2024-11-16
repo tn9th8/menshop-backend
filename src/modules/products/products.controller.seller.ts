@@ -21,14 +21,15 @@ export class ProductsControllerSeller {
     private readonly productsService: ProductsService,
     private readonly productInventoriesService: ProductInventoriesService,
   ) { }
+
   //CREATE//
   @ApiMessage('create a product')
   @Post()
   create(
-    @Body() createProductDto: CreateProductDto,
+    @Body() body: CreateProductDto,
     @User() user: IAuthUser
   ) {
-    return this.productsService.createOne(createProductDto, user);
+    return this.productsService.createOne(body, user);
   }
   //UPDATE//
   @ApiMessage('update a product')
@@ -90,7 +91,7 @@ export class ProductsControllerSeller {
     @Param('id', IdParamTransform) id: IKey,
     @User() user: IAuthUser
   ) {
-    return this.productsService.findOneById(id, GroupUserEnum.SELLER);
+    return this.productsService.findOneById(id, GroupUserEnum.SELLER, user);
   }
   //END QUERY//
 }

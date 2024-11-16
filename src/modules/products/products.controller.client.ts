@@ -1,19 +1,20 @@
-import { Controller, Get, Param, Query, UsePipes } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiMessage } from 'src/common/decorators/api-message.decorator';
-import { ProductsService } from './products.service';
 import { SkipJwt } from 'src/common/decorators/skip-jwt.decorator';
 import { IKey } from 'src/common/interfaces/index.interface';
 import { IdParamTransform } from 'src/middleware/pipe/id-param.transform';
-import { QueryProductTransform } from './transform/query-product.transform';
-import { QueryProductDto } from './dto/query-product.dto';
 import { SearchProductDto } from './dto/search-product.dto';
+import { ProductsService } from './products.service';
 import { SearchProductTransform } from './transform/search-product.transform';
+import { ProductInventoriesService } from './services/product-inventories.service';
 
 @ApiTags('Products Module For Client Side')
 @Controller('/client/products')
 export class ProductsControllerClient {
-  constructor(private readonly productsService: ProductsService) { }
+  constructor(
+    private readonly productsService: ProductsService,
+    private readonly productInvenService: ProductInventoriesService) { }
 
   //QUERY//
   @ApiMessage('Search all products')
@@ -38,7 +39,7 @@ export class ProductsControllerClient {
   @SkipJwt()
   @Get('/:id')
   findOne(@Param('id', IdParamTransform) id: IKey) {
-    return this.productsService.findOneValidById(id);
+    return this.productInvenService.findOneValidById(id);
   }
   //END QUERY//
 }
