@@ -156,6 +156,58 @@ shopOrders: [{
     return endShopOrders;
   }
 
+  // don't clear item in cart => easy to test
+  async confirmCheckoutV2(shopOrders: any, client: IAuthUser,
+    shipTo = '46A, phường Linh Trung, quận Thủ Đức, TP.HCM', payment = 'COD', phone = '0985509091') {
+    const isConfirmDiscount = true;
+    const { checkoutOrder, newShopOrders } = await this.reviewCheckout(shopOrders, client, isConfirmDiscount);
+    //check cart is available
+    const foundCart = await this.cartService.findMyCartId(client.id);
+    if (!foundCart)
+      throw new NotFoundException(notFoundMessage('cart'));
+    //order
+    const endShopOrders = [];
+    for (const shopOrder of newShopOrders) {
+      //get array of products
+      //const productItems = newShopOrders.flatMap(shopOrder => shopOrder.productItems);
+      const acquireProduct = [];
+      for (const productItem of shopOrder.productItems) {
+        const { product, quantity } = productItem;
+        const keyLock = await this.ordersRedis.acquireLock(product._id, quantity, foundCart._id);
+        acquireProduct.push(keyLock ? true : false);
+        if (keyLock) {
+          await this.ordersRedis.releaseLock(keyLock);
+        }
+      }
+      //nếu product hết hàng
+      if (acquireProduct.includes(false)) {
+        throw new BadRequestException('Thật là tiết. Một/Một số sản phẩm đã hết hàng. Vui lòng quay lại giỏ hàng');
+      }
+      //create order
+      const { shop, totalPrice, totalDiscount, totalCheckout, productItems } = shopOrder
+      const createdOrder = await this.ordersRepo.createOrder({
+        client: client.id,
+        shop: shop._id,
+        checkout: { totalPrice, totalDiscount, totalCheckout },
+        productItems: productItems,
+        trackingNumber: "#00000",
+        shipTo,
+        payment,
+        phone,
+        status: "pending"
+      });
+
+      if (!createdOrder)
+        throw new BadRequestException(createErrorMessage('Lỗi khi tạo 1 order'));
+      console.log(`Checkout successfully, orderId: ${createdOrder._id}`);
+      endShopOrders.push(createdOrder);
+      //order thành công thì remove product items trong cart
+      // const cartItems = shopOrder.productItems.map(item => item.cartProductItem)
+      // await this.cartService.removeFromCart({ productItems: cartItems }, client);
+    }
+    return endShopOrders;
+  }
+
   //UPDATE//
   async cancelOne(orderId: IKey) {
     const updated = await this.ordersRepo.updateOne({ status: 'cancelled' }, { _id: orderId, status: 'pending' });

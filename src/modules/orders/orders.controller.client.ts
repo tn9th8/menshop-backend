@@ -22,8 +22,13 @@ export class OrdersControllerClient {
   @ApiMessage('confirm a checkout')
   @Post('/confirm-checkout')
   async confirmCheckout(@Body() shopOrders: any, @User() client: IAuthUser) {
-    const time = new Date();
     return await this.ordersService.confirmCheckout(shopOrders, client);
+  }
+
+  @ApiMessage('make a checkout')
+  @Post('/make-payment')
+  async makePayment(@Body() shopOrders: any, @User() client: IAuthUser) {
+    return await this.ordersService.confirmCheckoutV2(shopOrders, client);
   }
 
   @ApiMessage('get all orders')
