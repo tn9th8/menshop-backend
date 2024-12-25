@@ -130,7 +130,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"username\": \"casio@gmail.com\",\r\n    \"password\": \"123456\"\r\n}",
+									"raw": "{\r\n    \"username\": \"underthinker@gmail.com\",\r\n    \"password\": \"123456\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -226,7 +226,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"username\": \"client@menshop.com\",\r\n    \"password\": \"123456\"\r\n}",
+									"raw": "// {\r\n//     \"username\": \"client@menshop.com\",\r\n//     \"password\": \"123456\"\r\n// }\r\n{\r\n    \"username\": \"vha@gmail.com\",\r\n    \"password\": \"123456\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -306,7 +306,7 @@
 						"header": [
 							{
 								"key": "folder_type",
-								"value": "product-thumb",
+								"value": "user-avatars",
 								"type": "text"
 							}
 						],
@@ -339,7 +339,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"name\": \"CASIO\",\r\n    \"email\": \"casio@gmail.com\",\r\n    \"phone\": \"0980123456\",\r\n    \"password\": \"123456\",\r\n    \"role\": \"672702583fc99fad411eb5e7\",\r\n    \"age\": 24,\r\n    \"gender\": \"male\", //male, female, other\r\n    \"avatar\": \"casio.jpg\"\r\n}",
+									"raw": "{\r\n    \"name\": \"UNDERTHINKER\",\r\n    \"email\": \"underthinker@gmail.com\",\r\n    \"phone\": \"0980123450\",\r\n    \"password\": \"123456\",\r\n    \"role\": \"672702583fc99fad411eb5e7\",\r\n    \"age\": 22,\r\n    \"gender\": \"male\", //male, female, other\r\n    \"avatar\": \"underthinker.png\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -441,7 +441,6 @@
 										{
 											"key": "limit",
 											"value": "",
-											"description": "24 (default)",
 											"disabled": true
 										},
 										{
@@ -915,7 +914,7 @@
 					"name": "Seller",
 					"item": [
 						{
-							"name": "find a own shop",
+							"name": "find own shop",
 							"request": {
 								"method": "GET",
 								"header": [],
@@ -930,7 +929,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"id\": \"67386061402bd47062263e7d\",\r\n    // \"name\": \"Demo Shop\",\r\n    // \"description\": \"Demo Shop dùng để test CRUD và của Demo Seller\",\r\n    \"image\": \"acfc.png\",\r\n    \"isOpen\": true\r\n}",
+									"raw": "{\r\n    // \"id\": \"67386061402bd47062263e7d\",\r\n    // \"name\": \"Demo Shop\",\r\n    // \"description\": \"Demo Shop dùng để test CRUD và của Demo Seller\",\r\n    \"image\": \"acfc.png\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -971,23 +970,7 @@
 							"request": {
 								"method": "PATCH",
 								"header": [],
-								"url": {
-									"raw": "{{api/v1/seller}}/shops/close/:id",
-									"host": [
-										"{{api/v1/seller}}"
-									],
-									"path": [
-										"shops",
-										"close",
-										":id"
-									],
-									"variable": [
-										{
-											"key": "id",
-											"value": "67385fe2402bd47062263e71"
-										}
-									]
-								}
+								"url": "{{api/v1/seller}}/shops/close"
 							},
 							"response": []
 						}
@@ -1417,7 +1400,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"name\": \"Đồng hồ nam dây kim loại chính hãng Casio MTP-V001D-1BUDF\",\r\n    \"description\": \"Somehow - thương hiệu đồng hồ uy tín từ Nhật Bản.\\n\\nCác tính năng:\\n+ Chống nước 3ATM.\\n+ Dây đeo bằng thép không gỉ.\\n+Thiết kế đơn giản, dễ sử dụng.\\n\\nLƯU Ý: Bảo hành 01 năm tất cả các lỗi về máy chính hãng Casio toàn quốc.\",\r\n    \"thumb\": \"casio-watch-1\",\r\n    \"asset\": {\r\n        \"productImages\": [\"casio-watch-11.png\", \"casio-watch-12.png\", \"casio-watch-13.png\"]\r\n        // \"variationImages\": [],\r\n        // \"sizeImage\": \"somehow-aosomi-1size.png\"\r\n    },\r\n    // \"variationTiers\": [{\r\n    //         \"name\": \"Cở áo\",\r\n    //         \"options\": [\"S (50-62kg)\", \"M (63-70kg)\", \"L (70-76kg)\"]\r\n    //         // \"images\": \"\"\r\n    //     },{\r\n    //         \"name\": \"Màu sắc\",\r\n    //         \"options\": [\"Trắng\", \"Đen\", \"Nâu\"]\r\n    //         // \"images\": \"\"\r\n    // }],\r\n    \"attributes\": [\r\n        {\"name\": \"Thương hiệu\", \"value\": \"Casio\", \"group\": \"Chung\"},\r\n        {\"name\": \"Xuất sứ\", \"value\": \"Nhật Bản\", \"group\": \"Chung\"},\r\n        {\"name\": \"Chất liệu dây\", \"value\": \"Thép không rỉ\", \"group\": \"Về sản phẩm\"},\r\n        {\"name\": \"Chất liệu mặt\", \"value\": \"Hợp kim\", \"group\": \"Về sản phẩm\"},\r\n        {\"name\": \"Đường kính mặt\", \"value\": \"38mm\", \"group\": \"Về sản phẩm\"},\r\n        {\"name\": \"Chống nước\", \"value\": \"Chống nước 30m-50m\", \"group\": \"Về sản phẩm\"},\r\n        {\"name\": \"Màu\", \"value\": \"Mặt đen\", \"group\": \"Về sản phẩm\"},\r\n        {\"name\": \"Nhu cầu\", \"value\": \"Đơn giản, cơ bản, thanh lịch, formal\", \"group\": \"Về sản phẩm\"}\r\n    ],\r\n    \"stock\": 4,\r\n    \"price\": 652000,\r\n    \"categories\": [\"6739b0e32eecfc712a8465cc\"]\r\n}",
+									"raw": "{\r\n    \"name\": \"Balo BRIAN Đi Học Đựng Laptop Thời Trang Unisex Chống Nước UNDERTHINKER\",\r\n    \"description\": \"UNDERTHINKER - một thương hiệu Việt Nam mong muốn mang đến cho bạn trải nghiệm tuyệt vời với tiêu chí chất lượng và tính thẩm mỹ cao được đặt lên hàng đầu. Thương hiệu quốc nội – Chất lượng quốc tế.\",\r\n    \"thumb\": \"underthinker-bag-1t.png\",\r\n    \"asset\": {\r\n        \"productImages\": [\"underthinker-bag-11.png\", \"underthinker-bag-12.png\", \"underthinker-bag-13.png\"]\r\n        // \"sizeImage\": \"poloman-quantay-2size.png\"\r\n    },\r\n    // \"variationFirst\": {\r\n    //         \"name\": \"Phân loại\",\r\n    //         \"options\": [\"Ví đứng\", \"Ví ngang\"]\r\n    // },\r\n    // \"variationSecond\": {\r\n    //         \"name\": \"Màu sắc\",\r\n    //         \"options\": [\"29\", \"30\", \"31\", \"32\", \"33\"]\r\n    // },\r\n    \"attributes\": [\r\n        {\"name\": \"Chất Liệu\", \"value\": \"Da\"},\r\n        {\"name\": \"Quai đeo\", \"value\": \"Đệm mút chống nhức mỏi\"},\r\n        {\"name\": \"Ngăn bên trong\", \"value\": \"1 ngăn chính, 1 ngăn chống sốc laptop 15 inch và 1 ngăn phụ nhỏ\"},\r\n        {\"name\": \"Phong Cách\", \"value\": \"Đơn giản\"},\r\n        {\"name\": \"Thương hiệu\", \"value\": \"UNDERTHINKER\"}\r\n    ],\r\n    \"stock\": 327,\r\n    \"price\": 199000,\r\n    \"categories\": [\"6751cf8918a572888f279560\", \"6751cfff18a572888f279579\"],\r\n    \"views\": 434,\r\n    \"likes\": 231\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1473,7 +1456,7 @@
 									"variable": [
 										{
 											"key": "id",
-											"value": "67399d190ab724f519743163"
+											"value": "673adab4bf60f4fbad845027"
 										}
 									]
 								}
@@ -1481,7 +1464,7 @@
 							"response": []
 						},
 						{
-							"name": "disable a product",
+							"name": "draft a product",
 							"request": {
 								"method": "PATCH",
 								"header": [],
@@ -1494,7 +1477,23 @@
 										}
 									}
 								},
-								"url": "{{api/v1/seller}}/products/draft/671f73cdee47adaf5589dc2e"
+								"url": {
+									"raw": "{{api/v1/seller}}/products/draft/:id",
+									"host": [
+										"{{api/v1/seller}}"
+									],
+									"path": [
+										"products",
+										"draft",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "673adab4bf60f4fbad845027"
+										}
+									]
+								}
 							},
 							"response": []
 						},
@@ -1619,7 +1618,22 @@
 							"request": {
 								"method": "GET",
 								"header": [],
-								"url": "{{api/v1/seller}}/products/671f73cdee47adaf5589dc2e"
+								"url": {
+									"raw": "{{api/v1/seller}}/products/:id",
+									"host": [
+										"{{api/v1/seller}}"
+									],
+									"path": [
+										"products",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "673b1ab8f78aa4eb7f4e7e70"
+										}
+									]
+								}
 							},
 							"response": []
 						}
@@ -1627,7 +1641,7 @@
 					"auth": {
 						"type": "bearer",
 						"bearer": {
-							"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjczYWQ3ZTRiZjYwZjRmYmFkODQ1MDE5IiwibmFtZSI6IkNBU0lPIiwiZW1haWwiOiJjYXNpb0BnbWFpbC5jb20iLCJwaG9uZSI6IjA5ODAxMjM0NTYiLCJyb2xlcyI6WyI2NzI3MDI1ODNmYzk5ZmFkNDExZWI1ZTciLCI2NzI3MDJhOWE3YjExODIzMzY3YjcyMDYiXX0sImlhdCI6MTczMTkwOTYyNiwiZXhwIjoxMDM3MTkwOTYyNn0.qBZeNJAVCvLbgEZhamt1Ilu1qlXRp_1fZq1LpFFzpEY"
+							"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjc1MWNlZWYxOGE1NzI4ODhmMjc5NTUyIiwibmFtZSI6IlVOREVSVEhJTktFUiIsImVtYWlsIjoidW5kZXJ0aGlua2VyQGdtYWlsLmNvbSIsInBob25lIjoiMDk4MDEyMzQ1MCIsInJvbGVzIjpbIjY3MjcwMjU4M2ZjOTlmYWQ0MTFlYjVlNyIsIjY3MjcwMmE5YTdiMTE4MjMzNjdiNzIwNiJdfSwiaWF0IjoxNzMzNDE1MDIzLCJleHAiOjEwMzczNDE1MDIzfQ.1RJqhwUMF3x6NuSAA23NQIgIT8c4rOMpdbMJJVybt2k"
 						}
 					},
 					"event": [
@@ -1662,7 +1676,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{api/v1/client}}/products",
+									"raw": "{{api/v1/client}}/products?sort=sales&name=áo thun",
 									"host": [
 										"{{api/v1/client}}"
 									],
@@ -1684,14 +1698,12 @@
 										},
 										{
 											"key": "sort",
-											"value": "",
-											"disabled": true
+											"value": "sales",
+											"description": "ctime, populate, sales"
 										},
 										{
 											"key": "name",
-											"value": "",
-											"description": "ctime, relevant, populate, sales",
-											"disabled": true
+											"value": "áo thun"
 										},
 										{
 											"key": "categories",
@@ -1719,7 +1731,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{api/v1/client}}/products/search?keyword=slim slimfit",
+									"raw": "{{api/v1/client}}/products/search?categories=6739b0e32eecfc712a8465cc",
 									"host": [
 										"{{api/v1/client}}"
 									],
@@ -1742,17 +1754,12 @@
 										},
 										{
 											"key": "sort",
-											"value": "",
-											"description": "ctime, relevant, populate, sales",
+											"value": "populate",
+											"description": "relevant, populate, sales",
 											"disabled": true
 										},
 										{
 											"key": "name",
-											"value": "",
-											"disabled": true
-										},
-										{
-											"key": "categories",
 											"value": "",
 											"disabled": true
 										},
@@ -1767,8 +1774,13 @@
 											"disabled": true
 										},
 										{
+											"key": "categories",
+											"value": "6739b0e32eecfc712a8465cc"
+										},
+										{
 											"key": "keyword",
-											"value": "slim slimfit"
+											"value": "dáng slim regular",
+											"disabled": true
 										}
 									]
 								}
@@ -1781,13 +1793,13 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{api/v1/client}}/products/671f73cdee47adaf5589dc2e",
+									"raw": "{{api/v1/client}}/products/673aca63a9edd9903a1e293e",
 									"host": [
 										"{{api/v1/client}}"
 									],
 									"path": [
 										"products",
-										"671f73cdee47adaf5589dc2e"
+										"673aca63a9edd9903a1e293e"
 									],
 									"query": [
 										{
@@ -1850,7 +1862,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"name\": \"Dầu gội đầu\",\r\n    \"description\": \"Mùi hương level 2\",\r\n    // \"level\": 1,\r\n    // \"children\": [],\r\n\r\n    \"level\": 2,\r\n    \"children\": [],\r\n    \"parent\": \"6739b2c52eecfc712a8465d3\",\r\n\r\n    // \"level\": 3,\r\n    // \"parent\": \"\",\r\n\r\n    \"search\": [\r\n        // {\"name\": \"Chất liệu\", \"value\": [\"vải quần tay\", \"vải jean\", \"Vải kaki\", \"Vải nỉ\"]},\r\n        // {\"name\": \"Nhu cầu\", \"value\": [\"Mặc hàng ngày\", \"Formal\", \"Phong cách\"]},\r\n        {\"name\": \"Kích cở\", \"value\": [\"lớn\", \"nhỏ\"]},\r\n        {\"name\": \"Hương thơm\", \"value\": [\"lịch lãm\", \"tươi mát\", \"nhiều tầng lớp\", \"gỗ\"]},\r\n        // {\"name\": \"Màu\", \"value\": [\"Đen\", \"Trắng\", \"Vàng\", \"Xanh dương\"]},\r\n        {\"name\": \"Thương hiệu\", \"value\": [\"Prola\", \"Ehurb\", \"AXR\", \"XMEN\"]}\r\n        // {\"name\": \"Xuất sứ\", \"value\": [\"Việt Nam\",\"Nhật Bản\", \"Trung Quốc\"]}\r\n    ]\r\n    // \"attributes\": [\"\", \"\"],\r\n    // \"specifications\": [\"\", \"\"],\r\n}",
+									"raw": "{\r\n    \"name\": \"Balo\",\r\n    \"description\": \"Túi level 2\",\r\n    // \"level\": 1,\r\n    // \"children\": [],\r\n\r\n    \"level\": 2,\r\n    \"children\": [],\r\n    \"parent\": \"6751cf8918a572888f279560\",\r\n\r\n    // \"level\": 3,\r\n    // \"parent\": \"\",\r\n\r\n    \"search\": [\r\n        // {\"name\": \"Chất liệu\", \"value\": [\"vải quần tay\", \"vải jean\", \"Vải kaki\", \"Vải nỉ\"]},\r\n        // {\"name\": \"Nhu cầu\", \"value\": [\"Mặc hàng ngày\", \"Formal\", \"Phong cách\"]},\r\n        {\"name\": \"Kích cở\", \"value\": [\"lớn\", \"nhỏ\"]},\r\n        {\"name\": \"Hương thơm\", \"value\": [\"lịch lãm\", \"tươi mát\", \"nhiều tầng lớp\", \"gỗ\"]},\r\n        // {\"name\": \"Màu\", \"value\": [\"Đen\", \"Trắng\", \"Vàng\", \"Xanh dương\"]},\r\n        {\"name\": \"Thương hiệu\", \"value\": [\"Prola\", \"Ehurb\", \"AXR\", \"XMEN\"]}\r\n        // {\"name\": \"Xuất sứ\", \"value\": [\"Việt Nam\",\"Nhật Bản\", \"Trung Quốc\"]}\r\n    ]\r\n    // \"attributes\": [\"\", \"\"],\r\n    // \"specifications\": [\"\", \"\"],\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -2315,7 +2327,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{api/v1/admin}}/discounts/valid?page=2&limit=2&name=giảm",
+									"raw": "{{api/v1/admin}}/discounts/valid",
 									"host": [
 										"{{api/v1/admin}}"
 									],
@@ -2326,11 +2338,13 @@
 									"query": [
 										{
 											"key": "page",
-											"value": "2"
+											"value": "2",
+											"disabled": true
 										},
 										{
 											"key": "limit",
-											"value": "2"
+											"value": "2",
+											"disabled": true
 										},
 										{
 											"key": "sort",
@@ -2340,7 +2354,8 @@
 										},
 										{
 											"key": "name",
-											"value": "giảm"
+											"value": "giảm",
+											"disabled": true
 										},
 										{
 											"key": "code",
@@ -2408,7 +2423,7 @@
 					"auth": {
 						"type": "bearer",
 						"bearer": {
-							"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NzFmNDljMDIyYzRjOTBiZGUyNGVmNGEiLCJpc3MiOiJmcm9tIHRoZSBtZW5zaG9wIHNlcnZlciIsInVzZXIiOnsiaWQiOiI2NzFmNDljMDIyYzRjOTBiZGUyNGVmNGEiLCJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInBob25lIjoiMDk4NTUwOTA5MSJ9LCJpYXQiOjE3MzAzNDg2MTEsImV4cCI6MTAzNzAzNDg2MTF9.oOMMp9UB-scZ_6sycaVn_bn14SurlcHZTvR5mntE8Hk"
+							"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjcyNzA2MTk4M2QxNmY0YzI0ZTZhZjc3IiwibmFtZSI6IkknbSBhIHN1cGVyIGFkbWluIiwiZW1haWwiOiJzdXBlckBtZW5zaG9wLmNvbSIsInBob25lIjoiMDAwMDk4OTg5OCIsInJvbGVzIjpbIjY3MjcwMDI4ODgyNDg5OTIxMzkyYjk3NCJdfSwiaWF0IjoxNzMxOTEzNjM4LCJleHAiOjEwMzcxOTEzNjM4fQ.SVF0rfxfheQB43suwAPDOjqQ-oFo3STx-JZuKGJe-lQ"
 						}
 					},
 					"event": [
@@ -2444,7 +2459,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"name\": \"Giảm 6%\",\r\n    \"code\": \"DP10T24111\",\r\n    \"description\": null,//\"Giảm 14k\",\r\n    \"type\": \"percentage\", //fixedAmount (vnd), percentage (%)\r\n    \"value\": 10, //10000 (vnd), 10 (%)\r\n    \"startDate\": \"2024-11-09\", //YYYY-MM_DD\r\n    \"endDate\": \"2024-11-20\",\r\n    \"minPurchaseValue\": 146000,\r\n    \"applyTo\": \"all\", //all (default), specific\r\n    //\"specificProducts\": [\"67207b126da251ee201960aaa\", \"672076ea58a2c171ce0a38cb\"], //specific\r\n    \"applyMax\": 46,\r\n    \"applyMaxPerClient\": 2\r\n}",
+									"raw": "{\r\n    \"name\": \"Giảm 15%\",\r\n    \"code\": \"coolmate15p1t\",\r\n    \"description\": \"Đơn hàng tối thiểu 599k\",//\"Giảm 14k\",\r\n    \"type\": \"percentage\", //fixedAmount (vnd), percentage (%)\r\n    \"value\": 15, //10000 (vnd), 10 (%)\r\n    \"startDate\": \"2024-11-28\", //YYYY-MM_DD\r\n    \"endDate\": \"2024-12-26\",\r\n    \"minPurchaseValue\": 599000,\r\n    \"applyTo\": \"all\", //all (default), specific\r\n    //\"specificProducts\": [\"67207b126da251ee201960aaa\", \"672076ea58a2c171ce0a38cb\"], //specific\r\n    \"applyMax\": 500,\r\n    \"applyMaxPerClient\": 50\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -2479,9 +2494,9 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{api/v1/admin}}/discounts/valid?page=2&limit=2&sort=&name=giảm",
+									"raw": "{{api/v1/seller}}/discounts/valid",
 									"host": [
-										"{{api/v1/admin}}"
+										"{{api/v1/seller}}"
 									],
 									"path": [
 										"discounts",
@@ -2490,24 +2505,28 @@
 									"query": [
 										{
 											"key": "page",
-											"value": "2"
+											"value": "2",
+											"disabled": true
 										},
 										{
 											"key": "limit",
-											"value": "2"
+											"value": "2",
+											"disabled": true
 										},
 										{
 											"key": "sort",
 											"value": "",
-											"description": "nameAz (default), nameZa, latest, oldest"
+											"description": "nameAz (default), nameZa, latest, oldest",
+											"disabled": true
 										},
 										{
 											"key": "name",
-											"value": "giảm"
+											"value": "20",
+											"disabled": true
 										},
 										{
 											"key": "code",
-											"value": "S1",
+											"value": "20p",
 											"disabled": true
 										}
 									]
@@ -2571,7 +2590,7 @@
 					"auth": {
 						"type": "bearer",
 						"bearer": {
-							"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjcyNzA2MzJhZTJjNDg4NGY5ZDM3MjgzIiwibmFtZSI6IkknbSBhIG5vcm1hbCBzZWxsZXIiLCJlbWFpbCI6InNlbGxlckBtZW5zaG9wLmNvbSIsInBob25lIjoiMDAwMDU0NTQ1NCIsInJvbGVzIjpbIjY3MjcwMjU4M2ZjOTlmYWQ0MTFlYjVlNyJdfSwiaWF0IjoxNzMxMTM1NDM4LCJleHAiOjEwMzcxMTM1NDM4fQ.zQQOunRdJjInC9EdnjIoeTseuT5eYvQUt9RKDdHQxAM"
+							"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjczODQ2ODNjM2VlY2JjYTZkZmJlZWVmIiwibmFtZSI6ImNvb2xtYXRlIiwiZW1haWwiOiJjb29sbWF0ZUBnbWFpbC5jb20iLCJwaG9uZSI6IjA5ODAxMjM0NTYiLCJyb2xlcyI6WyI2NzI3MDI1ODNmYzk5ZmFkNDExZWI1ZTciLCI2NzI3MDJhOWE3YjExODIzMzY3YjcyMDYiXX0sImlhdCI6MTczMjc3NjA2MSwiZXhwIjoxMDM3Mjc3NjA2MX0.szA1fyaU-UhyPVHTQPipbEipaGG9DvrnSIvZG5KO8dY"
 						}
 					},
 					"event": [
@@ -2601,12 +2620,12 @@
 					"name": "Client",
 					"item": [
 						{
-							"name": "find all discounts by shop",
+							"name": "find all discounts by shop, code",
 							"request": {
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{api/v1/client}}/discounts?shop=671899484273e64bec51ec98&code=D5PS1",
+									"raw": "{{api/v1/client}}/discounts?shop=67384683c3eecbca6dfbeef4&code=coolmate15p1t",
 									"host": [
 										"{{api/v1/client}}"
 									],
@@ -2632,36 +2651,12 @@
 										},
 										{
 											"key": "shop",
-											"value": "671899484273e64bec51ec98",
+											"value": "67384683c3eecbca6dfbeef4",
 											"description": "required"
 										},
 										{
 											"key": "code",
-											"value": "D5PS1"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "find a discount",
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{api/v1/client}}/discounts/:id",
-									"host": [
-										"{{api/v1/client}}"
-									],
-									"path": [
-										"discounts",
-										":id"
-									],
-									"variable": [
-										{
-											"key": "id",
-											"value": "6722f496c2c8b2a9df7dee18"
+											"value": "coolmate15p1t"
 										}
 									]
 								}
@@ -2674,7 +2669,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{api/v1/client}}/discounts/products",
+									"raw": "{{api/v1/client}}/discounts/products?code=poloman10p1t",
 									"host": [
 										"{{api/v1/client}}"
 									],
@@ -2703,8 +2698,31 @@
 										},
 										{
 											"key": "code",
-											"value": "D5PS1",
-											"disabled": true
+											"value": "poloman10p1t"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "find a discount by id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{api/v1/client}}/discounts/:id",
+									"host": [
+										"{{api/v1/client}}"
+									],
+									"path": [
+										"discounts",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
 										}
 									]
 								}
@@ -3073,7 +3091,16 @@
 					"name": "Client",
 					"item": [
 						{
-							"name": "get own cart",
+							"name": "get my cart",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": "{{api/v1/client}}/carts"
+							},
+							"response": []
+						},
+						{
+							"name": "get my cart v2",
 							"protocolProfileBehavior": {
 								"disableBodyPruning": true
 							},
@@ -3082,14 +3109,14 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"product\": \"6728ff5e38a5fbb836828a17\",\r\n    \"shop\": \"66fe7af5efc4a95d4f3684f6\",\r\n    \"quantity\": 1\r\n}",
+									"raw": "",
 									"options": {
 										"raw": {
 											"language": "json"
 										}
 									}
 								},
-								"url": "{{api/v1/client}}/carts"
+								"url": "{{api/v1/client}}/cart-discount"
 							},
 							"response": []
 						},
@@ -3100,7 +3127,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"product\": \"6728ff5e38a5fbb836828a17\",\r\n    \"shop\": \"66fe7af5efc4a95d4f3684f6\",\r\n    \"quantity\": 1\r\n}",
+									"raw": "{\r\n    \"product\": \"6751daba6f9149a1f5adf5bb\",\r\n    \"shop\": \"6751ceef18a572888f279557\",\r\n    \"variant\": \"duy nhất\",\r\n    \"quantity\": 2\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -3118,7 +3145,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"products\":[ \"67207b126da251ee201960aa\", \"6728ff5e38a5fbb836828a17\"]\r\n}",
+									"raw": "{\r\n    \"productItems\":[\"67491b6d641ab7763640f6f3\"]\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -3136,7 +3163,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"product\": \"67207b126da251ee201960aa\",\r\n    \"shop\": \"66fe7af5efc4a95d4f3684f6\",\r\n    \"quantity\": 0\r\n}",
+									"raw": "{\r\n    \"_id\": \"674808ab5c8d4ad670275085\",\r\n    \"quantity\": 5\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -3151,7 +3178,7 @@
 					"auth": {
 						"type": "bearer",
 						"bearer": {
-							"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjcyNzA2MmU3NmRmNWI2MjE2YWM1ZDhlIiwibmFtZSI6IkknbSBhIG5vcm1hbCBjbGllbnQiLCJlbWFpbCI6ImNsaWVudEBtZW5zaG9wLmNvbSIsInBob25lIjoiMDAwMDE0MTQxNCIsInJvbGVzIjpbIjY3MjcwMmE5YTdiMTE4MjMzNjdiNzIwNiJdfSwiaWF0IjoxNzMwOTUyNjU1LCJleHAiOjEwMzcwOTUyNjU1fQ.x9Ug0xo3w6WdHo6fRTzn9fNNGR1msVyGfPof8BuMCK4"
+							"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjczYWYzNTkwOTE3NTA2ODFmNzhiY2VjIiwibmFtZSI6IlbFqSBIb8OgbmcgQW5oIiwiZW1haWwiOiJ2aGFAZ21haWwuY29tIiwicGhvbmUiOiIwOTgwMTIzNDU2Iiwicm9sZXMiOlsiNjcyNzAyYTlhN2IxMTgyMzM2N2I3MjA2Il19LCJpYXQiOjE3MzQyNjM4NDQsImV4cCI6MTAzNzQyNjM4NDR9.Q3AceEcbSP7NuGyvKEKaBD-d5n9cosnzPSkMREheRS0"
 						}
 					},
 					"event": [
@@ -3188,7 +3215,102 @@
 				},
 				{
 					"name": "Seller",
-					"item": []
+					"item": [
+						{
+							"name": "get my orders",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{api/v1/seller}}/orders?status=all",
+									"host": [
+										"{{api/v1/seller}}"
+									],
+									"path": [
+										"orders"
+									],
+									"query": [
+										{
+											"key": "status",
+											"value": "all",
+											"description": "all, pending, shipping, completed, cancelled"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get one order",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{api/v1/seller}}/orders/:id",
+									"host": [
+										"{{api/v1/seller}}"
+									],
+									"path": [
+										"orders",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "674aaf99784011e6299d6b4a"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update status of an order",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"_id\": \"674aaf99784011e6299d6b4a\",\r\n    \"status\": \"shipping\" //pending, shipping, completed, cancelled\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{api/v1/seller}}/orders/status"
+							},
+							"response": []
+						}
+					],
+					"auth": {
+						"type": "bearer",
+						"bearer": {
+							"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjczODQ2ODNjM2VlY2JjYTZkZmJlZWVmIiwibmFtZSI6ImNvb2xtYXRlIiwiZW1haWwiOiJjb29sbWF0ZUBnbWFpbC5jb20iLCJwaG9uZSI6IjA5ODAxMjM0NTYiLCJyb2xlcyI6WyI2NzI3MDI1ODNmYzk5ZmFkNDExZWI1ZTciLCI2NzI3MDJhOWE3YjExODIzMzY3YjcyMDYiXX0sImlhdCI6MTczMzI4MDY3MSwiZXhwIjoxMDM3MzI4MDY3MX0.Pcr1IKSgClR4gerGT7SBuhP7AWgfWPUbCnm4jCdqzdw"
+						}
+					},
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
 				},
 				{
 					"name": "Client",
@@ -3200,7 +3322,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "[{\r\n    \"shop\": \"66fe7af5efc4a95d4f3684f6\",\r\n    \"discountCodes\": [],//[\"DP10T24111\"],\r\n    \"productItems\": [{\r\n        \"_id\": \"6728ff5e38a5fbb836828a17\",\r\n        \"quantity\": \"2\"\r\n    }]\r\n}]",
+									"raw": "[\r\n    {\r\n        \"shop\": \"6751ceef18a572888f279557\",\r\n        \"discountCodes\": [],// [\"poloman10p1t\"],//[\"DP10T24111\"],\r\n        \"productItems\": [\"6752c8b6cd2c97a97cfca792\"] //id của productItems trong cart\r\n    }\r\n]",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -3218,7 +3340,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "[{\r\n    \"shop\": \"66fe7af5efc4a95d4f3684f6\",\r\n    \"discountCodes\": [],//[\"DP10T24111\"],\r\n    \"productItems\": [{\r\n        \"_id\": \"6728ff5e38a5fbb836828a17\",\r\n        \"quantity\": \"2\"\r\n    }]\r\n}]",
+									"raw": "[\r\n    {\r\n        \"shop\": \"6751ceef18a572888f279557\",\r\n        \"discountCodes\": [],// [\"poloman10p1t\"],//[\"DP10T24111\"],\r\n        \"productItems\": [\"6752c8b6cd2c97a97cfca792\"] //id của productItems trong cart\r\n    }\r\n]",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -3228,12 +3350,102 @@
 								"url": "{{api/v1/client}}/orders/confirm-checkout"
 							},
 							"response": []
+						},
+						{
+							"name": "make a payment",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "[\r\n    {\r\n        \"shop\": \"6751ceef18a572888f279557\",\r\n        \"discountCodes\": [],// [\"poloman10p1t\"],//[\"DP10T24111\"],\r\n        \"productItems\": [\"6752c8b6cd2c97a97cfca792\"] //id của productItems trong cart\r\n    }\r\n]",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{api/v1/client}}/orders/make-payment"
+							},
+							"response": []
+						},
+						{
+							"name": "get my orders",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{api/v1/client}}/orders?status=all",
+									"host": [
+										"{{api/v1/client}}"
+									],
+									"path": [
+										"orders"
+									],
+									"query": [
+										{
+											"key": "status",
+											"value": "all",
+											"description": "all, pending, shipping, completed, cancelled"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get one order",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{api/v1/client}}/orders/:id",
+									"host": [
+										"{{api/v1/client}}"
+									],
+									"path": [
+										"orders",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "674aaf99784011e6299d6b4a"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "cancel my order",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"url": {
+									"raw": "{{api/v1/client}}/orders/:id",
+									"host": [
+										"{{api/v1/client}}"
+									],
+									"path": [
+										"orders",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "674aaf99784011e6299d6b4d"
+										}
+									]
+								}
+							},
+							"response": []
 						}
 					],
 					"auth": {
 						"type": "bearer",
 						"bearer": {
-							"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjcyNzA2MmU3NmRmNWI2MjE2YWM1ZDhlIiwibmFtZSI6IkknbSBhIG5vcm1hbCBjbGllbnQiLCJlbWFpbCI6ImNsaWVudEBtZW5zaG9wLmNvbSIsInBob25lIjoiMDAwMDE0MTQxNCIsInJvbGVzIjpbIjY3MjcwMmE5YTdiMTE4MjMzNjdiNzIwNiJdfSwiaWF0IjoxNzMxMTI5MDQzLCJleHAiOjEwMzcxMTI5MDQzfQ.oC1l96t6EWQdDOOfQVwiyiqvVVqsYYB6JxqRVLdysQ0"
+							"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjczYWYzNTkwOTE3NTA2ODFmNzhiY2VjIiwibmFtZSI6IlbFqSBIb8OgbmcgQW5oIiwiZW1haWwiOiJ2aGFAZ21haWwuY29tIiwicGhvbmUiOiIwOTgwMTIzNDU2Iiwicm9sZXMiOlsiNjcyNzAyYTlhN2IxMTgyMzM2N2I3MjA2Il19LCJpYXQiOjE3MzQyNjM4NDQsImV4cCI6MTAzNzQyNjM4NDR9.Q3AceEcbSP7NuGyvKEKaBD-d5n9cosnzPSkMREheRS0"
 						}
 					},
 					"event": [
